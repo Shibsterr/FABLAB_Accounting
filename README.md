@@ -16,6 +16,7 @@
 - [ ] Visually make it look nicer
 - [ ] New equipment image upload not working on newer phones (its something to due with permissions as WRITE_EXTERNAL_STORAGE)
 - - [ ] Add a way to make it ask for camera permissions (Instead of asking it only on QR code scanner)
+- [ ] Figure out what Report,Tasks buttons do exactly (Task's right now open google calendar (its your own meant for workers))
 
 ## New Features to Add:
 

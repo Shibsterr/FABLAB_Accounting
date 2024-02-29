@@ -125,9 +125,9 @@ public class HomeFragment extends Fragment{
         // Set the icon
         Drawable icon = ContextCompat.getDrawable(getActivity(), R.drawable.nav_home);
         // Set bounds for the icon (optional)
-        icon.setBounds(0, 0, icon.getIntrinsicWidth(), icon.getIntrinsicHeight());
+        icon.setBounds(0, 0, icon.getIntrinsicWidth()*2, icon.getIntrinsicHeight()*2);
         // Set the icon to the left of the text
-        stockButton.setCompoundDrawablesRelative(icon, null, null, null);
+        stockButton.setCompoundDrawablesRelative(icon, null, icon, null);
         // Set padding between the icon and the text
         stockButton.setCompoundDrawablePadding(10); // Adjust as needed
 
