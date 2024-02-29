@@ -20,20 +20,19 @@
             android:background="?attr/colorPrimary"
             app:popupTheme="@style/Theme.FABLAB.PopupOverlay">
 
+            <ImageView
+                android:id="@+id/page1Logo"
+                android:layout_width="70pt"
+                android:layout_height="29pt"
+                android:layout_gravity="center"
+                android:src="@drawable/fablablogo"
+                android:contentDescription="@string/logo" />
         </androidx.appcompat.widget.Toolbar>
 
     </com.google.android.material.appbar.AppBarLayout>
 
     <include layout="@layout/content_main" />
 
-    <ImageView
-        android:id="@+id/page1Logo"
-        android:layout_width="70pt"
-        android:layout_height="29pt"
-        android:layout_marginStart="105dp"
-        android:src="@drawable/fablablogo"
-        android:translationZ="90dp"
-        android:contentDescription="@string/logo" />
 
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

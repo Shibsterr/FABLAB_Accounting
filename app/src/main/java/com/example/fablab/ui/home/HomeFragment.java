@@ -5,11 +5,13 @@ import android.content.Intent;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.Button;
@@ -132,12 +134,9 @@ public class HomeFragment extends Fragment{
         // Set padding to ensure the text stays centered
         stockButton.setPadding(0, stockButton.getPaddingTop(), 0, stockButton.getPaddingBottom());
 
-
-
-
-
-
-        stockButton.setOnClickListener(v -> Navigation.findNavController(v).navigate(R.id.equipmentFragment));
+        stockButton.setOnClickListener(v ->
+                Navigation.findNavController(v).navigate(R.id.equipmentFragment
+                ));
 
         mAuth = FirebaseAuth.getInstance();
 
@@ -179,16 +178,32 @@ public class HomeFragment extends Fragment{
                 LinearLayout.LayoutParams.WRAP_CONTENT
         );
 
+        // Get the WindowManager service from the Context
+        WindowManager windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+
+        // Create DisplayMetrics object to hold screen information
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+
+        // Get the default display using WindowManager
+        windowManager.getDefaultDisplay().getMetrics(displayMetrics);
+
+        // Calculate the desired button width based on screen width
+        int screenWidth = displayMetrics.widthPixels;
+        int buttonWidth = (int) (screenWidth * 0.95); // Adjust this factor as needed
+
+        // Set the layout parameters for buttons
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
-                1400,
-                250
+                buttonWidth,
+                250 // Adjust this as needed
         );
-        layoutParams.setMargins(20, 20, 100, 20);
+
+        layoutParams.setMargins(30, 20, 100, 20);
 
         hidingButton.setLayoutParams(layoutParams);
         stockButton.setLayoutParams(layoutParams);
         calendarbutton.setLayoutParams(layoutParams);
         eventPage.setLayoutParams(layoutParams);
+
         RelativeLayout.LayoutParams topLayoutParams = new RelativeLayout.LayoutParams(
                 RelativeLayout.LayoutParams.MATCH_PARENT,
                 RelativeLayout.LayoutParams.WRAP_CONTENT
