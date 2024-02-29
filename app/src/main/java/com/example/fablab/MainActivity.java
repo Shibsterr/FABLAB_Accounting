@@ -3,13 +3,14 @@ package com.example.fablab;
 import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
-import android.net.Network;
-import android.net.NetworkCapabilities;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -43,6 +44,8 @@ public class MainActivity extends AppCompatActivity{
 
     private AppBarConfiguration mAppBarConfiguration;
     private TextView fullname,email;
+    private Button refreshbtn;
+    private ProgressBar progbar;
     private final ActivityResultLauncher<ScanOptions> barLauncher = registerForActivityResult(new ScanContract(),
             result ->{
 
@@ -82,11 +85,26 @@ public class MainActivity extends AppCompatActivity{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if(isNetworkConnected()){       //if connection is true then there is a connection
+        if(isNetworkAvailable()){       //if connection is true then there is a connection
+            Log.d("MainActivity","Its true you have net");
             setContentView(R.layout.fragment_home);
         }else{ //else
+            Log.d("MainActivity","Its false no net");
             // Inflate layout without internet connection
             setContentView(R.layout.activity_main_no_internet); //no
+
+            refreshbtn = findViewById(R.id.try_again_button);
+            progbar = findViewById(R.id.progressBar);
+
+            progbar.setVisibility(View.GONE);
+            refreshbtn.setVisibility(View.VISIBLE);
+
+            refreshbtn.setOnClickListener(v -> {
+                progbar.setVisibility(View.VISIBLE);
+                refreshbtn.setVisibility(View.GONE);
+                    startActivity(new Intent(MainActivity.this, MainActivity.class));
+                    finish();
+            });
         }
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
@@ -196,18 +214,10 @@ public class MainActivity extends AppCompatActivity{
         barLauncher.launch(options);
     }
 
-    private boolean isNetworkConnected() {
-        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        if (connectivityManager != null) {
-            Network network = connectivityManager.getActiveNetwork();
-            NetworkCapabilities networkCapabilities = connectivityManager.getNetworkCapabilities(network);
-            if (networkCapabilities != null && (networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) ||
-                    networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR))) {
-                // Device is connected to the internet
-                return true;
-            }
-        }
-        // Device is not connected to the internet
-        return false;
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager != null ? connectivityManager.getActiveNetworkInfo() : null;
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 }
