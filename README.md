@@ -12,9 +12,10 @@
 - [ ] Abillity to add/plan events inside a calendar as an user / or assign tasks as a worker to another worker
 - [ ] Add certain screens if somethings missing (No Internet connection, No Equipment to show)
 - [ ] Fix login and register not allowing to hop between from a single button place (its one way)
-- 
-## New Features
-Add:
+- [ ] More checks for image,code,name for new equipment maker
+- [ ] Visually make it look nicer
+
+## New Features to Add:
 
 - [x] Image upload to new equipment maker image gets added from the storage in firebase (added both)
 - [x] Description writer? In New Equipment maker (added)
@@ -24,5 +25,5 @@ Add:
 - [ ] Add certain screens if somethings missing (No Internet connection, No Equipment to show)
 - [ ] Ability to add/plan events inside a calendar as an user / or assign tasks as a worker to another worker
 - [ ] Add icons to the home page buttons
-- [ ] Add settings (theme changer, password changer)
-- 
+- [ ] Add settings (theme changer, password changer/reseter (is the only one that does it))
+- [ ]
