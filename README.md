@@ -15,7 +15,7 @@
 - [ ] More checks for image,code,name for new equipment maker
 - [ ] Visually make it look nicer
 - [ ] New equipment image upload not working on newer phones (its something to due with permissions as WRITE_EXTERNAL_STORAGE)
-- - [ ] Make it ask for camera permissions
+- - [ ] Add a way to make it ask for camera permissions (Instead of asking it only on QR code scanner)
 
 ## New Features to Add:
 
