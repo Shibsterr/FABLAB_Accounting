@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="15dp"
+    tools:context=".ui.NewEquipmentFragment"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="700dp">
+
+            <Spinner
+                android:id="@+id/spinner_type"
+                android:layout_width="208dp"
+                android:layout_height="53dp"
+                android:layout_below="@+id/text_type"
+                android:layout_alignParentStart="true"
+                android:layout_marginStart="23dp"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/spinner_border"
+                android:dropDownWidth="match_parent"
+                android:layout="@layout/spinner_layout"
+                android:minWidth="30dp"
+                android:spinnerMode="dropdown" />
+
+            <TextView
+                android:id="@+id/text_type"
+                android:layout_width="128dp"
+                android:layout_height="31dp"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginStart="23dp"
+                android:layout_marginTop="205dp"
+                android:text="@string/izvelies"
+                android:textColor="#555555"
+                android:textSize="18sp" />
+
+            <EditText
+                android:id="@+id/edit_code"
+                android:layout_width="wrap_content"
+                android:layout_height="48dp"
+                android:layout_below="@+id/kods_nr"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginStart="22dp"
+                android:layout_marginTop="63dp"
+                android:ems="10"
+                android:hint="@string/kods_hints"
+                android:inputType="text" />
+
+            <TextView
+                android:id="@+id/kods_nr"
+                android:layout_width="225dp"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/spinner_type"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginStart="22dp"
+                android:layout_marginTop="32dp"
+                android:text="@string/kods"
+                android:textColor="#555555"
+                android:textSize="18sp" />
+
+            <EditText
+                android:id="@+id/edit_name"
+                android:layout_width="wrap_content"
+                android:layout_height="48dp"
+                android:layout_below="@+id/name"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginStart="23dp"
+                android:layout_marginTop="152dp"
+                android:ems="10"
+                android:hint="@string/name_hints"
+                android:inputType="text" />
+
+            <TextView
+                android:id="@+id/name"
+                android:layout_width="200dp"
+                android:layout_height="31dp"
+                android:layout_below="@+id/kods_nr"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginStart="23dp"
+                android:layout_marginTop="120dp"
+                android:text="@string/nosaukums"
+                android:textColor="#555555"
+                android:textSize="18sp" />
+
+            <Spinner
+                android:id="@+id/spinner_unit"
+                android:layout_width="206dp"
+                android:layout_height="50dp"
+                android:layout_below="@+id/unit"
+                android:layout_alignParentStart="true"
+                android:layout_marginStart="22dp"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/spinner_border"
+                android:dropDownWidth="match_parent"
+                android:layout="@layout/spinner_layout"
+                android:minWidth="30dp"
+                android:spinnerMode="dropdown" />
+
+            <TextView
+                android:id="@+id/unit"
+                android:layout_width="200dp"
+                android:layout_height="31dp"
+                android:layout_below="@+id/name"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginStart="22dp"
+                android:layout_marginTop="304dp"
+                android:text="@string/units"
+                android:textColor="#555555"
+                android:textSize="18sp" />
+
+
+            <EditText
+                android:id="@+id/skaits"
+                android:layout_width="285dp"
+                android:layout_height="48dp"
+                android:layout_below="@+id/spinner_unit"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentEnd="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginStart="19dp"
+                android:layout_marginTop="11dp"
+                android:layout_marginEnd="24dp"
+                android:hint="Ievadi skaitli (Cik liels/daudzums)" />
+
+
+            <TextView
+                android:id="@+id/textViewFileName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/button_upload"
+                android:layout_alignParentEnd="true"
+                android:layout_marginTop="-34dp"
+                android:layout_marginEnd="50dp"
+                android:text="No file selected"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textSize="12sp" />
+
+            <EditText
+                android:id="@+id/crit_stock"
+                android:layout_width="99dp"
+                android:layout_height="55dp"
+                android:layout_alignBottom="@+id/button_upload"
+                android:layout_alignParentStart="true"
+                android:layout_marginStart="15dp"
+                android:layout_marginBottom="65dp"
+                android:hint="crit stock" />
+
+            <EditText
+                android:id="@+id/min_stock"
+                android:layout_width="99dp"
+                android:layout_height="55dp"
+                android:layout_alignBottom="@+id/button_upload"
+                android:layout_alignParentStart="true"
+                android:layout_marginStart="130dp"
+                android:layout_marginBottom="64dp"
+                android:hint="min stock" />
+
+            <EditText
+                android:id="@+id/max_stock"
+                android:layout_width="99dp"
+                android:layout_height="55dp"
+                android:layout_alignBottom="@+id/button_upload"
+                android:layout_alignParentStart="true"
+                android:layout_marginStart="239dp"
+                android:layout_marginBottom="64dp"
+                android:hint="max stock" />
+
+
+            <EditText
+                android:id="@+id/description"
+                android:layout_width="match_parent"
+                android:layout_height="64dp"
+                android:layout_below="@+id/button_upload"
+                android:layout_alignParentEnd="true"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="-11dp"
+                android:hint="Apraksts">
+
+            </EditText>
+
+            <Button
+            android:id="@+id/button_upload"
+            android:layout_width="187dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/skaits"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="80dp"
+            android:layout_marginEnd="179dp"
+            android:hint="Pievienot attēlu" />
+
+            <Button
+                android:id="@+id/button_submit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/spinner_unit"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:layout_marginTop="282dp"
+                android:layout_marginEnd="115dp"
+                android:paddingLeft="40dp"
+                android:paddingRight="40dp"
+                android:text="@string/submit"
+                android:textAlignment="center" />
+    </RelativeLayout>
+
+</ScrollView>

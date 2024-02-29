@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "443233404317",
+    "project_id": "nomadic-sprite-414512",
+    "storage_bucket": "nomadic-sprite-414512.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:443233404317:android:7c0a53c7275d4253005b74",
+        "android_client_info": {
+          "package_name": "com.example.fablab"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDEIKQIdwDn_CZ2ggdSKQVdRrDW0Y8qZAM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

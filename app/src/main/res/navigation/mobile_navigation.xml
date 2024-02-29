@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@+id/nav_home">
+
+    <fragment
+        android:id="@+id/nav_home"
+        android:name="com.example.fablab.ui.home.HomeFragment"
+        tools:layout="@layout/fragment_home">
+        <action
+            android:id="@+id/action_mainActivity_to_specificEquipmentFragment"
+            app:destination="@id/specificEquipmentFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_task"
+        android:name="com.example.fablab.ui.gallery.GalleryFragment"
+        tools:layout="@layout/fragment_gallery" />
+
+    <fragment
+        android:id="@+id/nav_report"
+        android:name="com.example.fablab.ui.slideshow.SlideshowFragment"
+        tools:layout="@layout/fragment_slideshow" />
+
+    <fragment
+        android:id="@+id/nav_settings"
+        android:name="com.example.fablab.ui.settings.SettingsFragment"
+        tools:layout="@layout/fragment_settings"/>
+    <fragment
+        android:id="@+id/new_equip"
+        android:name="com.example.fablab.ui.NewEquipmentFragment"
+        tools:layout="@layout/fragment_new_equipment" />
+
+    <fragment
+        android:id="@+id/equipmentListFragment"
+        android:name="com.example.fablab.ui.EquipmentListFragment"
+        android:label="fragment_equipment_list"
+        tools:layout="@layout/fragment_equipment_list">
+        <action
+            android:id="@+id/action_equipmentListFragment_to_specificEquipmentFragment"
+            app:destination="@id/specificEquipmentFragment"
+            app:popUpTo="@id/specificEquipmentFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/specificEquipmentFragment"
+        android:name="com.example.fablab.ui.SpecificEquipmentFragment"
+        android:label="fragment_specific_equipment"
+        tools:layout="@layout/fragment_specific_equipment">
+        <action
+            android:id="@+id/action_specificEquipmentFragment_to_equipmentListFragment"
+            app:destination="@id/equipmentListFragment"
+            app:popUpTo="@+id/equipmentListFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
+
+
+    <fragment
+        android:id="@+id/equipmentFragment"
+        android:name="com.example.fablab.ui.stockequip.EquipmentFragment"
+        android:label="fragment_equipment"
+        tools:layout="@layout/fragment_equipment">
+
+    </fragment>
+
+
+</navigation>
