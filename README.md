@@ -24,8 +24,8 @@
 - [x] Description writer? In New Equipment maker (added)
 - [x] Max stock they choose In New Equipment maker (added crit,min,max)
 - [x] Make the buttons auto adjust depending on screen size
-- [ ] Add a forgot password button to login screen
+- [x] Add a forgot password button to login screen
 - [ ] Add certain screens if somethings missing (No Internet connection, No Equipment to show)
 - [ ] Ability to add/plan events inside a calendar as an user / or assign tasks as a worker to another worker
 - [ ] Add icons to the home page buttons
-- [ ] Add settings (theme changer, password changer/reseter (is the only one that does it))
+- [ ] Add settings (theme changer, password changer/reset (literally just copy and paste it from LoginUser and adjust it a little to getting the email then just logging the user out and sending the email for the password reset) (is the only one that does it))

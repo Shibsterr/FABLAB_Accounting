@@ -20,7 +20,7 @@ import com.google.firebase.auth.FirebaseAuth;
 public class LoginUser extends AppCompatActivity implements View.OnClickListener{
     private TextView login;
     private EditText email,password;
-    private Button loginbtn;
+    private Button loginbtn,forgorbtn;
     private ProgressBar progressBar;
     private FirebaseAuth mAuth;
 
@@ -34,21 +34,29 @@ public class LoginUser extends AppCompatActivity implements View.OnClickListener
         email = (EditText) findViewById(R.id.email);
         password = (EditText) findViewById(R.id.password);
         loginbtn = (Button) findViewById(R.id.login_Button);
+        forgorbtn = (Button) findViewById(R.id.forgot_pass);
         progressBar = (ProgressBar) findViewById(R.id.progress_login);
         mAuth = FirebaseAuth.getInstance();
 
         loginbtn.setVisibility(View.VISIBLE);
 
         loginbtn.setOnClickListener((View.OnClickListener) this);
-
+        forgorbtn.setOnClickListener((View.OnClickListener) this);
     }
 
     @Override
     public void onClick(View v) {
-        if(v.getId() == R.id.login_Button){
+        if(v.getId() == R.id.login_Button){ //log the user in
             userLogin();
-        }else if(v.getId() == R.id.register_swap){
-            startActivity(new Intent(this, RegisterUser.class));
+        }else if(v.getId() == R.id.register_swap){  //swap to registration
+            Intent intent = new Intent(LoginUser.this, RegisterUser.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+        }else if(v.getId() == R.id.forgot_pass){    //password reset
+            Log.d("LoginUser", "Clicked message to reset password");
+            Intent intent = new Intent(LoginUser.this, ForgotPasswordActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
         }
     }
 
@@ -79,8 +87,9 @@ public class LoginUser extends AppCompatActivity implements View.OnClickListener
 
         mAuth.signInWithEmailAndPassword(mail, pass).addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
-                startActivity(new Intent(LoginUser.this, MainActivity.class));
-                finish();
+                Intent intent = new Intent(LoginUser.this, MainActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
                 Log.d("MainActivity", "Logging in...");
             } else {
                 // Check if the error is due to an incorrect password

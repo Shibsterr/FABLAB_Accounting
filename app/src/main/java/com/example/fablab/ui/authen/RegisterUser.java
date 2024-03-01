@@ -8,7 +8,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -26,9 +25,8 @@ import java.util.Map;
 
 public class RegisterUser extends AppCompatActivity implements View.OnClickListener{
 
-    private TextView login;
     private EditText name_surname,email,password,rep_password;
-    private Button register;
+    private Button register,login;
     private ProgressBar progressBar;
     private FirebaseAuth mAuth;
 
@@ -37,7 +35,7 @@ public class RegisterUser extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.user_register);
 
-        login = (TextView) findViewById(R.id.register);
+        login = (Button) findViewById(R.id.register);
         login.setOnClickListener(this);
 
         register = (Button) findViewById(R.id.register_button);
@@ -58,7 +56,9 @@ public class RegisterUser extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View v) {
         if (v.getId() == R.id.register) {
-            startActivity(new Intent(this, LoginUser.class));
+            Intent intent = new Intent(RegisterUser.this, LoginUser.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
         }else if(v.getId() == R.id.register_button){
             userRegister();
         }
@@ -95,15 +95,6 @@ public class RegisterUser extends AppCompatActivity implements View.OnClickListe
 
              mAuth.createUserWithEmailAndPassword(mail,pass).addOnCompleteListener(task -> {
                  if(task.isSuccessful()){
-                     //Firestore database
-
-//                     user.put("Statuss", statuss);
-//                     user.put("Vards un uzvards", names);
-//                     user.put("epasts", mail);
-//                     db.collection("users")
-//                             .document(mAuth.getUid())
-//                             .set(user);
-
                      // Get a reference to your Firebase database
                      DatabaseReference databaseRef = FirebaseDatabase.getInstance().getReference();
 
@@ -115,9 +106,9 @@ public class RegisterUser extends AppCompatActivity implements View.OnClickListe
                      user.put("epasts", mail);
 
                      userRef.setValue(user);
-
-
-                     startActivity(new Intent(RegisterUser.this, MainActivity.class));
+                     Intent intent = new Intent(RegisterUser.this, MainActivity.class);
+                     intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                     startActivity(intent);
                      finish();
                      Log.d("MainActivity","Registering account...");
                  }else{

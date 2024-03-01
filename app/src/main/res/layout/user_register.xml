@@ -79,12 +79,15 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/name_surname" />
 
-    <TextView
+    <Button
         android:id="@+id/register"
-        android:layout_width="118dp"
-        android:layout_height="22dp"
+        android:layout_width="133dp"
+        android:layout_height="46dp"
         android:layout_marginTop="7dp"
         android:layout_marginEnd="16dp"
+        android:textAllCaps="false"
+        style="?android:attr/borderlessButtonStyle"
+        android:backgroundTint="@color/white"
         android:text="@string/konts_ir"
         android:textAlignment="center"
         android:textSize="15sp"

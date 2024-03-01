@@ -52,22 +52,40 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/password" />
 
-    <TextView
+    <Button
         android:id="@+id/register_swap"
-        android:layout_width="118dp"
-        android:layout_height="22dp"
+        android:layout_width="133dp"
+        android:layout_height="46dp"
         android:layout_marginTop="7dp"
         android:layout_marginEnd="16dp"
+        android:textAllCaps="false"
+        style="?android:attr/borderlessButtonStyle"
+        android:backgroundTint="@color/white"
         android:text="@string/konts_nav"
         android:textAlignment="center"
         android:textSize="15sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/login_Button" />
 
+    <Button
+        android:id="@+id/forgot_pass"
+        android:layout_width="133dp"
+        android:layout_height="46dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="4dp"
+        android:text="Aizmirsi paroli?"
+        android:textAllCaps="false"
+        style="?android:attr/borderlessButtonStyle"
+        android:backgroundTint="@color/white"
+        app:layout_constraintEnd_toStartOf="@+id/register_swap"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/login_Button" />
+
     <ProgressBar
         android:id="@+id/progress_login"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="70dp"
+        android:layout_height="183dp"
         android:layout_marginTop="40dp"
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
