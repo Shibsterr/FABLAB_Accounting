@@ -7,8 +7,7 @@
         android:icon="@drawable/baseline_qr_code_scanner_24"
         android:title="@string/qrcode"
         app:showAsAction="always"
-        android:onClick="scanCode"
-        />
+        android:onClick="scanCode"/>
 
 
 </menu>

@@ -55,7 +55,7 @@
     <Button
         android:id="@+id/register_swap"
         android:layout_width="133dp"
-        android:layout_height="46dp"
+        android:layout_height="48dp"
         android:layout_marginTop="7dp"
         android:layout_marginEnd="16dp"
         android:textAllCaps="false"
@@ -70,7 +70,7 @@
     <Button
         android:id="@+id/forgot_pass"
         android:layout_width="133dp"
-        android:layout_height="46dp"
+        android:layout_height="48dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="4dp"
         android:text="Aizmirsi paroli?"

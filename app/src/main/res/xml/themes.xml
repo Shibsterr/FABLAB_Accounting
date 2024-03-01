@@ -1,7 +1,22 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
     <!-- Base application theme. -->
-    <style name="Theme.FABLAB" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="Theme.FABLAB" parent="Theme.MaterialComponents.Light.NoActionBar">
         <!-- Primary brand color. -->
+        <item name="colorPrimary">@color/teal_700</item>
+        <item name="colorPrimaryVariant">@color/teal_200</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <!-- Secondary brand color. -->
+        <item name="colorSecondary">@color/green</item>
+        <item name="colorSecondaryVariant">@color/dark_green</item>
+        <item name="colorOnSecondary">@color/black</item>
+        <!-- Status bar color. -->
+        <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
+        <!-- Customize your theme here. -->
+        <item name="android:fontFamily">@font/arimoregular</item>
+    </style>
+
+
+    <style name="Theme.Dabasmāja" parent="Theme.MaterialComponents.Light.NoActionBar">
         <item name="colorPrimary">@color/green</item>
         <item name="colorPrimaryVariant">@color/dark_green</item>
         <item name="colorOnPrimary">@color/white</item>
@@ -12,23 +27,8 @@
         <!-- Status bar color. -->
         <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
+        <item name="android:fontFamily">@font/arimoregular</item>
     </style>
-
-    <style name="Theme.Dabasmāja." parent="Theme.MaterialComponents.Light.NoActionBar">
-        <item name="colorPrimary">@color/green</item>
-        <item name="colorPrimaryVariant">@color/dark_green</item>
-        <item name="colorOnPrimary">@color/white</item>
-        <!-- Secondary brand color. -->
-        <item name="colorSecondary">@color/teal_200</item>
-        <item name="colorSecondaryVariant">@color/teal_700</item>
-        <item name="colorOnSecondary">@color/black</item>
-        <!-- Status bar color. -->
-        <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
-        <!-- Customize your theme here. -->
-    </style>
-
-
-
 
 
 </resources>

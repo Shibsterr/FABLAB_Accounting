@@ -52,6 +52,8 @@ dependencies {
     implementation("com.journeyapps:zxing-android-embedded:4.3.0")
     implementation("com.dolatkia:animated-theme-manager:1.1.4")
 
+    implementation ("androidx.preference:preference:1.2.1")
+
     implementation(platform("com.google.firebase:firebase-bom:32.7.2"))
     implementation("com.google.firebase:firebase-analytics")
     implementation("com.google.firebase:firebase-database:20.3.0")
@@ -62,6 +64,7 @@ dependencies {
 
     implementation("com.github.bumptech.glide:glide:4.12.0")
     implementation("com.google.firebase:firebase-storage:20.3.0")
+    implementation("androidx.preference:preference:1.2.1")
     annotationProcessor("com.github.bumptech.glide:compiler:4.12.0")
 
     testImplementation("junit:junit:4.13.2")

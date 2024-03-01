@@ -29,8 +29,7 @@
         tools:targetApi="tiramisu">
         <activity
             android:name=".ui.authen.ForgotPasswordActivity"
-            android:exported="false"
-            android:theme="@style/Theme.FABLAB.NoActionBar" />
+            android:exported="false" />
 
         <provider
             android:name="androidx.core.content.FileProvider"
@@ -45,7 +44,7 @@
         <activity
             android:name=".Splashscreen"
             android:exported="true"
-            android:theme="@style/Theme.FABLAB.NoActionBar"> <!-- subject to change -->
+            android:theme="@style/Theme.FABLAB">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -54,8 +53,7 @@
         </activity>
         <activity
             android:name=".MainActivity"
-            android:exported="true"
-            android:theme="@style/Theme.FABLAB.NoActionBar">
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
             </intent-filter>
@@ -70,8 +68,7 @@
 
         <activity
             android:name=".NewEvent"
-            android:exported="true"
-            android:theme="@style/Theme.FABLAB.NoActionBar">
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.INSERT" />
 
@@ -83,12 +80,10 @@
 
         <activity
             android:name=".ui.authen.RegisterUser"
-            android:exported="false"
-            android:theme="@style/Theme.FABLAB.NoActionBar" />
+            android:exported="false" />
         <activity
             android:name=".ui.authen.LoginUser"
-            android:exported="false"
-            android:theme="@style/Theme.FABLAB.NoActionBar" />
+            android:exported="false" />
     </application>
 
 </manifest>

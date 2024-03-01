@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Theme Preference -->
+    <ListPreference
+        android:key="theme_preference"
+        android:title="App Theme"
+        android:summary="Choose your preferred theme"
+        android:dialogTitle="Select Theme"
+        android:entries="@array/theme_entries"
+        android:entryValues="@array/theme_values"
+        android:defaultValue="Theme.FABLAB" />
+
+    <!-- Sign Out Preference -->
+    <Preference
+        android:key="sign_out"
+        android:title="Sign Out" />
+
+</PreferenceScreen>

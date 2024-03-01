@@ -25,11 +25,4 @@ public class GalleryFragment extends Fragment {
 
         return view;
     }
-
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        com.example.fablab.databinding.FragmentGalleryBinding binding = null;
-    }
 }
