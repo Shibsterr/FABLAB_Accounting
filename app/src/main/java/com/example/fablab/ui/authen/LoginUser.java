@@ -49,9 +49,9 @@ public class LoginUser extends AppCompatActivity implements View.OnClickListener
         if(v.getId() == R.id.login_Button){ //log the user in
             userLogin();
         }else if(v.getId() == R.id.register_swap){  //swap to registration
-            Intent intent = new Intent(LoginUser.this, RegisterUser.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivity(intent);
+            Intent intentreg = new Intent(LoginUser.this, RegisterUser.class);
+            intentreg.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intentreg);
         }else if(v.getId() == R.id.forgot_pass){    //password reset
             Log.d("LoginUser", "Clicked message to reset password");
             Intent intent = new Intent(LoginUser.this, ForgotPasswordActivity.class);
@@ -103,5 +103,4 @@ public class LoginUser extends AppCompatActivity implements View.OnClickListener
             progressBar.setVisibility(View.GONE);
         });
     }
-
 }

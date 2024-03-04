@@ -47,9 +47,6 @@ import java.util.Objects;
 public class HomeFragment extends Fragment{
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        //super.onCreateView(inflater, container, savedInstanceState);
-//        View view;
-//        view = inflater.inflate(R.layout.fragment_home,container,false);
 
         return createLayout(getContext());
     }

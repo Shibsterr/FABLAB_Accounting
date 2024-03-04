@@ -2,6 +2,7 @@ package com.example.fablab;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -22,6 +23,7 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
+import androidx.preference.PreferenceManager;
 
 import com.example.fablab.databinding.ActivityMainBinding;
 import com.example.fablab.ui.SpecificEquipmentFragment;
@@ -40,22 +42,22 @@ import com.journeyapps.barcodescanner.ScanOptions;
 
 import java.util.Objects;
 
-public class MainActivity extends AppCompatActivity{
+public class MainActivity extends AppCompatActivity {
 
     private AppBarConfiguration mAppBarConfiguration;
-    private TextView fullname,email;
+    private TextView fullname, email;
     private Button refreshbtn;
     private ProgressBar progbar;
     private final ActivityResultLauncher<ScanOptions> barLauncher = registerForActivityResult(new ScanContract(),
-            result ->{
+            result -> {
 
                 //If you scanned something it shows result VVVV
-                if(result.getContents() == null){
+                if (result.getContents() == null) {
                     Intent originalIntent = result.getOriginalIntent();
                     if (originalIntent == null) {
                         Log.d("MainActivity", "Cancelled scan");
                         Toast.makeText(MainActivity.this, "Cancelled", Toast.LENGTH_LONG).show();
-                    } else if(originalIntent.hasExtra(Intents.Scan.MISSING_CAMERA_PERMISSION)) {
+                    } else if (originalIntent.hasExtra(Intents.Scan.MISSING_CAMERA_PERMISSION)) {
                         Log.d("MainActivity", "Cancelled scan due to missing camera permission");
                         Toast.makeText(MainActivity.this, "Cancelled due to missing camera permission", Toast.LENGTH_LONG).show();
                     }
@@ -84,12 +86,20 @@ public class MainActivity extends AppCompatActivity{
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        // Retrieve the selected theme from shared preferences and set it
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        String selectedTheme = sharedPreferences.getString("theme_preference", "Theme.FABLAB");
+        int themeResourceId = getResources().getIdentifier(selectedTheme, "style", getPackageName());
+        setTheme(themeResourceId);
+
         super.onCreate(savedInstanceState);
-        if(isNetworkAvailable()){       //if connection is true then there is a connection
-            Log.d("MainActivity","Its true you have net");
+
+        // Rest of your onCreate code
+        if (isNetworkAvailable()) {       //if connection is true then there is a connection
+            Log.d("MainActivity", "Its true you have net");
             setContentView(R.layout.fragment_home);
-        }else{ //else
-            Log.d("MainActivity","Its false no net");
+        } else { //else
+            Log.d("MainActivity", "Its false no net");
             // Inflate layout without internet connection
             setContentView(R.layout.activity_main_no_internet); //no
 
@@ -102,16 +112,16 @@ public class MainActivity extends AppCompatActivity{
             refreshbtn.setOnClickListener(v -> {
                 progbar.setVisibility(View.VISIBLE);
                 refreshbtn.setVisibility(View.GONE);
-                    startActivity(new Intent(MainActivity.this, MainActivity.class));
-                    finish();
+                startActivity(new Intent(MainActivity.this, MainActivity.class));
+                finish();
             });
         }
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
 
-        if(currentUser == null){
+        if (currentUser == null) {
             startActivity(new Intent(MainActivity.this, RegisterUser.class));
-        }else{
+        } else {
             ActivityMainBinding binding = ActivityMainBinding.inflate(getLayoutInflater());
             setContentView(binding.getRoot());
 
@@ -207,10 +217,10 @@ public class MainActivity extends AppCompatActivity{
 
     public void scanCode(MenuItem item) {
         ScanOptions options = new ScanOptions();
-            options.setPrompt("Volume up to turn on flash");
-            options.setBeepEnabled(true);
-            options.setOrientationLocked(true);
-            options.setCaptureActivity(CaptureAct.class);
+        options.setPrompt("Volume up to turn on flash");
+        options.setBeepEnabled(true);
+        options.setOrientationLocked(true);
+        options.setCaptureActivity(CaptureAct.class);
         barLauncher.launch(options);
     }
 

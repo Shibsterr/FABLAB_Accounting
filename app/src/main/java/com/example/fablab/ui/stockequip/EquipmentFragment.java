@@ -32,7 +32,6 @@ public class EquipmentFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         databaseReference = FirebaseDatabase.getInstance().getReference().child("stations");
         equipmentList = new ArrayList<>();
     }

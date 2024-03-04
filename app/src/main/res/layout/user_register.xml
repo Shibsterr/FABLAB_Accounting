@@ -88,6 +88,7 @@
         android:textAllCaps="false"
         style="?android:attr/borderlessButtonStyle"
         android:backgroundTint="@color/white"
+        android:textColor="@color/black"
         android:text="@string/konts_ir"
         android:textAlignment="center"
         android:textSize="15sp"

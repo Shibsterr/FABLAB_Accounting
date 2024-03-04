@@ -11,7 +11,11 @@
         android:entryValues="@array/theme_values"
         android:defaultValue="Theme.FABLAB" />
 
-    <!-- Sign Out Preference -->
+    <Preference
+        android:key="password_reset"
+        android:title="Password reset"/>
+
+        <!-- Sign Out Preference -->
     <Preference
         android:key="sign_out"
         android:title="Sign Out" />
