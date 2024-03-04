@@ -21,10 +21,13 @@ public class ForgotPasswordActivity extends AppCompatActivity {
     private EditText editTextPwdResetEmail;
     private ProgressBar progressBar;
     private FirebaseAuth authProfile;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_forgot_password);
+        authProfile = FirebaseAuth.getInstance();
+        authProfile.signOut();
         editTextPwdResetEmail = findViewById(R.id.editText_password_reset_email);
         buttonPwdReset = findViewById(R.id.button_password_reset);
         progressBar = findViewById(R.id.progressBar);
@@ -45,7 +48,6 @@ public class ForgotPasswordActivity extends AppCompatActivity {
     }
 
     private void resetPasswrod(String email) {
-        authProfile = FirebaseAuth.getInstance();
         authProfile.sendPasswordResetEmail(email).addOnCompleteListener(task -> {
             if(task.isSuccessful()){
                 Toast.makeText(ForgotPasswordActivity.this, "Lūdzu apstieties savā epastā lai turpinātu tālāk!", Toast.LENGTH_SHORT).show();

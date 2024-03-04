@@ -77,7 +77,8 @@ public class EquipmentListFragment extends Fragment {
             EquipmentAdapter adapter = new EquipmentAdapter(equipmentList);
             recyclerView.setAdapter(adapter);
             recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        } else {
+        } else{
+
             Log.e("EquipmentListFragment", "RecyclerView or context is null");
         }
     }
