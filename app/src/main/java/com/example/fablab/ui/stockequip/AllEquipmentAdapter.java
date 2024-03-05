@@ -1,5 +1,6 @@
 package com.example.fablab.ui.stockequip;
 
+import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,6 +9,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -18,7 +21,7 @@ import java.util.List;
 
 public class AllEquipmentAdapter extends RecyclerView.Adapter<AllEquipmentAdapter.EquipmentViewHolder> {
 
-    private List<Equipment> equipmentList;
+    private static List<Equipment> equipmentList;
 
     public AllEquipmentAdapter(List<Equipment> equipmentList) {
         this.equipmentList = equipmentList;
@@ -55,6 +58,22 @@ public class AllEquipmentAdapter extends RecyclerView.Adapter<AllEquipmentAdapte
             descriptionTextView = itemView.findViewById(R.id.descriptionTextView);
             imageView = itemView.findViewById(R.id.imageView);
             imageView.setClipToOutline(true);
+
+            itemView.setOnClickListener(v -> {
+                // Retrieve the NavController associated with the activity
+                NavController navController = Navigation.findNavController(v);
+                // Get the clicked equipment's name
+                Equipment equipment = equipmentList.get(getAdapterPosition());
+                String equipmentName = equipment.getName();
+
+                // Perform any action with the equipment name, such as sending it to another fragment
+                Log.d("Equipment Adapter", "Clicked item: " + equipmentName);
+
+                // Navigate to the EquipmentListFragment with station node name as argument
+                Bundle bundle = new Bundle();
+                bundle.putString("equipment_name", equipmentName);
+                navController.navigate(R.id.action_equipmentListFragment_to_specificEquipmentFragment, bundle);
+            });
         }
 
         public void bind(Equipment equipment) {

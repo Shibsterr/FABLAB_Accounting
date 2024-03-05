@@ -8,7 +8,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -18,9 +17,8 @@ import com.example.fablab.R;
 import com.google.firebase.auth.FirebaseAuth;
 
 public class LoginUser extends AppCompatActivity implements View.OnClickListener{
-    private TextView login;
     private EditText email,password;
-    private Button loginbtn,forgorbtn;
+    private Button loginbtn,forgorbtn,login;
     private ProgressBar progressBar;
     private FirebaseAuth mAuth;
 
@@ -30,7 +28,7 @@ public class LoginUser extends AppCompatActivity implements View.OnClickListener
         super.onCreate(savedInstanceState);
         setContentView(R.layout.user_login);
 
-        login = (TextView) findViewById(R.id.register_swap);
+        login = (Button) findViewById(R.id.register_swap);
         email = (EditText) findViewById(R.id.email);
         password = (EditText) findViewById(R.id.password);
         loginbtn = (Button) findViewById(R.id.login_Button);
@@ -42,6 +40,7 @@ public class LoginUser extends AppCompatActivity implements View.OnClickListener
 
         loginbtn.setOnClickListener((View.OnClickListener) this);
         forgorbtn.setOnClickListener((View.OnClickListener) this);
+        login.setOnClickListener((View.OnClickListener) this);
     }
 
     @Override

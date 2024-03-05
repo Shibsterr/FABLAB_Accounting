@@ -4,7 +4,6 @@ import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,7 +14,6 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 
 import com.example.fablab.R;
@@ -25,31 +23,25 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 public class SlideshowFragment extends Fragment {
 
     private static final int REQUEST_IMAGE_CAPTURE = 1;
-    private static final int REQUEST_WRITE_EXTERNAL_STORAGE = 2;
-    private EditText descriptionEditText;
+    private EditText descriptionEditText,edittelpanr,editstacijanr,editname;
     private TextView selectedPictureTextView;
-
     private String currentPhotoPath;
-
+    private ArrayList<Uri> userSelectedImageUriList = null;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_slideshow, container, false);
 
         descriptionEditText = view.findViewById(R.id.Description);
-        selectedPictureTextView = view.findViewById(R.id.selected_picture);
-
-        Button attachButton = view.findViewById(R.id.attach);
-        attachButton.setOnClickListener(v -> {
-            dispatchTakePictureIntent();
-        });
+        editstacijanr = view.findViewById(R.id.stacijasnr);
+        edittelpanr = view.findViewById(R.id.telpanr);
+        editname = view.findViewById(R.id.itemname);
 
         Button sendButton = view.findViewById(R.id.send_it);
         sendButton.setOnClickListener(v -> sendEmail());
@@ -57,23 +49,6 @@ public class SlideshowFragment extends Fragment {
         return view;
     }
 
-    private void dispatchTakePictureIntent() {
-        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        if (takePictureIntent.resolveActivity(requireActivity().getPackageManager()) != null) {
-            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
-        } else {
-            Toast.makeText(getContext(), "No camera app found", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == getActivity().RESULT_OK) {
-            // Update the TextView with the name of the selected picture
-            selectedPictureTextView.setText("Picture has been taken and attached");
-        }
-    }
 
     private void sendEmail() {
         // Retrieve email list from Firebase Realtime Database based on user status
@@ -102,9 +77,16 @@ public class SlideshowFragment extends Fragment {
     }
 
     private void sendEmailToAdmin(List<String> emails) {
+        String text;
+        String telpanr,stacijanr,name;
+
+        telpanr = String.valueOf(edittelpanr.getText());
+        stacijanr = String.valueOf(editstacijanr.getText());
+        name = String.valueOf(editname.getText());
+
         // Construct your email and send it to the list of emails
         Intent emailIntent = new Intent(Intent.ACTION_SEND_MULTIPLE);
-        emailIntent.setType("text/plain");
+        emailIntent.setType("message/rfc822");
 
         // Convert the list of emails to a single string with comma-separated values
         StringBuilder emailStringBuilder = new StringBuilder();
@@ -116,28 +98,23 @@ public class SlideshowFragment extends Fragment {
         if (emailList.endsWith(",")) {
             emailList = emailList.substring(0, emailList.length() - 1);
         }
-
+        text =  "Telpa: "+telpanr+
+                "\n Stacija: "+stacijanr+
+                "\nPriekšmetu nosaukums: "+name+
+                "\nProblēma: \n"
+                +descriptionEditText.getText().toString();
         emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{emailList});
         emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Problem Report");
-        emailIntent.putExtra(Intent.EXTRA_TEXT, descriptionEditText.getText().toString());
+        emailIntent.putExtra(Intent.EXTRA_TEXT, text);
 
-        if (currentPhotoPath != null) {
-            File photoFile = new File(currentPhotoPath);
-            if (photoFile.exists()) {
-                Uri photoUri = FileProvider.getUriForFile(requireContext(),
-                        "com.example.fablab.provider", photoFile);
-                ArrayList<Uri> uris = new ArrayList<>();
-                uris.add(photoUri);
-                emailIntent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, uris);
-                emailIntent.setType("image/png");
-            }
-        }
-
+        // Set the package name of the Gmail app to force usage
+        emailIntent.setPackage("com.google.android.gm");
         try {
             startActivity(Intent.createChooser(emailIntent, "Send mail..."));
         } catch (ActivityNotFoundException ex) {
             Toast.makeText(requireContext(), "There are no email clients installed.", Toast.LENGTH_SHORT).show();
         }
     }
+
 
 }

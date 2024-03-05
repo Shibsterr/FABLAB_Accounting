@@ -188,10 +188,12 @@ public class HomeFragment extends Fragment{
         int screenWidth = displayMetrics.widthPixels;
         int buttonWidth = (int) (screenWidth * 0.95); // Adjust this factor as needed
 
+        int screenHeight = displayMetrics.heightPixels;
+        int buttonHeight = (int) (screenHeight * 0.125);
         // Set the layout parameters for buttons
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
                 buttonWidth,
-                250 // Adjust this as needed
+                buttonHeight // Adjust this as needed
         );
 
         layoutParams.setMargins(30, 20, 100, 20);
