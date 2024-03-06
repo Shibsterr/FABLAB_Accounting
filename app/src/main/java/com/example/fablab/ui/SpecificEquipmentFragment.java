@@ -17,6 +17,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 
 import com.bumptech.glide.Glide;
 import com.example.fablab.R;
@@ -35,7 +37,6 @@ import java.util.Objects;
 
 public class SpecificEquipmentFragment extends Fragment {
     private DatabaseReference databaseReference;
-
     private TextView titletext, desctext;
     private ImageView equipimg;
     private Button instbtn, stockbtn;
@@ -97,6 +98,14 @@ public class SpecificEquipmentFragment extends Fragment {
                 Log.d("SpecificEquipmentFragment", "Equipment name: " + equipmentName);
                 Log.d("SpecificEquipmentFragment", "Station node name: " + stationNodeName);
 
+                stockbtn.setOnClickListener(v -> {
+                    // Retrieve the NavController associated with the activity
+                    NavController navController = Navigation.findNavController(v);
+                    // Navigate to the EquipmentListFragment with station node name as argument
+                    Bundle b = new Bundle();
+                    b.putString("equipment_name", equipmentName);
+                    navController.navigate(R.id.action_specificEquipmentFragment_to_specStockEquipmentFragment, bundle);
+                });
                 // Query the database to find details about the clicked equipment
                 DatabaseReference stationRef = databaseReference.child(stationNodeName).child("Equipment");
                 stationRef.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -172,6 +181,47 @@ public class SpecificEquipmentFragment extends Fragment {
             }else if(bundle.containsKey("code")){
                 String equipmentCode = bundle.getString("code");
                 // Get a reference to the database node containing stations
+
+                    DatabaseReference equipmentRef = FirebaseDatabase.getInstance().getReference().child("equipment");
+                    equipmentRef.orderByChild("Kods").equalTo(equipmentCode).addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            // Check if the dataSnapshot contains the equipment with the specified code
+                            if (dataSnapshot.exists()) {
+                                // Loop through the dataSnapshot to find the specific equipment
+                                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                                    // Retrieve the equipment name
+                                    String equipmentName = snapshot.child("Nosaukums").getValue(String.class);
+
+                                    // Create a bundle with equipment code and equipment name
+                                    Bundle bundle = new Bundle();
+                                    bundle.putString("equipment_name", equipmentName);
+                                    bundle.putString("code", equipmentCode);
+
+                                    // Set onClickListener for the stock button
+                                    stockbtn.setOnClickListener(v -> {
+                                        // Retrieve the NavController associated with the activity
+                                        NavController navController = Navigation.findNavController(v);
+                                        // Navigate to the specStockEquipmentFragment with the bundle
+                                        navController.navigate(R.id.action_specificEquipmentFragment_to_specStockEquipmentFragment, bundle);
+                                    });
+
+                                    // Exit loop once the equipment name is found
+                                    break;
+                                }
+                            } else {
+                                // Handle the case where the equipment data is not found
+                                Log.d("SpecificEquipmentFragment", "Equipment with code " + equipmentCode + " not found.");
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+                            // Handle database error
+                            Log.e("SpecificEquipmentFragment", "Database Error: " + databaseError.getMessage());
+                        }
+                    });
+
                 DatabaseReference stationsRef = FirebaseDatabase.getInstance().getReference().child("stations");
 
                 instbtn.setOnClickListener(v -> {
@@ -274,6 +324,93 @@ public class SpecificEquipmentFragment extends Fragment {
                         // Handle database error
                         Log.e("SpecificEquipmentFragment", "Database Error: " + databaseError.getMessage());
                     }
+                });
+            }else if(bundle.containsKey("allequipname")){       //If going through the stock page?
+                String equipmentName = bundle.getString("allequipname");
+
+                // Query the database to find details about the equipment
+                DatabaseReference equipmentRef = FirebaseDatabase.getInstance().getReference().child("equipment");
+
+                equipmentRef.orderByChild("Nosaukums").equalTo(equipmentName).addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        // Check if the equipment with the given name exists in the database
+                        if (dataSnapshot.exists()) {
+                            for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                                // Get the details of the equipment
+                                String imageName = snapshot.child("Attēls").getValue(String.class);
+                                String description = snapshot.child("Description").getValue(String.class);
+
+                                // Update UI with the retrieved details
+                                equipimg.setClipToOutline(true);
+                                titletext.setText(equipmentName);
+                                desctext.setText(description);
+                                Glide.with(requireContext()).load(imageName).into(equipimg);
+
+                                stockbtn.setOnClickListener(v -> {
+                                    // Retrieve the NavController associated with the activity
+                                    NavController navController = Navigation.findNavController(v);
+                                    // Navigate to the EquipmentListFragment with station node name as argument
+                                    Bundle b = new Bundle();
+                                    b.putString("equipment_name", equipmentName);
+
+                                    navController.navigate(R.id.action_specificEquipmentFragment_to_specStockEquipmentFragment, b);
+                                });
+                            }
+                        } else {
+                            // Equipment with the given name does not exist
+                            Log.d("SpecificEquipmentFragment", "Equipment with name '" + equipmentName + "' not found.");
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                        // Handle database error
+                        Log.e("SpecificEquipmentFragment", "Database Error: " + databaseError.getMessage());
+                    }
+                });
+
+                instbtn.setOnClickListener(v -> {
+                    // Retrieve the equipment code from the bundle
+                    String equipmentCode = test;
+                    Log.d("SpecificEquipmentFragment", "This is the code: "+test);
+                    // Construct the file name for the PDF (assuming it has the same name as the equipment code)
+                    String fileName = equipmentCode + ".pdf";
+
+                    // Get a reference to the PDF file in Firebase Storage
+                    String filePath = "Equipment_instructions/" + fileName;
+                    StorageReference storageRef = FirebaseStorage.getInstance().getReference(filePath);
+
+                    // Create a local file to store the downloaded PDF
+                    File localFile  ;
+                    try {
+                        localFile = File.createTempFile("temp_pdf", "pdf");
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        Toast.makeText(getContext(), "Error: Unable to create local file", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
+                    // Download the PDF file from Firebase Storage to the local file
+                    File finalLocalFile = localFile;
+                    storageRef.getFile(localFile)
+                            .addOnSuccessListener(taskSnapshot -> {
+                                // File downloaded successfully, open the PDF using an Intent
+                                Intent intent = new Intent(Intent.ACTION_VIEW);
+                                Uri pdfUri = FileProvider.getUriForFile(getContext(), getContext().getApplicationContext().getPackageName() + ".provider", finalLocalFile);
+                                intent.setDataAndType(pdfUri, "application/pdf");
+                                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                                try {
+                                    startActivity(intent);
+                                } catch (ActivityNotFoundException e) {
+                                    Toast.makeText(getContext(), "No PDF viewer found", Toast.LENGTH_SHORT).show();
+                                }
+                            })
+                            .addOnFailureListener(exception -> {
+                                // Handle any errors
+                                Toast.makeText(getContext(), "Error: PDF not found", Toast.LENGTH_SHORT).show();
+                                Log.e("SpecificEquipmentFragment", "Error downloading PDF: " + exception.getMessage());
+                            });
                 });
             }
         }else{

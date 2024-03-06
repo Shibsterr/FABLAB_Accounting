@@ -61,17 +61,18 @@
         <View
             android:id="@+id/view"
             android:layout_width="wrap_content"
-            android:layout_height="0dp"
-            android:layout_marginTop="206dp"
-            android:layout_marginBottom="79dp"
+            android:layout_height="1dp"
+            android:layout_marginTop="36dp"
             android:background="@color/black"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toBottomOf="@+id/equip_desc">
+
+        </View>
 
         <TextView
-            android:id="@+id/textView3"
+            android:id="@+id/stock"
             android:layout_width="match_parent"
             android:layout_height="75dp"
             android:layout_marginTop="4dp"
@@ -87,7 +88,7 @@
             app:layout_constraintTop_toBottomOf="@+id/view" />
 
         <TextView
-            android:id="@+id/textView4"
+            android:id="@+id/minstock"
             android:layout_width="match_parent"
             android:layout_height="75dp"
             android:gravity="center_vertical"
@@ -99,10 +100,10 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView3" />
+            app:layout_constraintTop_toBottomOf="@+id/stock" />
 
         <TextView
-            android:id="@+id/textView5"
+            android:id="@+id/maxstock"
             android:layout_width="match_parent"
             android:layout_height="75dp"
             android:layout_marginTop="72dp"
@@ -115,10 +116,10 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView3" />
+            app:layout_constraintTop_toBottomOf="@+id/stock" />
 
         <TextView
-            android:id="@+id/textView6"
+            android:id="@+id/critstock"
             android:layout_width="match_parent"
             android:layout_height="75dp"
             android:gravity="center_vertical"
@@ -130,27 +131,45 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView5" />
+            app:layout_constraintTop_toBottomOf="@+id/maxstock" />
+
+        <View
+            android:id="@+id/view2"
+            android:layout_width="wrap_content"
+            android:layout_height="1dp"
+            android:background="@color/black"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/critstock">
+
+        </View>
 
         <Button
             android:id="@+id/subtractbutton"
             android:layout_width="170dp"
-            android:layout_height="73dp"
-            android:layout_marginStart="224dp"
+            android:layout_height="65dp"
+            android:layout_marginTop="16dp"
             android:drawableLeft="@drawable/remove_circle"
             android:text="Subtract"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.952"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView6" />
+            app:layout_constraintTop_toBottomOf="@+id/critstock" />
 
         <Button
             android:id="@+id/addbutton"
-            android:layout_width="134dp"
-            android:layout_height="73dp"
+            android:layout_width="150dp"
+            android:layout_height="65dp"
             android:layout_marginStart="16dp"
-            android:text="Add"
+            android:layout_marginTop="16dp"
             android:drawableLeft="@drawable/add_circle"
+            android:text="Add"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/subtractbutton"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView6" />
+            app:layout_constraintTop_toBottomOf="@+id/critstock" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

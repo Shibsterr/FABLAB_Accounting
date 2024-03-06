@@ -12,7 +12,7 @@
 - [ ] Abillity to add/plan events inside a calendar as an user / or assign tasks as a worker to another worker
 - [ ] Add certain screens if somethings missing (~~No Internet connection~~, No Equipment to show)
 - [x] Fix login and register not allowing to hop between from a single button place (its one way) (bruh)
-- [ ] More checks for image,code,name for new equipment maker
+- [x] More checks for image,code,name for new equipment maker
 - [ ] Visually make it look nicer
 - [ ] New equipment image upload not working on newer phones (its something to due with permissions as WRITE_EXTERNAL_STORAGE)
 - [ ] Add a way to make it ask for camera permissions (Instead of asking it only on QR code scanner)
@@ -23,11 +23,12 @@
 - [x] Image upload to new equipment maker image gets added from the storage in firebase (added both)
 - [x] Description writer? In New Equipment maker (added)
 - [x] Max stock they choose In New Equipment maker (added crit,min,max)
-	- [ ] Add the stock page where the worker/admin can add or subtract x amount of stock. The buttons open a popup window where it happens. And it should probably update the stocks when the user adds it)
-    - [ ] Add checks that prevents the user from adding more then the max or going below the critical amount. and also prevent the user from inputing negative numbers
+	- [x] Add the stock page where the worker/admin can add or subtract x amount of stock. The buttons open a popup window where it happens. And it should probably update the stocks when the user adds it)
+    - [x] Add checks that prevents the user from adding more then the max or going below the critical amount. and also prevent the user from inputing negative numbers
 - [x] Make the buttons auto adjust depending on screen size
 - [x] Add a forgot password button to login screen
 - [ ] Add certain screens if somethings missing (~~No Internet connection~~, No Equipment to show)
 - [ ] Ability to add/plan events inside a calendar as an user / or assign tasks as a worker to another worker
 - [ ] Add icons to the home page buttons
 - [x] Add settings (~~theme changer~~, ~~password changer/reset~~)
+- [ ] Add a sidebar navigation which is only seen by the admin where you can see all the logs displayed.

@@ -27,7 +27,7 @@
     <fragment
         android:id="@+id/nav_settings"
         android:name="com.example.fablab.ui.settings.SettingsFragment"
-        tools:layout="@layout/fragment_settings"/>
+        tools:layout="@xml/fragment_settings"/>
     <fragment
         android:id="@+id/new_equip"
         android:name="com.example.fablab.ui.NewEquipmentFragment"
@@ -54,6 +54,11 @@
             app:destination="@id/equipmentListFragment"
             app:popUpTo="@+id/equipmentListFragment"
             app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_specificEquipmentFragment_to_specStockEquipmentFragment"
+            app:destination="@id/specStockEquipmentFragment"
+            app:popUpTo="@+id/specStockEquipmentFragment"
+            app:popUpToInclusive="true" />
     </fragment>
 
 
@@ -62,7 +67,17 @@
         android:name="com.example.fablab.ui.stockequip.EquipmentFragment"
         android:label="fragment_equipment"
         tools:layout="@layout/fragment_equipment">
+        <action
+            android:id="@+id/action_equipmentFragment_to_specificEquipmentFragment"
+            app:destination="@id/specificEquipmentFragment"
+            app:popUpTo="@id/specificEquipmentFragment" />
 
+    </fragment>
+    <fragment
+        android:id="@+id/specStockEquipmentFragment"
+        android:name="com.example.fablab.ui.stockequip.SpecStockEquipmentFragment"
+        android:label="fragment_spec_stock_equipment"
+        tools:layout="@layout/fragment_spec_stock_equipment">
     </fragment>
 
 

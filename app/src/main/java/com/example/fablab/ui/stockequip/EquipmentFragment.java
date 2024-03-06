@@ -64,8 +64,8 @@ public class EquipmentFragment extends Fragment {
                         Log.d("AllEquipmentAdapter", "Adding equipment: " + equipment.getName());
                         equipmentList.add(equipment);
                     }
+                    updateUI();
                 }
-                adapter.notifyDataSetChanged();
                 Log.d("AllEquipmentAdapter", "Data set changed, total items: " + equipmentList.size());
             }
 
@@ -76,6 +76,16 @@ public class EquipmentFragment extends Fragment {
         });
     }
 
+    private void updateUI() {
+        RecyclerView recyclerView = getView().findViewById(R.id.recyclerView);
+        if (recyclerView != null && getContext() != null) {
+            AllEquipmentAdapter adapter = new AllEquipmentAdapter(equipmentList);
+            recyclerView.setAdapter(adapter);
+            recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        } else{
 
+            Log.e("EquipmentListFragment", "RecyclerView or context is null");
+        }
+    }
 
 }

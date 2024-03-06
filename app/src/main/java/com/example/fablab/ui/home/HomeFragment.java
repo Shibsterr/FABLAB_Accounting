@@ -132,8 +132,7 @@ public class HomeFragment extends Fragment{
         stockButton.setPadding(0, stockButton.getPaddingTop(), 0, stockButton.getPaddingBottom());
 
         stockButton.setOnClickListener(v ->
-                Navigation.findNavController(v).navigate(R.id.equipmentFragment
-                ));
+                Navigation.findNavController(v).navigate(R.id.equipmentFragment));
 
         mAuth = FirebaseAuth.getInstance();
 

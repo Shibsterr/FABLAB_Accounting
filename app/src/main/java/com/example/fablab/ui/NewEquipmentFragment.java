@@ -8,7 +8,9 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -114,6 +116,35 @@ public class NewEquipmentFragment extends Fragment {
 
             }
         });
+
+        // Disable the upload image button initially
+        btnUploadImage.setEnabled(false);
+
+        // Set listeners for text changes in EditText fields to enable/disable the upload image button accordingly
+        EditText[] editTexts = {editcode, editname, editamount, editdescr, editcrit, editmax, editmin};
+        for (EditText editText : editTexts) {
+            editText.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {}
+
+                @Override
+                public void afterTextChanged(Editable s) {
+                    // Check if any field is empty
+                    boolean anyEmpty = false;
+                    for (EditText editText : editTexts) {
+                        if (TextUtils.isEmpty(editText.getText())) {
+                            anyEmpty = true;
+                            break;
+                        }
+                    }
+                    // Enable/disable the upload image button based on whether any field is empty
+                    btnUploadImage.setEnabled(!anyEmpty);
+                }
+            });
+        }
 
         btnsubmit.setOnClickListener(v -> {
 

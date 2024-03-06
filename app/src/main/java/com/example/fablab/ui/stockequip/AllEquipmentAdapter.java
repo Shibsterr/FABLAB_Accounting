@@ -71,8 +71,8 @@ public class AllEquipmentAdapter extends RecyclerView.Adapter<AllEquipmentAdapte
 
                 // Navigate to the EquipmentListFragment with station node name as argument
                 Bundle bundle = new Bundle();
-                bundle.putString("equipment_name", equipmentName);
-                navController.navigate(R.id.action_equipmentListFragment_to_specificEquipmentFragment, bundle);
+                bundle.putString("allequipname", equipmentName);
+                navController.navigate(R.id.action_equipmentFragment_to_specificEquipmentFragment, bundle);
             });
         }
 
