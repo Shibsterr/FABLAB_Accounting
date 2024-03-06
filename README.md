@@ -24,7 +24,8 @@
 - [x] Description writer? In New Equipment maker (added)
 - [x] Max stock they choose In New Equipment maker (added crit,min,max)
 	- [x] Add the stock page where the worker/admin can add or subtract x amount of stock. The buttons open a popup window where it happens. And it should probably update the stocks when the user adds it)
-    - [x] Add checks that prevents the user from adding more then the max or going below the critical amount. and also prevent the user from inputing negative numbers
+    - [x] Add checks that prevents the user from adding more then then the max.
+    - [x] Upon going below minimum sends the user to gmail and makes them send an email to request new stock
 - [x] Make the buttons auto adjust depending on screen size
 - [x] Add a forgot password button to login screen
 - [ ] Add certain screens if somethings missing (~~No Internet connection~~, No Equipment to show)
