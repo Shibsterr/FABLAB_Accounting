@@ -133,7 +133,7 @@ public class MainActivity extends AppCompatActivity {
             // Passing each menu ID as a set of Ids because each
             // menu should be considered as top level destinations.
 
-            mAppBarConfiguration = new AppBarConfiguration.Builder(R.id.nav_home, R.id.new_equip, R.id.nav_task, R.id.nav_report, R.id.nav_settings)
+            mAppBarConfiguration = new AppBarConfiguration.Builder(R.id.nav_home, R.id.new_equip, R.id.nav_task,R.id.nav_logs,R.id.nav_report, R.id.nav_settings)
                     .setOpenableLayout(drawer)
                     .build();
 
@@ -184,10 +184,16 @@ public class MainActivity extends AppCompatActivity {
                         if ("Lietotājs".equals(statuss)) { // Use .equals() for string comparison
                             navMenu.findItem(R.id.new_equip).setVisible(false); // Hide new equipment item
                             navMenu.findItem(R.id.nav_task).setVisible(false); // Hide tasks item
-                        } else {
+                            navMenu.findItem(R.id.nav_logs).setVisible(false);
+                        } else if("Darbinieks".equals(statuss)){
                             // Optionally, you can show these items for workers,admin
                             navMenu.findItem(R.id.new_equip).setVisible(true);
                             navMenu.findItem(R.id.nav_task).setVisible(true);
+                            navMenu.findItem(R.id.nav_logs).setVisible(false);
+                        }else if("Admin".equals(statuss)){
+                            navMenu.findItem(R.id.new_equip).setVisible(true);
+                            navMenu.findItem(R.id.nav_task).setVisible(true);
+                            navMenu.findItem(R.id.nav_logs).setVisible(true);
                         }
                     }
                 }

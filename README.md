@@ -15,7 +15,7 @@
 - [x] More checks for image,code,name for new equipment maker
 - [ ] Visually make it look nicer
 - [ ] New equipment image upload not working on newer phones (its something to due with permissions as WRITE_EXTERNAL_STORAGE)
-- [ ] Add a way to make it ask for camera permissions (Instead of asking it only on QR code scanner)
+- [x] Add a way to make it ask for camera permissions (Instead of asking it only on QR code scanner)
 - [x] Figure out what Report,Tasks buttons do exactly (Task's right now open google calendar (its your own meant for workers))
 - [ ] Cut the users knees and add a dropdown list for station and room Nrs
 ## New Features to Add:
@@ -32,4 +32,4 @@
 - [ ] Ability to add/plan events inside a calendar as an user / or assign tasks as a worker to another worker
 - [ ] Add icons to the home page buttons
 - [x] Add settings (~~theme changer~~, ~~password changer/reset~~)
-- [ ] Add a sidebar navigation which is only seen by the admin where you can see all the logs displayed.
+- [x] Add a sidebar navigation which is only seen by the admin where you can see all the logs displayed.

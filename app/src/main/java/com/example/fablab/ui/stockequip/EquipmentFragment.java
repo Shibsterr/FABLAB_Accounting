@@ -21,19 +21,23 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class EquipmentFragment extends Fragment {
     private List<Equipment> equipmentList;
     private DatabaseReference databaseReference;
     private RecyclerView recyclerView;
     private AllEquipmentAdapter adapter;
+    private Set<String> addedEquipmentNames;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         databaseReference = FirebaseDatabase.getInstance().getReference().child("stations");
         equipmentList = new ArrayList<>();
+        addedEquipmentNames = new HashSet<>();
     }
 
     @Nullable
@@ -54,19 +58,25 @@ public class EquipmentFragment extends Fragment {
         stationsRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                equipmentList.clear(); // Clear the list before populating it again
+                addedEquipmentNames.clear(); // Clear the set of added equipment names
+
                 for (DataSnapshot stationSnapshot : dataSnapshot.getChildren()) {
                     DataSnapshot equipmentSnapshot = stationSnapshot.child("Equipment");
                     for (DataSnapshot snapshot : equipmentSnapshot.getChildren()) {
                         String name = snapshot.child("Nosaukums").getValue(String.class);
                         String description = snapshot.child("Description").getValue(String.class);
                         String image = snapshot.child("Attēls").getValue(String.class);
-                        Equipment equipment = new Equipment(name, description, image);
-                        Log.d("AllEquipmentAdapter", "Adding equipment: " + equipment.getName());
-                        equipmentList.add(equipment);
+
+                        if (!addedEquipmentNames.contains(name)) { // Check if the equipment name is not already added
+                            Equipment equipment = new Equipment(name, description, image);
+                            equipmentList.add(equipment);
+                            addedEquipmentNames.add(name); // Add the equipment name to the set of added names
+                        }
                     }
-                    updateUI();
                 }
-                Log.d("AllEquipmentAdapter", "Data set changed, total items: " + equipmentList.size());
+                updateUI();
+                Log.d("EquipmentFragment", "Data set changed, total items: " + equipmentList.size());
             }
 
             @Override
@@ -77,15 +87,10 @@ public class EquipmentFragment extends Fragment {
     }
 
     private void updateUI() {
-        RecyclerView recyclerView = getView().findViewById(R.id.recyclerView);
-        if (recyclerView != null && getContext() != null) {
-            AllEquipmentAdapter adapter = new AllEquipmentAdapter(equipmentList);
-            recyclerView.setAdapter(adapter);
-            recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        } else{
-
-            Log.e("EquipmentListFragment", "RecyclerView or context is null");
+        if (getContext() != null) {
+            adapter.notifyDataSetChanged(); // Notify adapter of data set change
+        } else {
+            Log.e("EquipmentFragment", "Context is null");
         }
     }
-
 }

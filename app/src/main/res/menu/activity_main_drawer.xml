@@ -18,6 +18,10 @@
             android:icon="@drawable/nav_task"
             android:title="@string/menu_tasks" />
         <item
+            android:id="@+id/nav_logs"
+            android:icon="@drawable/data_log"
+            android:title="Activity logs" />
+        <item
             android:id="@+id/nav_report"
             android:icon="@drawable/nav_report"
             android:title="@string/menu_report" />

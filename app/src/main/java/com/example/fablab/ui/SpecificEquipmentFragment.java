@@ -1,6 +1,7 @@
 package com.example.fablab.ui;
 
 import android.content.ActivityNotFoundException;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -41,7 +42,12 @@ public class SpecificEquipmentFragment extends Fragment {
     private ImageView equipimg;
     private Button instbtn, stockbtn;
     private String test;
-
+    private Context mContext;
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        mContext = context;
+    }
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

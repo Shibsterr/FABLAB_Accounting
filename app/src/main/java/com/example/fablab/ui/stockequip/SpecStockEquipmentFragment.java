@@ -166,8 +166,8 @@ public class SpecStockEquipmentFragment extends Fragment {
                     // Reset the new stock to maximum stock
                     newStock = maxStock;
                 } else if (newStock < critStock) {
-                    // Reset the new stock to critical stock
-                    newStock = critStock;
+//                    // Reset the new stock to critical stock
+//                    newStock = critStock;
                     // Send email to admin when stock falls below critical level
                     sendEmailToAdmin();
                 }
@@ -196,8 +196,6 @@ public class SpecStockEquipmentFragment extends Fragment {
                                 // Ensure stock does not go above max or below crit
                                 if (updatedStock > maxStock) {
                                     updatedStock = maxStock;
-                                } else if (updatedStock < critStock) {
-                                    updatedStock = critStock;
                                 }
 
                                 // Update the stock value in the database

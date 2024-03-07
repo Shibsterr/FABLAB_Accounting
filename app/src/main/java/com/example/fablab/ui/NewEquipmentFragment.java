@@ -47,6 +47,7 @@ public class NewEquipmentFragment extends Fragment {
 
     private static final int REQUEST_IMAGE_CAPTURE = 1;
     private static final int REQUEST_WRITE_EXTERNAL_STORAGE = 2;
+    private static final int REQUEST_CAMERA = 101;
 
     Spinner spinnerType, spinnerUnit;
     private String selectedType, selectedUnit;
@@ -151,8 +152,10 @@ public class NewEquipmentFragment extends Fragment {
             // Proceed with submitting the data
             String code = String.valueOf(editcode.getText());
             String name = String.valueOf(editname.getText());
+
             selectedType = spinnerType.getSelectedItem().toString();
             selectedUnit = spinnerUnit.getSelectedItem().toString();
+
             String skaits = String.valueOf(editamount.getText());
             String desc = String.valueOf(editdescr.getText());
             String crit = String.valueOf(editcrit.getText());
@@ -225,12 +228,12 @@ public class NewEquipmentFragment extends Fragment {
 
                         Log.d("NewEquipmentFragment", Type);
                         // check the stocks
-                        if (critValue >= minValue) {
+                        if (critValue > minValue) {
                             editcrit.setError("Crit must be lower than Min");
                             editcrit.requestFocus();
                         }
 
-                        if (minValue >= maxValue) {
+                        if (minValue > maxValue) {
                             editmin.setError("Min must be lower than Max");
                             editmin.requestFocus();
                         }
@@ -318,19 +321,28 @@ public class NewEquipmentFragment extends Fragment {
                 // Request the permission if not granted
                 ActivityCompat.requestPermissions(requireActivity(), new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_WRITE_EXTERNAL_STORAGE);
             } else {
-                // Permission is granted, proceed with image capture
-                dispatchTakePictureIntent();
+                // Permission is granted for WRITE_EXTERNAL_STORAGE, now check CAMERA permission
+                if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                    // Request the CAMERA permission if not granted
+                    ActivityCompat.requestPermissions(requireActivity(), new String[]{Manifest.permission.CAMERA}, REQUEST_CAMERA);
+                } else {
+                    // Permission is granted for both WRITE_EXTERNAL_STORAGE and CAMERA, proceed with image capture
+                    dispatchTakePictureIntent();
+                }
             }
         });
+
 
         return view;
     }
 
     private boolean checkCode(String kods) {
-        String patternString = "^[1-9][0-9]?_[1-9]_[1-2]?_[a-zA-Z0-9]+$"; //10_5_1_test1234
-        String patternLonger = "^[1-9][0-9]?_[1-9][0-9]?_[1-2]_[a-zA-Z0-9]+$"; //10_15_2_test4321
-        String pattern = "^[1-9]_[1-9][0-9]?_[1-2]_[a-zA-Z0-9]+$"; //1_15_1_test2135
-        String smallpattern = "^[1-9]_[1-9]_[1-2]_[a-zA-Z0-9]+$"; //5_3_1_test4124
+        //Allows spaces aswell
+        String patternString = "^[1-9][0-9]?_[1-9]_[1-2]?_[a-zA-Z0-9\\s]+$"; //10_5_1_test1234
+        String patternLonger = "^[1-9][0-9]?_[1-9][0-9]?_[1-2]_[a-zA-Z0-9\\s]+$"; //10_15_2_test4321
+        String pattern = "^[1-9]_[1-9][0-9]?_[1-2]_[a-zA-Z0-9\\s]+$"; //1_15_1_test2135
+        String smallpattern = "^[1-9]_[1-9]_[1-2]_[a-zA-Z0-9\\s]+$"; //5_3_1_test4124
+
 
         Pattern pattern1 = Pattern.compile(patternString);
         Pattern pattern2 = Pattern.compile(patternLonger);
