@@ -316,13 +316,19 @@ public class NewEquipmentFragment extends Fragment {
         });
 
         btnUploadImage.setOnClickListener(v -> {
-            // Check if CAMERA permission is granted
-            if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-                // Request the CAMERA permission if not granted
-                ActivityCompat.requestPermissions(requireActivity(), new String[]{Manifest.permission.CAMERA}, REQUEST_CAMERA);
+            // Check if WRITE_EXTERNAL_STORAGE permission is granted
+            if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                // Request the permission if not granted
+                ActivityCompat.requestPermissions(requireActivity(), new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_WRITE_EXTERNAL_STORAGE);
             } else {
-                // Permission is granted for CAMERA, proceed with image capture
-                dispatchTakePictureIntent();
+                // Permission is granted for WRITE_EXTERNAL_STORAGE, now check CAMERA permission
+                if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                    // Request the CAMERA permission if not granted
+                    ActivityCompat.requestPermissions(requireActivity(), new String[]{Manifest.permission.CAMERA}, REQUEST_CAMERA);
+                } else {
+                    // Permission is granted for both WRITE_EXTERNAL_STORAGE and CAMERA, proceed with image capture
+                    dispatchTakePictureIntent();
+                }
             }
         });
 
@@ -434,7 +440,7 @@ public class NewEquipmentFragment extends Fragment {
     }
     private void uploadImageToStorage(Uri uri, String imageName) {
         // Convert the image to PNG format
-        Bitmap bitmap = null;
+        Bitmap bitmap;
         try {
             bitmap = MediaStore.Images.Media.getBitmap(requireContext().getContentResolver(), uri);
         } catch (IOException e) {
@@ -464,7 +470,10 @@ public class NewEquipmentFragment extends Fragment {
                     deleteCurrentImage();
                 });
     }
-    private String whatStat(String stacija) {
+
+
+
+    private String whatStat(String stacija) {       //needs to be dynamically changed
         String whatStation = "";
 
         if (stacija.equals("1")) {

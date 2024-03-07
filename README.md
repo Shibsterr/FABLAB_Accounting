@@ -18,6 +18,7 @@
 - [x] Add a way to make it ask for camera permissions (Instead of asking it only on QR code scanner)
 - [x] Figure out what Report,Tasks buttons do exactly (Task's right now open google calendar (its your own meant for workers))
 - [x] Cut the users knees and add a dropdown list for station and room Nrs
+
 ## New Features to Add:
 
 - [x] Image upload to new equipment maker image gets added from the storage in firebase (added both)
