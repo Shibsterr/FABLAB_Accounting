@@ -2,14 +2,14 @@ package com.example.fablab.ui.slideshow;
 
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -28,27 +28,51 @@ import java.util.List;
 
 public class SlideshowFragment extends Fragment {
 
-    private static final int REQUEST_IMAGE_CAPTURE = 1;
-    private EditText descriptionEditText,edittelpanr,editstacijanr,editname;
-    private TextView selectedPictureTextView;
-    private String currentPhotoPath;
-    private ArrayList<Uri> userSelectedImageUriList = null;
+    private EditText descriptionEditText, edittelpanr, editname;
+    private Spinner stacijaSpinner;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_slideshow, container, false);
 
         descriptionEditText = view.findViewById(R.id.Description);
-        editstacijanr = view.findViewById(R.id.stacijasnr);
         edittelpanr = view.findViewById(R.id.telpanr);
         editname = view.findViewById(R.id.itemname);
+        stacijaSpinner = view.findViewById(R.id.stacijasnr_spinner);
 
         Button sendButton = view.findViewById(R.id.send_it);
         sendButton.setOnClickListener(v -> sendEmail());
 
+        loadStationNames(); // Load station names into the spinner
+
         return view;
     }
 
+    private void loadStationNames() {
+        DatabaseReference stationsRef = FirebaseDatabase.getInstance().getReference().child("stations");
+        stationsRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                List<String> stationNames = new ArrayList<>();
+                for (DataSnapshot stationSnapshot : dataSnapshot.getChildren()) {
+                    String stationName = stationSnapshot.child("Name").getValue(String.class);
+                    if (stationName != null) {
+                        stationNames.add(stationName);
+                    }
+                }
+                // Populate spinner with station names
+                ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_spinner_item, stationNames);
+                spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                stacijaSpinner.setAdapter(spinnerAdapter);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                // Handle error
+            }
+        });
+    }
 
     private void sendEmail() {
         // Retrieve email list from Firebase Realtime Database based on user status
@@ -78,10 +102,10 @@ public class SlideshowFragment extends Fragment {
 
     private void sendEmailToAdmin(List<String> emails) {
         String text;
-        String telpanr,stacijanr,name;
+        String telpanr, stacijanr, name;
 
         telpanr = String.valueOf(edittelpanr.getText());
-        stacijanr = String.valueOf(editstacijanr.getText());
+        stacijanr = String.valueOf(stacijaSpinner.getSelectedItem());
         name = String.valueOf(editname.getText());
 
         // Construct your email and send it to the list of emails
@@ -98,11 +122,11 @@ public class SlideshowFragment extends Fragment {
         if (emailList.endsWith(",")) {
             emailList = emailList.substring(0, emailList.length() - 1);
         }
-        text =  "Telpa: "+telpanr+
-                "\n Stacija: "+stacijanr+
-                "\nPriekšmetu nosaukums: "+name+
+        text = "Telpa: " + telpanr +
+                "\nStacija: " + stacijanr +
+                "\nPriekšmetu nosaukums: " + name +
                 "\nProblēma: \n"
-                +descriptionEditText.getText().toString();
+                + descriptionEditText.getText().toString();
         emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{emailList});
         emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Problem Report");
         emailIntent.putExtra(Intent.EXTRA_TEXT, text);
