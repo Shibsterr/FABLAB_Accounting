@@ -88,6 +88,11 @@
         android:label="fragment_spec_stock_equipment"
         tools:layout="@layout/fragment_spec_stock_equipment">
     </fragment>
+    <fragment
+        android:id="@+id/nav_assign"
+        android:name="com.example.fablab.ui.assigning.TaskAssigningFragment"
+        android:label="fragment_task_assigning"
+        tools:layout="@layout/fragment_task_assigning" />
 
 
 </navigation>

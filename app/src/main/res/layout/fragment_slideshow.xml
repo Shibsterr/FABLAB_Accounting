@@ -28,7 +28,7 @@
         <Spinner
             android:id="@+id/stacijasnr_spinner"
             android:layout_width="254dp"
-            android:layout_height="40dp"
+            android:layout_height="48dp"
             android:layout_marginStart="4dp"
             android:hint="Stacijas nr"
             android:textSize="13sp"

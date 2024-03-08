@@ -92,6 +92,9 @@ public class MainActivity extends AppCompatActivity {
         int themeResourceId = getResources().getIdentifier(selectedTheme, "style", getPackageName());
         setTheme(themeResourceId);
 
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+
         super.onCreate(savedInstanceState);
 
         // Rest of your onCreate code
@@ -116,8 +119,6 @@ public class MainActivity extends AppCompatActivity {
                 finish();
             });
         }
-        FirebaseAuth mAuth = FirebaseAuth.getInstance();
-        FirebaseUser currentUser = mAuth.getCurrentUser();
 
         if (currentUser == null) {
             startActivity(new Intent(MainActivity.this, RegisterUser.class));
@@ -126,14 +127,14 @@ public class MainActivity extends AppCompatActivity {
             setContentView(binding.getRoot());
 
             setSupportActionBar(binding.appBarMain.toolbar);
-            getSupportActionBar().setDisplayShowTitleEnabled(false);        //hides the app name
+            getSupportActionBar().setDisplayShowTitleEnabled(false);        //hides the app name (at the toolbar next to the logo)
 
             DrawerLayout drawer = binding.drawerLayout;
             NavigationView navigationView = binding.navView;
             // Passing each menu ID as a set of Ids because each
             // menu should be considered as top level destinations.
-
-            mAppBarConfiguration = new AppBarConfiguration.Builder(R.id.nav_home, R.id.new_equip, R.id.nav_task,R.id.nav_logs,R.id.nav_report, R.id.nav_settings)
+            mAppBarConfiguration = new AppBarConfiguration.Builder(
+                    R.id.nav_home, R.id.new_equip, R.id.nav_task,R.id.nav_assign,R.id.nav_logs,R.id.nav_report, R.id.nav_settings)  //Assigning tasks would be a sidebar navigation// (Admin only or both worker and admin)
                     .setOpenableLayout(drawer)
                     .build();
 
@@ -185,15 +186,18 @@ public class MainActivity extends AppCompatActivity {
                             navMenu.findItem(R.id.new_equip).setVisible(false); // Hide new equipment item
                             navMenu.findItem(R.id.nav_task).setVisible(false); // Hide tasks item
                             navMenu.findItem(R.id.nav_logs).setVisible(false);
+                            navMenu.findItem(R.id.nav_assign).setVisible(false);
                         } else if("Darbinieks".equals(statuss)){
                             // Optionally, you can show these items for workers,admin
                             navMenu.findItem(R.id.new_equip).setVisible(true);
                             navMenu.findItem(R.id.nav_task).setVisible(true);
                             navMenu.findItem(R.id.nav_logs).setVisible(false);
+                            navMenu.findItem(R.id.nav_assign).setVisible(true);
                         }else if("Admin".equals(statuss)){
                             navMenu.findItem(R.id.new_equip).setVisible(true);
                             navMenu.findItem(R.id.nav_task).setVisible(true);
                             navMenu.findItem(R.id.nav_logs).setVisible(true);
+                            navMenu.findItem(R.id.nav_assign).setVisible(true);
                         }
                     }
                 }

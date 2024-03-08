@@ -9,7 +9,7 @@
 - [x] QR code scanner that finds a specific equipment
 	- [x] Opens the specific fragment equipment layout and gets the details from the database by using the code which gets scanned
 - [x] Fix not showing image inside specificequipmentfragment (After picking a equipment from the specific list)
-- [ ] Abillity to add/plan events inside a calendar as an user / or assign tasks as a worker to another worker
+- [x] Abillity to add/plan events inside a calendar as an user / or assign tasks as a worker to another worker
 - [ ] Add certain screens if somethings missing (~~No Internet connection~~, No Equipment to show)
 - [x] Fix login and register not allowing to hop between from a single button place (its one way) (bruh)
 - [x] More checks for image,code,name for new equipment maker
@@ -30,7 +30,7 @@
 - [x] Make the buttons auto adjust depending on screen size
 - [x] Add a forgot password button to login screen
 - [ ] Add certain screens if somethings missing (~~No Internet connection~~, No Equipment to show)
-- [ ] Ability to add/plan events inside a calendar as an user / or assign tasks as a worker to another worker
+- [x] Ability to add/plan events inside a calendar as an user / or assign tasks as a worker to another worker
 - [ ] Add icons to the home page buttons
 - [x] Add settings (~~theme changer~~, ~~password changer/reset~~)
 - [x] Add a sidebar navigation which is only seen by the admin where you can see all the logs displayed.
