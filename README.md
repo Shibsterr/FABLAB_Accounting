@@ -12,7 +12,7 @@
 - [x] Abillity to add/plan events inside a calendar as an user / or assign tasks as a worker to another worker
 - [x] Fix login and register not allowing to hop between from a single button place (its one way) (bruh)
 - [x] More checks for image,code,name for new equipment maker
-- [x] New equipment image upload not working on newer phones (its something to due with permissions as WRITE_EXTERNAL_STORAGE)
+- [ ] New equipment image upload not working on newer phones (its something to due with permissions as WRITE_EXTERNAL_STORAGE)
 - [x] Add a way to make it ask for camera permissions (Instead of asking it only on QR code scanner)
 - [x] Figure out what Report,Tasks buttons do exactly (Task's right now open google calendar (its your own meant for workers))
 - [x] Cut the users knees and add a dropdown list for station and room Nrs
