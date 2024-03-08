@@ -48,5 +48,5 @@
 	- [ ] Equipment_Icons/
     - [ ] Equipment_instructions/
 - [ ] Authentication system must use email and password
-- Realtime database
+- [ ] Realtime database
 	- [ ] Should create the nodes automatically. If not create them
