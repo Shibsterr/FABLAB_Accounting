@@ -41,3 +41,12 @@
 - [ ] Update the splashscreen if needed
 - [ ] Calendar viewing for normal users to see which days are unavailable and allow them to assing one (Could just store it inside the database)
 - [ ] Change whatStat method inside NewEquipmentFragment its not dynamic currently and wont work.
+
+
+## What do you need for Firebase:
+- [ ] Firebase Storage
+	- [ ] Equipment_Icons/
+    - [ ] Equipment_instructions/
+- [ ] Authentication system must use email and password
+- Realtime database
+	- [ ] Should create the nodes automatically. If not create them
