@@ -29,6 +29,7 @@
 - [x] Add a forgot password button to login screen
 - [ ] Add certain screens if somethings missing (~~No Internet connection~~, No Equipment to show)
     - [ ] Make it also check ur mobile data. 
+    - [ ] Screens that say if there are no tasks also add a loading screen when you open the app to hide the loading data
 - [x] Ability to add/plan events inside a calendar as an user / or assign tasks as a worker to another worker
 - [ ] Add icons to the home page buttons (Not required)
 - [x] Add settings (~~theme changer~~, ~~password changer/reset~~)
@@ -39,3 +40,4 @@
 - [ ] Visually make it look nicer (Better colors and such)
 - [ ] Update the splashscreen if needed
 - [ ] Calendar viewing for normal users to see which days are unavailable and allow them to assing one (Could just store it inside the database)
+- [ ] Change whatStat method inside NewEquipmentFragment its not dynamic currently and wont work.
