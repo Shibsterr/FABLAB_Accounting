@@ -10,10 +10,8 @@
 	- [x] Opens the specific fragment equipment layout and gets the details from the database by using the code which gets scanned
 - [x] Fix not showing image inside specificequipmentfragment (After picking a equipment from the specific list)
 - [x] Abillity to add/plan events inside a calendar as an user / or assign tasks as a worker to another worker
-- [ ] Add certain screens if somethings missing (~~No Internet connection~~, No Equipment to show)
 - [x] Fix login and register not allowing to hop between from a single button place (its one way) (bruh)
 - [x] More checks for image,code,name for new equipment maker
-- [ ] Visually make it look nicer
 - [x] New equipment image upload not working on newer phones (its something to due with permissions as WRITE_EXTERNAL_STORAGE)
 - [x] Add a way to make it ask for camera permissions (Instead of asking it only on QR code scanner)
 - [x] Figure out what Report,Tasks buttons do exactly (Task's right now open google calendar (its your own meant for workers))
@@ -30,7 +28,14 @@
 - [x] Make the buttons auto adjust depending on screen size
 - [x] Add a forgot password button to login screen
 - [ ] Add certain screens if somethings missing (~~No Internet connection~~, No Equipment to show)
+    - [ ] Make it also check ur mobile data. 
 - [x] Ability to add/plan events inside a calendar as an user / or assign tasks as a worker to another worker
-- [ ] Add icons to the home page buttons
+- [ ] Add icons to the home page buttons (Not required)
 - [x] Add settings (~~theme changer~~, ~~password changer/reset~~)
+  - [ ] Multi language support (Will take the longest as you must add everything inside the strings.xml file so that you can translate it properly)
 - [x] Add a sidebar navigation which is only seen by the admin where you can see all the logs displayed.
+- [ ] Make sure the layouts are fit to be on many different screen sizes
+- [ ] Permissions for newer phones may be removed (External storage write is an example)
+- [ ] Visually make it look nicer (Better colors and such)
+- [ ] Update the splashscreen if needed
+- [ ] Calendar viewing for normal users to see which days are unavailable and allow them to assing one (Could just store it inside the database)
