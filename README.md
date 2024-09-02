@@ -43,6 +43,11 @@
 - [ ] Change whatStat method inside NewEquipmentFragment its not dynamic currently and wont work.
 
 
+## Improvements:
+- [ ] Better sorting for logs
+- 
+
+
 ## What do you need for Firebase:
 - [ ] Firebase Storage
 	- [ ] Equipment_Icons/

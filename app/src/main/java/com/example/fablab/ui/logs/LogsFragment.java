@@ -54,14 +54,24 @@ public class LogsFragment extends Fragment {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot logSnapshot : dataSnapshot.getChildren()) {
                     String dateTime = logSnapshot.getKey();
-                    String itemName = logSnapshot.child("Priekšmeta nosaukums").getValue(String.class);
-                    int quantity = logSnapshot.child("Daudzums").getValue(Integer.class);
-                    boolean isAddition = logSnapshot.child("Pievienošana?").getValue(Boolean.class);
-                    String fullName = logSnapshot.child("Vārds uzvārds").getValue(String.class);
-                    String email = logSnapshot.child("Epasts").getValue(String.class);
+                    if(logSnapshot.child("Pievienošana?").getValue(Boolean.class) == null){
+                        String desc = logSnapshot.child("Apraksts").getValue(String.class);
+                        String fullName = logSnapshot.child("Vārds uzvārds").getValue(String.class);
+                        String email = logSnapshot.child("Epasts").getValue(String.class);
+                        String code = logSnapshot.child("Priekšmeta kods").getValue(String.class);
 
-                    logList.add(new LogItem(dateTime, fullName, email, itemName, quantity, isAddition));
-                }
+//                        logList.add(new LogItem(dateTime, fullName, email, code, desc));
+
+                    }else {
+                        String itemName = logSnapshot.child("Priekšmeta nosaukums").getValue(String.class);
+                        int quantity = logSnapshot.child("Daudzums").getValue(Integer.class);
+                        boolean isAddition = logSnapshot.child("Pievienošana?").getValue(Boolean.class);
+                        String fullName = logSnapshot.child("Vārds uzvārds").getValue(String.class);
+                        String email = logSnapshot.child("Epasts").getValue(String.class);
+
+                        logList.add(new LogItem(dateTime, fullName, email, itemName, quantity, isAddition));
+                    }
+                    }
 
                 // Reverse the order of logList
                 Collections.reverse(logList);

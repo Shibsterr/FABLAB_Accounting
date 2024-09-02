@@ -28,6 +28,8 @@ import androidx.preference.PreferenceManager;
 import com.example.fablab.databinding.ActivityMainBinding;
 import com.example.fablab.ui.SpecificEquipmentFragment;
 import com.example.fablab.ui.authen.RegisterUser;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -40,6 +42,11 @@ import com.google.zxing.client.android.Intents;
 import com.journeyapps.barcodescanner.ScanContract;
 import com.journeyapps.barcodescanner.ScanOptions;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
 import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
@@ -80,9 +87,66 @@ public class MainActivity extends AppCompatActivity {
                     Log.d("MainActivity", "Scanned data: " + data);
                     Toast.makeText(MainActivity.this, "Scanned: " + data, Toast.LENGTH_LONG).show();
 
-
+                    addLogEntry(data);
                 }
             });
+
+    private void addLogEntry(String data) {
+        // Get the current user's UID
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        String uid = currentUser.getUid();
+
+        // Get a reference to the user's node in the Realtime Database
+        DatabaseReference userRef = FirebaseDatabase.getInstance().getReference().child("users").child(uid);
+
+        // Fetch the user's full name from the Realtime Database
+        userRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    // Get the user's full name
+                    String fullName = dataSnapshot.child("Vards un uzvards").getValue(String.class);
+                    String apraksts = "Noskanēja objektu";
+                    // Get current date and time
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+                    String dateTime = sdf.format(new Date());
+
+                    // Create a new log entry with the current date and time as the node name
+                    DatabaseReference logsRef = FirebaseDatabase.getInstance().getReference().child("Logs").child(dateTime);
+
+                    // Create a map with the log entry data
+                    Map<String, Object> logEntry = new HashMap<>();
+                    logEntry.put("Priekšmeta kods", data);
+                    logEntry.put("Vārds uzvārds", fullName); // Use the user's full name
+                    logEntry.put("Epasts", currentUser.getEmail());
+                    logEntry.put("Laiks", dateTime);
+                    logEntry.put("Apraksts", apraksts);
+
+                    // Add the log entry to the Realtime Database
+                    logsRef.setValue(logEntry)
+                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void aVoid) {
+                                    Log.d("AddLogEntry", "Log entry added successfully");
+                                }
+                            })
+                            .addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    Log.e("AddLogEntry", "Error adding log entry", e);
+                                }
+                            });
+                } else {
+                    Log.e("AddLogEntry", "User data not found in Realtime Database");
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.e("AddLogEntry", "Database error: " + databaseError.getMessage());
+            }
+        });
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -188,7 +252,6 @@ public class MainActivity extends AppCompatActivity {
                             navMenu.findItem(R.id.nav_logs).setVisible(false);
                             navMenu.findItem(R.id.nav_assign).setVisible(false);
                         } else if("Darbinieks".equals(statuss)){
-                            // Optionally, you can show these items for workers,admin
                             navMenu.findItem(R.id.new_equip).setVisible(true);
                             navMenu.findItem(R.id.nav_task).setVisible(true);
                             navMenu.findItem(R.id.nav_logs).setVisible(false);

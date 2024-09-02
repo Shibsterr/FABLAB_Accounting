@@ -1,4 +1,4 @@
-package com.example.fablab.ui.home;
+package com.example.fablab.ui.authen.home;
 
 import android.content.Context;
 import android.content.Intent;
