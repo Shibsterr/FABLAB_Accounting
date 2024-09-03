@@ -12,7 +12,7 @@
 - [x] Abillity to add/plan events inside a calendar as an user / or assign tasks as a worker to another worker
 - [x] Fix login and register not allowing to hop between from a single button place (its one way) (bruh)
 - [x] More checks for image,code,name for new equipment maker
-- [ ] New equipment image upload not working on newer phones (its something to due with permissions as WRITE_EXTERNAL_STORAGE)
+- [x] New equipment image upload not working on newer phones (its something to due with permissions as WRITE_EXTERNAL_STORAGE)
 - [x] Add a way to make it ask for camera permissions (Instead of asking it only on QR code scanner)
 - [x] Figure out what Report,Tasks buttons do exactly (Task's right now open google calendar (its your own meant for workers))
 - [x] Cut the users knees and add a dropdown list for station and room Nrs
@@ -28,7 +28,7 @@
 - [x] Make the buttons auto adjust depending on screen size
 - [x] Add a forgot password button to login screen
 - [ ] Add certain screens if somethings missing (~~No Internet connection~~, No Equipment to show)
-    - [ ] Make it also check ur mobile data. 
+    - [x] Make it also check ur mobile data. 
     - [ ] Screens that say if there are no tasks also add a loading screen when you open the app to hide the loading data
 - [x] Ability to add/plan events inside a calendar as an user / or assign tasks as a worker to another worker
 - [ ] Add icons to the home page buttons (Not required)
@@ -36,7 +36,7 @@
   - [ ] Multi language support (Will take the longest as you must add everything inside the strings.xml file so that you can translate it properly)
 - [x] Add a sidebar navigation which is only seen by the admin where you can see all the logs displayed.
 - [ ] Make sure the layouts are fit to be on many different screen sizes
-- [ ] Permissions for newer phones may be removed (External storage write is an example)
+- [x] Permissions for newer phones may be removed (External storage write is an example) ?
 - [ ] Visually make it look nicer (Better colors and such)
 - [ ] Update the splashscreen if needed
 - [ ] Calendar viewing for normal users to see which days are unavailable and allow them to assing one (Could just store it inside the database)
@@ -45,7 +45,7 @@
 
 ## Improvements:
 - [ ] Better sorting for logs
-- 
+- [x] Added a new log entry that shows which user scanned which QR code
 
 
 ## What do you need for Firebase:

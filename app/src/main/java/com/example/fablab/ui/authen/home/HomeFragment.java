@@ -2,6 +2,8 @@ package com.example.fablab.ui.authen.home;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -12,6 +14,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.Button;
@@ -39,6 +43,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -82,12 +88,14 @@ public class HomeFragment extends Fragment{
         hidingButton.setText(getResources().getString(R.string.stations));
         hidingButton.setTypeface(null, Typeface.BOLD);
         hidingButton.setOnClickListener(v -> {
-            if(properLayout.getVisibility() == View.VISIBLE){
+            if (properLayout.getVisibility() == View.VISIBLE) {
                 properLayout.setVisibility(View.GONE);
-                Log.d("MainActivity", "It works (Its gone)");
-            }else{
+//                Animation slideUp = AnimationUtils.loadAnimation(getActivity(), R.anim.slide_up);
+//                properLayout.startAnimation(slideUp);
+            } else {
                 properLayout.setVisibility(View.VISIBLE);
-                Log.d("MainActivity", "It works (Its visible again)");
+                Animation slideDown = AnimationUtils.loadAnimation(getActivity(), R.anim.slide_down);
+                properLayout.startAnimation(slideDown);
             }
         });
 
@@ -266,12 +274,14 @@ public class HomeFragment extends Fragment{
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     String station = snapshot.child("Name").getValue(String.class);
                     String description = snapshot.child("Description").getValue(String.class);
+                    int ID = snapshot.child("ID").getValue(Integer.class);
+
 
                     stationsList.add(station);
                     descriptionsList.add(description);
 
                     // Create card view for each station
-                    createCardView(context, properLayout, station, description, R.drawable.nav_home);
+                    createCardView(context, properLayout, station, description, ID);
                     createSpace(context, properLayout);
                 }
             }
@@ -311,7 +321,7 @@ public class HomeFragment extends Fragment{
     //https://calendar.google.com/calendar/embed?src=285df84310f927e2cd943985a590d6726dcade6efe9aad1980389ad74832e2e2%40group.calendar.google.com&ctz=Europe%2FRiga
 
     //Stations
-    private void createCardView(Context context, LinearLayout parent, String title, String description, int drawableResId) {
+    private void createCardView(Context context, LinearLayout parent, String title, String description, int ID) {
         CardView cardView = new CardView(context);
         cardView.setCardElevation(4);
 
@@ -321,9 +331,22 @@ public class HomeFragment extends Fragment{
         innerLayout.setBackgroundResource(R.drawable.my_custom_background);
 
         ImageView imageView = new ImageView(context);
-        imageView.setImageResource(drawableResId);
         imageView.setLayoutParams(new LinearLayout.LayoutParams(200, 200));
 
+        // Load image from Firebase Storage
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+        StorageReference storageReference = storage.getReference().child("Station_Icons/" + ID + ".png"); // Assuming the image is stored with a .jpg extension
+
+        storageReference.getBytes(Long.MAX_VALUE).addOnSuccessListener(bytes -> {
+            // Convert the bytes to a Bitmap and set it to the ImageView
+            Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+            imageView.setImageBitmap(bitmap);
+        }).addOnFailureListener(exception -> {
+            // Handle any errors
+            Log.e("FirebaseStorageError", "Failed to load image: " + exception.getMessage());
+            // Set a placeholder or error image
+            imageView.setImageResource(R.drawable.placeholder_image);
+        });
         TextView titleView = new TextView(context);
         titleView.setText(title);
         titleView.setTextSize(15);

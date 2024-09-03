@@ -5,10 +5,11 @@ public class LogItem {
     private String userName;
     private String email;
     private String itemName;
-    private int quantity;
+    private String desc;
+    private String quantity;
     private boolean isAddition; // true for addition, false for subtraction
 
-    public LogItem(String dateTime, String userName, String email, String itemName, int quantity, boolean isAddition) {
+    public LogItem(String dateTime, String userName, String email, String itemName, String quantity, boolean isAddition) {
         this.dateTime = dateTime;
         this.userName = userName;
         this.email = email;
@@ -16,7 +17,15 @@ public class LogItem {
         this.quantity = quantity;
         this.isAddition = isAddition;
     }
+    public LogItem(String dateTime, String fullname, String email, String code, String desc){
+        this.dateTime = dateTime;
+        this.userName = fullname;
+        this.email = email;
+        this.itemName = code;
+        this.desc = desc;
+    }
 
+    public String getDesc(){return desc;}
     public String getDateTime() {
         return dateTime;
     }
@@ -49,11 +58,11 @@ public class LogItem {
         this.itemName = itemName;
     }
 
-    public int getQuantity() {
+    public String getQuantity() {
         return quantity;
     }
 
-    public void setQuantity(int quantity) {
+    public void setQuantity(String quantity) {
         this.quantity = quantity;
     }
 

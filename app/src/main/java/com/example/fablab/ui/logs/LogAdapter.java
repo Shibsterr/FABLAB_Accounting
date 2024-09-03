@@ -57,7 +57,9 @@ public class LogAdapter extends RecyclerView.Adapter<LogAdapter.LogViewHolder> {
             textDateTime = itemView.findViewById(R.id.text_view_summary);
             textUserName = itemView.findViewById(R.id.text_view_username);
             textEmail = itemView.findViewById(R.id.text_view_email);
+
             textItemName = itemView.findViewById(R.id.text_view_item_name);
+
             textQuantity = itemView.findViewById(R.id.text_view_quantity);
             textAddition = itemView.findViewById(R.id.text_view_addition);
 
@@ -66,17 +68,23 @@ public class LogAdapter extends RecyclerView.Adapter<LogAdapter.LogViewHolder> {
         }
 
         public void bind(LogItem logItem) {
-            // Set text of button to date, time, and username
-            buttonExpand.setText(logItem.getDateTime() + " " + logItem.getUserName());
-
             // Populate detailed information
-            textDateTime.setText("Date and Time: " + logItem.getDateTime());
-            textUserName.setText("User Name: " + logItem.getUserName());
+            textDateTime.setText("Datums un laiks: " + logItem.getDateTime());
+            textUserName.setText("Vārds uzvārds: " + logItem.getUserName());
             textEmail.setText("Email: " + logItem.getEmail());
-            textItemName.setText("Item Name: " + logItem.getItemName());
-            textQuantity.setText("Quantity: " + logItem.getQuantity());
-            textAddition.setText("Addition: " + (logItem.isAddition() ? "Yes" : "No"));
-        }
+
+            if(logItem.getQuantity() == null) {     // Checks for the quantity if its null then the log is for users who scanned a QR code
+                buttonExpand.setText("Noskanēts objekts");
+                textItemName.setText("Priekšmeta kods: " + logItem.getItemName());
+                textQuantity.setText("Apraksts: " + logItem.getDesc());
+                textAddition.setVisibility(View.GONE);
+            }else{
+                buttonExpand.setText("Inventāra izmaiņas");
+                textItemName.setText("Priekšmeta nosaukums: " + logItem.getItemName());
+                textQuantity.setText("Daudzums: " + logItem.getQuantity());
+                textAddition.setText("Pieskaitīšana?: " + (logItem.isAddition() ? "Yes" : "No"));
+            }
+            }
 
         // Method to toggle visibility of details
         private void toggleDetails() {

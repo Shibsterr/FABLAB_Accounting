@@ -5,6 +5,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -30,6 +32,9 @@ public class EquipmentListFragment extends Fragment {
     private DatabaseReference databaseReference;
     private List<Equipment> equipmentList;
     private Set<String> addedEquipmentNames;
+    private RecyclerView recyclerView;
+    private TextView emptyView;
+    private Button refreshButton;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -42,9 +47,22 @@ public class EquipmentListFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_equipment_list, container, false);
-        RecyclerView recyclerView = view.findViewById(R.id.recyclerView);
+        recyclerView = view.findViewById(R.id.recyclerView);
+        emptyView = view.findViewById(R.id.empty_view);
+        refreshButton = view.findViewById(R.id.refresh_button);
+
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
+        // Set up the refresh button to reload the data
+        refreshButton.setOnClickListener(v -> loadData());
+
+        // Initial data load
+        loadData();
+
+        return view;
+    }
+
+    private void loadData() {
         Bundle args = getArguments();
         if (args != null) {
             String stationNodeName = args.getString("stationNodeName");
@@ -79,17 +97,20 @@ public class EquipmentListFragment extends Fragment {
                 });
             }
         }
-        return view;
     }
 
     private void updateUI() {
-        RecyclerView recyclerView = getView().findViewById(R.id.recyclerView);
-        if (recyclerView != null && getContext() != null) {
+        if (equipmentList.isEmpty()) {
+            // Show the empty view and hide the RecyclerView
+            emptyView.setVisibility(View.VISIBLE);
+            recyclerView.setVisibility(View.GONE);
+        } else {
+            // Show the RecyclerView and hide the empty view
+            emptyView.setVisibility(View.GONE);
+            recyclerView.setVisibility(View.VISIBLE);
+
             EquipmentAdapter adapter = new EquipmentAdapter(equipmentList);
             recyclerView.setAdapter(adapter);
-            recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        } else{
-            Log.e("EquipmentListFragment", "RecyclerView or context is null");
         }
     }
 }

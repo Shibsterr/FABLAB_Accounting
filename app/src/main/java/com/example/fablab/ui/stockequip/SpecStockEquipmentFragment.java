@@ -336,8 +336,9 @@ public class SpecStockEquipmentFragment extends Fragment {
 
                     // Create a map with the log entry data
                     Map<String, Object> logEntry = new HashMap<>();
+                    String quan = String.valueOf(quantity);
                     logEntry.put("Priekšmeta nosaukums", equipmentName);
-                    logEntry.put("Daudzums", quantity);
+                    logEntry.put("Daudzums", quan);
                     logEntry.put("Pievienošana?", isAddOperation);      //if false then its subtraction else its addition
                     logEntry.put("Vārds uzvārds", fullName); // Use the user's full name
                     logEntry.put("Epasts", currentUser.getEmail());

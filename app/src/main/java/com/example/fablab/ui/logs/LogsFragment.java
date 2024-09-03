@@ -60,11 +60,11 @@ public class LogsFragment extends Fragment {
                         String email = logSnapshot.child("Epasts").getValue(String.class);
                         String code = logSnapshot.child("Priekšmeta kods").getValue(String.class);
 
-//                        logList.add(new LogItem(dateTime, fullName, email, code, desc));
+                        logList.add(new LogItem(dateTime, fullName, email, code, desc));
 
                     }else {
                         String itemName = logSnapshot.child("Priekšmeta nosaukums").getValue(String.class);
-                        int quantity = logSnapshot.child("Daudzums").getValue(Integer.class);
+                        String quantity = logSnapshot.child("Daudzums").getValue(String.class);
                         boolean isAddition = logSnapshot.child("Pievienošana?").getValue(Boolean.class);
                         String fullName = logSnapshot.child("Vārds uzvārds").getValue(String.class);
                         String email = logSnapshot.child("Epasts").getValue(String.class);

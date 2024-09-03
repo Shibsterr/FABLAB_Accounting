@@ -316,19 +316,10 @@ public class NewEquipmentFragment extends Fragment {
         });
 
         btnUploadImage.setOnClickListener(v -> {
-            // Check if WRITE_EXTERNAL_STORAGE permission is granted
-            if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                // Request the permission if not granted
-                ActivityCompat.requestPermissions(requireActivity(), new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_WRITE_EXTERNAL_STORAGE);
+            if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(requireActivity(), new String[]{Manifest.permission.CAMERA}, REQUEST_CAMERA);
             } else {
-                // Permission is granted for WRITE_EXTERNAL_STORAGE, now check CAMERA permission
-                if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-                    // Request the CAMERA permission if not granted
-                    ActivityCompat.requestPermissions(requireActivity(), new String[]{Manifest.permission.CAMERA}, REQUEST_CAMERA);
-                } else {
-                    // Permission is granted for both WRITE_EXTERNAL_STORAGE and CAMERA, proceed with image capture
-                    dispatchTakePictureIntent();
-                }
+                takePicture();
             }
         });
 
@@ -342,7 +333,7 @@ public class NewEquipmentFragment extends Fragment {
         if (requestCode == REQUEST_CAMERA) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 // CAMERA permission is granted, proceed with image capture
-                dispatchTakePictureIntent();
+                takePicture();
             } else {
                 // CAMERA permission is denied, show a message or take appropriate action
                 Toast.makeText(requireContext(), "Camera permission is required for taking pictures", Toast.LENGTH_SHORT).show();
@@ -392,12 +383,10 @@ public class NewEquipmentFragment extends Fragment {
         return matches;
     }
 
-    private void dispatchTakePictureIntent() {
+    private void takePicture() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if (takePictureIntent.resolveActivity(requireActivity().getPackageManager()) != null) {
             startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
-        } else {
-            Toast.makeText(getContext(), "No camera app found", Toast.LENGTH_SHORT).show();
         }
     }
 
