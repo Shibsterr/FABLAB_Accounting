@@ -46,6 +46,13 @@
 ## Improvements:
 - [ ] Better sorting for logs
 - [x] Added a new log entry that shows which user scanned which QR code
+- [x] Domain checker for emails when registering
+  - [x] Password checker (8 characters, capital letter, symbols)
+- [x] Add a QR code checker where it checks if its a valid code otherwise repeat the scan until it scans a correct code (by pattern)
+- [x] Date of birth picker during register
+- [ ] Multiple languages (en,lv)
+- [ ] Loading screens
+- [ ] Internet checker for every page
 
 
 ## What do you need for Firebase:

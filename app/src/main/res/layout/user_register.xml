@@ -18,6 +18,79 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <EditText
+        android:id="@+id/name_surname"
+        android:layout_width="300dp"
+        android:layout_height="75dp"
+        android:layout_marginTop="176dp"
+        android:hint="@string/name"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.466"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/date_of_birth"
+        android:layout_width="243dp"
+        android:layout_height="54dp"
+        android:layout_marginTop="12dp"
+        android:gravity="center_vertical"
+        android:hint="Dzimšanas datums"
+        android:padding="15dp"
+        android:textColor="@android:color/black"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toStartOf="@+id/date_picker_button"
+        app:layout_constraintHorizontal_bias="0.825"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/name_surname" />
+
+    <ImageButton
+        android:id="@+id/date_picker_button"
+        android:layout_width="50dp"
+        android:layout_height="49dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginEnd="56dp"
+        android:background="?android:attr/selectableItemBackground"
+        android:contentDescription="test"
+        android:src="@android:drawable/ic_menu_my_calendar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/name_surname" />
+
+    <EditText
+        android:id="@+id/email"
+        android:layout_width="300dp"
+        android:layout_height="75dp"
+        android:layout_marginTop="8dp"
+        android:hint="@string/email"
+        android:inputType="textEmailAddress"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.468"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/date_of_birth" />
+
+    <EditText
+        android:id="@+id/password_repeat"
+        android:layout_width="300dp"
+        android:layout_height="75dp"
+        android:layout_marginTop="8dp"
+        android:hint="@string/repeat_password"
+        android:inputType="textPassword"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.468"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/password" />
+
+    <EditText
+        android:id="@+id/password"
+        android:layout_width="300dp"
+        android:layout_height="75dp"
+        android:layout_marginTop="8dp"
+        android:hint="@string/password"
+        android:inputType="textPassword"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.468"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/email" />
 
     <Button
         android:id="@+id/register_button"
@@ -30,54 +103,6 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/password_repeat" />
-
-    <EditText
-        android:id="@+id/name_surname"
-        android:layout_width="300dp"
-        android:layout_height="75dp"
-        android:layout_marginTop="176dp"
-        android:hint="@string/name"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.466"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-
-    <EditText
-        android:id="@+id/password"
-        android:layout_width="300dp"
-        android:layout_height="75dp"
-        android:layout_marginTop="4dp"
-        android:hint="@string/password"
-        android:inputType="textPassword"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.468"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/email" />
-
-    <EditText
-        android:id="@+id/password_repeat"
-        android:layout_width="300dp"
-        android:layout_height="75dp"
-        android:layout_marginTop="4dp"
-        android:hint="@string/repeat_password"
-        android:inputType="textPassword"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.468"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/password" />
-
-    <EditText
-        android:id="@+id/email"
-        android:layout_width="300dp"
-        android:layout_height="75dp"
-        android:layout_marginTop="2dp"
-        android:hint="@string/email"
-        android:inputType="textEmailAddress"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.465"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/name_surname" />
 
     <Button
         android:id="@+id/register"
@@ -104,8 +129,6 @@
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/password_repeat"
-        android:visibility="gone">
-
-    </ProgressBar>
+        android:visibility="gone" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

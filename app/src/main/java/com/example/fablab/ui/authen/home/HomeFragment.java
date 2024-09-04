@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -121,26 +120,23 @@ public class HomeFragment extends Fragment{
             openNewEventActivity();
         });
 
-        //Stock button
+        // Stock button
         Button stockButton = new Button(context);
+
+        // Set background and text
         stockButton.setBackground(ContextCompat.getDrawable(getActivity(), R.drawable.stock_button));
         stockButton.setText(getResources().getString(R.string.stock));
         stockButton.setTypeface(null, Typeface.BOLD);
 
-        // Set the icon
-        Drawable icon = ContextCompat.getDrawable(getActivity(), R.drawable.nav_home);
-        // Set bounds for the icon (optional)
-        icon.setBounds(0, 0, icon.getIntrinsicWidth()*2, icon.getIntrinsicHeight()*2);
-        // Set the icon to the left of the text
-        stockButton.setCompoundDrawablesRelative(icon, null, icon, null);
-        // Set padding between the icon and the text
-        stockButton.setCompoundDrawablePadding(10); // Adjust as needed
+        // Remove the icon
+        stockButton.setCompoundDrawablesRelative(null, null, null, null);
 
         // Set padding to ensure the text stays centered
         stockButton.setPadding(0, stockButton.getPaddingTop(), 0, stockButton.getPaddingBottom());
 
         stockButton.setOnClickListener(v ->
                 Navigation.findNavController(v).navigate(R.id.equipmentFragment));
+
 
         mAuth = FirebaseAuth.getInstance();
 
