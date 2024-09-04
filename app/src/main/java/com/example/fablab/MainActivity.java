@@ -3,6 +3,8 @@ package com.example.fablab;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -151,6 +153,16 @@ public class MainActivity extends AppCompatActivity {
         int themeResourceId = getResources().getIdentifier(selectedTheme, "style", getPackageName());
         setTheme(themeResourceId);
 
+        String languageCode = sharedPreferences.getString("language_preference", "en");
+        Locale locale = new Locale(languageCode);
+        Locale.setDefault(locale);
+
+        Resources resources = getResources();
+        Configuration configuration = new Configuration(resources.getConfiguration());
+        configuration.setLocale(locale);
+
+        resources.updateConfiguration(configuration, resources.getDisplayMetrics());
+
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
 
@@ -276,7 +288,7 @@ public class MainActivity extends AppCompatActivity {
     public void scanCode(MenuItem item) {
         ScanOptions options = new ScanOptions();
         options.setPrompt("Volume up to turn on flash");
-        options.setBeepEnabled(true);
+        options.setBeepEnabled(false);
         options.setOrientationLocked(true);
         options.setCaptureActivity(CaptureAct.class);
         barLauncher.launch(options);

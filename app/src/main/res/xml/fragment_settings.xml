@@ -1,23 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <!-- Theme Preference -->
+    <ListPreference
+        android:key="language_preference"
+        android:title="@string/settings_lang"
+        android:summary="@string/settings_sublang"
+        android:entries="@array/language_titles"
+        android:entryValues="@array/language_values" />
+
     <ListPreference
         android:key="theme_preference"
-        android:title="App Theme"
-        android:summary="Choose your preferred theme"
-        android:dialogTitle="Select Theme"
-        android:entries="@array/theme_entries"
-        android:entryValues="@array/theme_values"
-        android:defaultValue="Theme.FABLAB" />
+        android:title="@string/settings_theme"
+        android:summary="@string/settings_theme"
+        android:dialogTitle="@string/settings_subtheme"/>
+
+    <Preference
+        android:key="sign_out"
+        android:title="@string/settings_signout"
+        android:summary="@string/settings_subsignout"/>
 
     <Preference
         android:key="password_reset"
-        android:title="Password reset"/>
-
-        <!-- Sign Out Preference -->
-    <Preference
-        android:key="sign_out"
-        android:title="Sign Out" />
+        android:title="@string/settings_reset"
+        android:summary="@string/settings_subreset"/>
 
 </PreferenceScreen>

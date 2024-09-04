@@ -1,0 +1,34 @@
+<resources>
+    <!-- Reply Preference -->
+    <string-array name="reply_entries">
+        <item>Reply</item>
+        <item>Reply to all</item>
+    </string-array>
+
+    <string-array name="reply_values">
+        <item>reply</item>
+        <item>reply_all</item>
+    </string-array>
+
+    <string-array name="type_list">
+        <item>Asset</item>
+        <item>Consumable</item>
+    </string-array>
+
+        <string-array name="units_list_cons">
+            <item>gb (Gabali)</item>
+            <item>metri</item>
+            <item>g</item>
+            <item>kg</item>
+            <item>l</item>
+        </string-array>
+
+        <string-array name="unit_list_assets">
+            <item>gb (Gabali)</item>
+        </string-array>
+
+        <string-array name="theme_entries">
+            <item>FABLAB</item>
+            <item>Greenhouse</item>
+        </string-array>
+</resources>

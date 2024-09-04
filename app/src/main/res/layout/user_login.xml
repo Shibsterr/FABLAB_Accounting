@@ -77,7 +77,7 @@
         android:layout_marginTop="4dp"
         android:backgroundTint="@color/white"
         android:textColor="@color/black"
-        android:text="Aizmirsi paroli?"
+        android:text="@string/forgot_pass"
         android:textAllCaps="false"
         app:layout_constraintEnd_toStartOf="@+id/register_swap"
         app:layout_constraintHorizontal_bias="0.0"

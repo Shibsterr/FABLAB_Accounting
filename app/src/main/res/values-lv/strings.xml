@@ -1,0 +1,118 @@
+<resources>
+    <string name="app_name">FABLAB</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="nav_header_title">Android Studio</string>
+    <string name="nav_header_subtitle">android.studio@android.com</string>
+
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="action_settings">Settings</string>
+
+    <string name="kods">Kods (HOP lietvedības nr)</string>
+    <string name="nosaukums">Nosaukums inventāram</string>
+    <string name="units">Mērvienība</string>
+
+    <string name="name_hints">Nosaukums</string>
+    <string name="kods_hints">Koda numurs</string>
+
+    <string name="qrcode">hi</string>
+    <string name="submit">Pievienot</string>
+
+
+    <string name="izvelies">Izvēlies tipu</string>
+
+    <string name="menu_home">Sākums</string>
+    <string name="menu_equip">Jauns aprīkojums</string>
+    <string name="menu_assign">Uzdodiet uzdevumus</string>
+    <string name="menu_logs">Darbību žurnāls</string>
+    <string name="menu_tasks">Uzdevumi</string>
+    <string name="menu_report">Ziņojums</string>
+    <string name="menu_settings">Iestatījumi</string>
+    <string name="logo">Logo</string>
+
+
+    <string name="stations">Stacijas</string>
+    <string name="calendar">Kalendārs</string>
+    <string name="stock">Noliktava</string>
+    <string name="new_event">Pieteikties</string>
+
+    <string name="addevent">Pieteikšanas forms</string>
+
+
+    <!-- Settings-->
+    <string name="select">Select</string>
+
+    <!-- Preference Titles -->
+    <string name="messages_header">Messages</string>
+    <string name="sync_header">Sync</string>
+
+    <!-- Messages Preferences -->
+    <string name="signature_title">Your signature</string>
+    <string name="reply_title">Default reply action</string>
+
+    <!-- Sync Preferences -->
+    <string name="sync_title">Sync email periodically</string>
+    <string name="attachment_title">Download incoming attachments</string>
+    <string name="attachment_summary_on">Automatically download attachments for incoming emails
+    </string>
+    <string name="attachment_summary_off">Only download attachments when manually requested</string>
+
+    <!-- Authentication system -->
+    <string name="email">E-pasts</string>
+    <string name="password">Parole</string>
+    <string name="repeat_password">Atkārtojiet paroli</string>
+    <string name="register_user">Reģistrēties</string>
+    <string name="name">Pilnais vārds</string>
+    <string name="forgot_pass">Aizmirsi paroli?</string>
+        <string name="ielogoties">Piesakieties</string>
+
+    <string name="konts_ir">Piesakieties</string>
+    <string name="konts_nav">Reģistrēties</string>
+
+    <!--    themes-->
+    <string-array name="theme_titles">
+        <item>FABLAB</item>
+        <item>Dabasmāja</item>
+    </string-array>
+
+    <string-array name="theme_values">
+        <item>fablab</item>
+        <item>dabasmaja</item>
+    </string-array>
+
+    <string-array name="language_titles">
+        <item>English</item>
+        <item>Latvian</item>
+    </string-array>
+
+    <string-array name="language_values">
+        <item>en</item>
+        <item>lv</item>
+    </string-array>
+
+    <!-- settings/iestatijumi -->
+    <string name="settings_lang">Izvēlieties valodu</string>
+        <string name="settings_sublang">Izvēlieties lietotnes valodu</string>
+    <string name="settings_theme">Motīvs</string>
+        <string name="settings_subtheme">Izvēlies Motīvu</string>
+    <string name="settings_signout">Izrakstīties</string>
+    <string name="settings_subsignout">Izrakstieties no sava konta</string>
+    <string name="settings_reset">Atiestatīt paroli</string>
+    <string name="settings_subreset">Atiestatiet savu paroli</string>
+    <string name="language_settings_header">Valodas iestatījumi</string>
+
+
+    <!-- main activity -->
+    <string name="change_language">Change Language</string>
+    <string name="scanned">Scanned: %1$s</string>
+    <string name="cancelled_scan">Cancelled scan</string>
+    <string name="cancelled_scan_permission">Cancelled due to missing camera permission</string>
+    <string name="invalid_scan">Invalid scan. Please try again.</string>
+    <string name="select_language">Select Language</string>
+    <string name="english">English</string>
+    <string name="latvian">Latvian</string>
+
+
+
+</resources>

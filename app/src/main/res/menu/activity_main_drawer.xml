@@ -20,11 +20,11 @@
         <item
             android:id="@+id/nav_assign"
             android:icon="@drawable/assign_tasks"
-            android:title="Assign tasks"/>
+            android:title="@string/menu_assign"/>
         <item
             android:id="@+id/nav_logs"
             android:icon="@drawable/data_log"
-            android:title="Activity logs" />
+            android:title="@string/menu_logs" />
         <item
             android:id="@+id/nav_report"
             android:icon="@drawable/nav_report"

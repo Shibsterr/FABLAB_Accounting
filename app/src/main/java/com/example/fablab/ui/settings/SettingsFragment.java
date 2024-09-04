@@ -27,35 +27,46 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         mAuth = FirebaseAuth.getInstance();
         sharedPreferences = getPreferenceManager().getSharedPreferences();
 
-        ListPreference themePreference = findPreference("theme_preference");
+        // Set up language preference
+        ListPreference languagePreference = findPreference("language_preference");
+        if (languagePreference != null) {
+            CharSequence[] languageEntries = {"English", "Latvian"};
+            CharSequence[] languageValues = {"en", "lv"};
+            languagePreference.setEntries(languageEntries);
+            languagePreference.setEntryValues(languageValues);
 
+            // Set the summary of the language preference to the current language
+            languagePreference.setSummaryProvider(preference -> {
+                String languageValue = sharedPreferences.getString("language_preference", "en");
+                return languageValue.equals("en") ? "English" : "Latvian";
+            });
+
+            languagePreference.setOnPreferenceChangeListener((preference, newValue) -> {
+                String selectedLanguage = (String) newValue;
+                sharedPreferences.edit().putString("language_preference", selectedLanguage).apply();
+//                changeLanguage(selectedLanguage);
+                restartActivity();
+                return true;
+            });
+        }
+
+        // Set up theme preference
+        ListPreference themePreference = findPreference("theme_preference");
         if (themePreference != null) {
-            // Set up the dropdown list with theme options
             CharSequence[] themeEntries = {"FABLAB", "Dabasmāja"};
             CharSequence[] themeValues = {"Theme.FABLAB", "Theme.Dabasmāja"};
             themePreference.setEntries(themeEntries);
             themePreference.setEntryValues(themeValues);
 
-            // Set the summary of the theme preference to the current theme
             themePreference.setSummaryProvider(preference -> {
                 String themeValue = sharedPreferences.getString("theme_preference", "Theme.FABLAB");
-                if (themeValue.equals("Theme.FABLAB")) {
-                    return "FABLAB";
-                } else if (themeValue.equals("Theme.Dabasmāja")) {
-                    return "Dabasmāja";
-                }
-                return "";
+                return themeValue.equals("Theme.FABLAB") ? "FABLAB" : "Dabasmāja";
             });
 
-            // Listen for changes to the theme preference
             themePreference.setOnPreferenceChangeListener((preference, newValue) -> {
-                // Get the selected theme value
                 String selectedTheme = (String) newValue;
-                // Save the selected theme to shared preferences
                 sharedPreferences.edit().putString("theme_preference", selectedTheme).apply();
-                Intent intent = new Intent(getActivity(), MainActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(intent);
+                restartActivity();
                 return true;
             });
         }
@@ -65,6 +76,8 @@ public class SettingsFragment extends PreferenceFragmentCompat {
             signOut();
             return true;
         });
+
+        // Password reset button
         findPreference("password_reset").setOnPreferenceClickListener(preference -> {
             Log.d("LoginUser", "Clicked message to reset password");
             Intent intent = new Intent(getContext(), ForgotPasswordActivity.class);
@@ -77,9 +90,35 @@ public class SettingsFragment extends PreferenceFragmentCompat {
     private void signOut() {
         mAuth.signOut();
         Toast.makeText(getContext(), "Signed out successfully", Toast.LENGTH_SHORT).show();
-        // Redirect to login activity
         Intent intent = new Intent(getActivity(), LoginUser.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
+    }
+
+//    private void changeLanguage(String languageCode) {
+//        Locale locale = new Locale(languageCode);
+//        Locale.setDefault(locale);
+//
+//        Resources resources = getResources();
+//        Configuration configuration = new Configuration(resources.getConfiguration());
+//        configuration.setLocale(locale);
+//
+//        // For API 24 and above, use createConfigurationContext
+//        Context context = getContext();
+//        if (context != null) {
+//            context = context.createConfigurationContext(configuration);
+//            Resources newResources = context.getResources();
+//            Configuration newConfiguration = new Configuration(newResources.getConfiguration());
+//            newConfiguration.setLocale(locale);
+//            getResources().updateConfiguration(newConfiguration, newResources.getDisplayMetrics());
+//        }
+//    }
+
+    private void restartActivity() {
+        // Restart the activity to apply changes
+        Intent intent = new Intent(getActivity(), MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+        getActivity().finish(); // Finish the current activity to ensure it is not kept in the back stack
     }
 }
