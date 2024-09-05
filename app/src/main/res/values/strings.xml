@@ -144,4 +144,7 @@
     <string name="min_stock">min stock</string>
     <string name="crit_stock">crit stock</string>
     <string name="no_file_selected">No file selected</string>
+    <string name="no_internet_connection">No Internet Connection</string>
+    <string name="check_con">Check your Internet Connection and Try Again</string>
+    <string name="try_again">Try Again</string>
 </resources>

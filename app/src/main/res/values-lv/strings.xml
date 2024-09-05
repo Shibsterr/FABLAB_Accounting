@@ -147,6 +147,9 @@
     <string name="min_stock">min krājums</string>
     <string name="crit_stock">crit krājums</string>
     <string name="no_file_selected">Nav atlasīts neviens fails</string>
+    <string name="no_internet_connection">Nav interneta savienojuma</string>
+    <string name="check_con">Pārbaudiet interneta savienojumu un mēģiniet vēlreiz</string>
+    <string name="try_again">Mēģiniet vēlreiz</string>
 
 
 </resources>

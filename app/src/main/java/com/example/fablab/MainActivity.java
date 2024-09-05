@@ -2,6 +2,7 @@ package com.example.fablab;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.content.res.Resources;
@@ -57,6 +58,8 @@ public class MainActivity extends AppCompatActivity {
     private Button refreshbtn;
     private ProgressBar progbar;
 
+    private NetworkChangeReceiver networkChangeReceiver;
+
     // Define the patterns
     private static final String PATTERN_STRING = "^[1-9][0-9]?_[1-9]_[1-2]?_[a-zA-Z0-9\\s]+$";
     private static final String PATTERN_LONGER = "^[1-9][0-9]?_[1-9][0-9]?_[1-2]_[a-zA-Z0-9\\s]+$";
@@ -79,7 +82,6 @@ public class MainActivity extends AppCompatActivity {
                     Log.d("MainActivity", "Scanned data: " + data);
 
                     if (isValidScan(data)) {
-                        // Proceed with valid scan
                         Bundle bundle = new Bundle();
                         bundle.putString("code", data);
 
@@ -92,9 +94,7 @@ public class MainActivity extends AppCompatActivity {
                         Toast.makeText(MainActivity.this, "Scanned: " + data, Toast.LENGTH_LONG).show();
                         addLogEntry(data);
                     } else {
-                        // Inform the user and prompt them to rescan
                         Toast.makeText(MainActivity.this, "Invalid scan. Please try again.", Toast.LENGTH_LONG).show();
-                        // Optionally, you can trigger the scanner again here if needed
                         scanCode(null); // Restart scanning
                     }
                 }
@@ -163,32 +163,35 @@ public class MainActivity extends AppCompatActivity {
 
         resources.updateConfiguration(configuration, resources.getDisplayMetrics());
 
+        super.onCreate(savedInstanceState);
+
+        networkChangeReceiver = new NetworkChangeReceiver();
+        IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+        registerReceiver(networkChangeReceiver, filter);
 
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
 
-        super.onCreate(savedInstanceState);
-
-        if (isNetworkAvailable()) {
+//        if (isNetworkAvailable()) {
             Log.d("MainActivity", "Its true you have net");
             setContentView(R.layout.fragment_home);
-        } else {
-            Log.d("MainActivity", "Its false no net");
-            setContentView(R.layout.activity_main_no_internet);
-
-            refreshbtn = findViewById(R.id.try_again_button);
-            progbar = findViewById(R.id.progressBar);
-
-            progbar.setVisibility(View.GONE);
-            refreshbtn.setVisibility(View.VISIBLE);
-
-            refreshbtn.setOnClickListener(v -> {
-                progbar.setVisibility(View.VISIBLE);
-                refreshbtn.setVisibility(View.GONE);
-                startActivity(new Intent(MainActivity.this, MainActivity.class));
-                finish();
-            });
-        }
+//        } else {
+//            Log.d("MainActivity", "Its false no net");
+//            setContentView(R.layout.activity_main_no_internet);
+//
+//            refreshbtn = findViewById(R.id.try_again_button);
+//            progbar = findViewById(R.id.progressBar);
+//
+//            progbar.setVisibility(View.GONE);
+//            refreshbtn.setVisibility(View.VISIBLE);
+//
+//            refreshbtn.setOnClickListener(v -> {
+//                progbar.setVisibility(View.VISIBLE);
+//                refreshbtn.setVisibility(View.GONE);
+//                startActivity(new Intent(MainActivity.this, MainActivity.class));
+//                finish();
+//            });
+//        }
 
         if (currentUser == null) {
             startActivity(new Intent(MainActivity.this, RegisterUser.class));
@@ -274,6 +277,20 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+
+    @Override
+    protected void onStart(){
+        IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+        registerReceiver(networkChangeReceiver, filter);
+        super.onStart();
+    }
+
+    @Override
+    protected void onStop(){
+        unregisterReceiver(networkChangeReceiver);
+        super.onStop();
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
@@ -294,10 +311,18 @@ public class MainActivity extends AppCompatActivity {
         options.setCaptureActivity(CaptureAct.class);
         barLauncher.launch(options);
     }
-    private boolean isNetworkAvailable() {
-        ConnectivityManager connectivityManager
-                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+
+    public boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetworkInfo = connectivityManager != null ? connectivityManager.getActiveNetworkInfo() : null;
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (networkChangeReceiver != null) {
+            unregisterReceiver(networkChangeReceiver);
+        }
     }
 }

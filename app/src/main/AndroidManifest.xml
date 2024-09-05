@@ -93,6 +93,14 @@
         <activity
             android:name=".ui.authen.LoginUser"
             android:exported="false" />
+        <receiver
+            android:name=".NetworkChangeReceiver"
+            android:exported="false"
+            android:enabled="true">
+        <intent-filter>
+            <action android:name="android.net.conn.CONNECTIVITY_CHANGE"/>
+        </intent-filter>
+    </receiver>
 
     </application>
 

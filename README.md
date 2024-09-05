@@ -52,7 +52,7 @@
 - [x] Date of birth picker during register
 - [ ] Multiple languages (en,lv)
 - [ ] Loading screens
-- [ ] Internet checker for every page
+- [x] Internet checker for every page
 - [ ] 
 
 ## What do you need for Firebase:
