@@ -1,7 +1,10 @@
 package com.example.fablab.ui.settings;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
@@ -14,6 +17,8 @@ import com.example.fablab.R;
 import com.example.fablab.ui.authen.ForgotPasswordActivity;
 import com.example.fablab.ui.authen.LoginUser;
 import com.google.firebase.auth.FirebaseAuth;
+
+import java.util.Locale;
 
 public class SettingsFragment extends PreferenceFragmentCompat {
 
@@ -44,7 +49,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
             languagePreference.setOnPreferenceChangeListener((preference, newValue) -> {
                 String selectedLanguage = (String) newValue;
                 sharedPreferences.edit().putString("language_preference", selectedLanguage).apply();
-//                changeLanguage(selectedLanguage);
+                changeLanguage(selectedLanguage);
                 restartActivity();
                 return true;
             });
@@ -95,24 +100,24 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         startActivity(intent);
     }
 
-//    private void changeLanguage(String languageCode) {
-//        Locale locale = new Locale(languageCode);
-//        Locale.setDefault(locale);
-//
-//        Resources resources = getResources();
-//        Configuration configuration = new Configuration(resources.getConfiguration());
-//        configuration.setLocale(locale);
-//
-//        // For API 24 and above, use createConfigurationContext
-//        Context context = getContext();
-//        if (context != null) {
-//            context = context.createConfigurationContext(configuration);
-//            Resources newResources = context.getResources();
-//            Configuration newConfiguration = new Configuration(newResources.getConfiguration());
-//            newConfiguration.setLocale(locale);
-//            getResources().updateConfiguration(newConfiguration, newResources.getDisplayMetrics());
-//        }
-//    }
+    private void changeLanguage(String languageCode) {
+        Locale locale = new Locale(languageCode);
+        Locale.setDefault(locale);
+
+        Resources resources = getResources();
+        Configuration configuration = new Configuration(resources.getConfiguration());
+        configuration.setLocale(locale);
+
+        // For API 24 and above, use createConfigurationContext
+        Context context = getContext();
+        if (context != null) {
+            context = context.createConfigurationContext(configuration);
+            Resources newResources = context.getResources();
+            Configuration newConfiguration = new Configuration(newResources.getConfiguration());
+            newConfiguration.setLocale(locale);
+            getResources().updateConfiguration(newConfiguration, newResources.getDisplayMetrics());
+        }
+    }
 
     private void restartActivity() {
         // Restart the activity to apply changes

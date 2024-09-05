@@ -82,7 +82,7 @@ public class LogAdapter extends RecyclerView.Adapter<LogAdapter.LogViewHolder> {
                 buttonExpand.setText("Inventāra izmaiņas");
                 textItemName.setText("Priekšmeta nosaukums: " + logItem.getItemName());
                 textQuantity.setText("Daudzums: " + logItem.getQuantity());
-                textAddition.setText("Pieskaitīšana?: " + (logItem.isAddition() ? "Yes" : "No"));
+                textAddition.setText("Pieskaitīšana?: " + (logItem.isAddition() ? "Jā" : "Nē"));
             }
             }
 

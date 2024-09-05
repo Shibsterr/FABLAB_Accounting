@@ -2,217 +2,236 @@
 <ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="15dp"
     tools:context=".ui.NewEquipmentFragment"
     android:orientation="vertical">
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="700dp">
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-            <Spinner
-                android:id="@+id/spinner_type"
-                android:layout_width="208dp"
-                android:layout_height="53dp"
-                android:layout_below="@+id/text_type"
-                android:layout_alignParentStart="true"
-                android:layout_marginStart="23dp"
-                android:layout_marginTop="8dp"
-                android:background="@drawable/spinner_border"
-                android:dropDownWidth="match_parent"
-                android:layout="@layout/spinner_layout"
-                android:minWidth="30dp"
-                android:spinnerMode="dropdown" />
+                <!-- Text for Spinner Type -->
+                <TextView
+                    android:id="@+id/text_type"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/izvelies"
+                    android:textColor="#555555"
+                    android:textSize="18sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    android:layout_marginTop="16dp" />
 
-            <TextView
-                android:id="@+id/text_type"
-                android:layout_width="128dp"
-                android:layout_height="31dp"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentTop="true"
-                android:layout_marginStart="23dp"
-                android:layout_marginTop="205dp"
-                android:text="@string/izvelies"
-                android:textColor="#555555"
-                android:textSize="18sp" />
+                <!-- Spinner Type -->
+                <Spinner
+                    android:id="@+id/spinner_type"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/spinner_border"
+                    android:spinnerMode="dropdown"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/text_type"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginStart="23dp"
+                    android:layout_marginEnd="23dp" />
 
-            <EditText
-                android:id="@+id/edit_code"
-                android:layout_width="wrap_content"
-                android:layout_height="48dp"
-                android:layout_below="@+id/kods_nr"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentTop="true"
-                android:layout_marginStart="22dp"
-                android:layout_marginTop="63dp"
-                android:ems="10"
-                android:hint="@string/kods_hints"
-                android:inputType="text" />
+                <!-- Code TextView -->
+                <TextView
+                    android:id="@+id/kods_nr"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/kods"
+                    android:textColor="#555555"
+                    android:textSize="18sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/spinner_type"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    android:layout_marginTop="16dp" />
 
-            <TextView
-                android:id="@+id/kods_nr"
-                android:layout_width="225dp"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/spinner_type"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentTop="true"
-                android:layout_marginStart="22dp"
-                android:layout_marginTop="32dp"
-                android:text="@string/kods"
-                android:textColor="#555555"
-                android:textSize="18sp" />
+                <!-- Code EditText -->
+                <EditText
+                    android:id="@+id/edit_code"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/kods_hints"
+                    android:inputType="text"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/kods_nr"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginStart="23dp"
+                    android:layout_marginEnd="23dp" />
 
-            <EditText
-                android:id="@+id/edit_name"
-                android:layout_width="wrap_content"
-                android:layout_height="48dp"
-                android:layout_below="@+id/name"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentTop="true"
-                android:layout_marginStart="23dp"
-                android:layout_marginTop="152dp"
-                android:ems="10"
-                android:hint="@string/name_hints"
-                android:inputType="text" />
+                <!-- Name TextView -->
+                <TextView
+                    android:id="@+id/name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/nosaukums"
+                    android:textColor="#555555"
+                    android:textSize="18sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/edit_code"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    android:layout_marginTop="16dp" />
 
-            <TextView
-                android:id="@+id/name"
-                android:layout_width="200dp"
-                android:layout_height="31dp"
-                android:layout_below="@+id/kods_nr"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentTop="true"
-                android:layout_marginStart="23dp"
-                android:layout_marginTop="120dp"
-                android:text="@string/nosaukums"
-                android:textColor="#555555"
-                android:textSize="18sp" />
+                <!-- Name EditText -->
+                <EditText
+                    android:id="@+id/edit_name"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/name_hints"
+                    android:inputType="text"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/name"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginStart="23dp"
+                    android:layout_marginEnd="23dp" />
 
-            <Spinner
-                android:id="@+id/spinner_unit"
-                android:layout_width="206dp"
-                android:layout_height="50dp"
-                android:layout_below="@+id/unit"
-                android:layout_alignParentStart="true"
-                android:layout_marginStart="22dp"
-                android:layout_marginTop="8dp"
-                android:background="@drawable/spinner_border"
-                android:dropDownWidth="match_parent"
-                android:layout="@layout/spinner_layout"
-                android:minWidth="30dp"
-                android:spinnerMode="dropdown" />
+                <!-- Unit TextView -->
+                <TextView
+                    android:id="@+id/unit"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/units"
+                    android:textColor="#555555"
+                    android:textSize="18sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/edit_name"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    android:layout_marginTop="16dp" />
 
-            <TextView
-                android:id="@+id/unit"
-                android:layout_width="200dp"
-                android:layout_height="31dp"
-                android:layout_below="@+id/name"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentTop="true"
-                android:layout_marginStart="22dp"
-                android:layout_marginTop="304dp"
-                android:text="@string/units"
-                android:textColor="#555555"
-                android:textSize="18sp" />
+                <!-- Unit Spinner -->
+                <Spinner
+                    android:id="@+id/spinner_unit"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/spinner_border"
+                    android:spinnerMode="dropdown"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/unit"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginStart="23dp"
+                    android:layout_marginEnd="23dp" />
 
+                <!-- Quantity EditText -->
+                <EditText
+                    android:id="@+id/skaits"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/ievadi_skaitli_cik_liels_daudzums"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/spinner_unit"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginStart="23dp"
+                    android:layout_marginEnd="23dp" />
 
-            <EditText
-                android:id="@+id/skaits"
-                android:layout_width="285dp"
-                android:layout_height="48dp"
-                android:layout_below="@+id/spinner_unit"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentEnd="true"
-                android:layout_centerHorizontal="true"
-                android:layout_marginStart="19dp"
-                android:layout_marginTop="11dp"
-                android:layout_marginEnd="24dp"
-                android:hint="Ievadi skaitli (Cik liels/daudzums)" />
+                <!-- Critical Stock EditText -->
+                <EditText
+                    android:id="@+id/crit_stock"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/crit_stock"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/min_stock"
+                    app:layout_constraintTop_toBottomOf="@id/skaits"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginStart="23dp" />
 
+                <!-- Min Stock EditText -->
+                <EditText
+                    android:id="@+id/min_stock"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/min_stock"
+                    app:layout_constraintStart_toEndOf="@id/crit_stock"
+                    app:layout_constraintEnd_toStartOf="@id/max_stock"
+                    app:layout_constraintTop_toBottomOf="@id/skaits"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="16dp" />
 
-            <TextView
-                android:id="@+id/textViewFileName"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/button_upload"
-                android:layout_alignParentEnd="true"
-                android:layout_marginTop="-34dp"
-                android:layout_marginEnd="50dp"
-                android:text="No file selected"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textSize="12sp" />
+                <!-- Max Stock EditText -->
+                <EditText
+                    android:id="@+id/max_stock"
+                    android:layout_width="112dp"
+                    android:layout_height="45dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginEnd="23dp"
+                    android:hint="@string/max_stock"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toEndOf="@id/min_stock"
+                    app:layout_constraintTop_toBottomOf="@id/skaits" />
 
-            <EditText
-                android:id="@+id/crit_stock"
-                android:layout_width="99dp"
-                android:layout_height="55dp"
-                android:layout_alignBottom="@+id/button_upload"
-                android:layout_alignParentStart="true"
-                android:layout_marginStart="15dp"
-                android:layout_marginBottom="65dp"
-                android:hint="crit stock" />
+                <!-- Description EditText -->
+                <EditText
+                    android:id="@+id/description"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/apraksts"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/crit_stock"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginStart="23dp"
+                    android:layout_marginEnd="23dp" />
 
-            <EditText
-                android:id="@+id/min_stock"
-                android:layout_width="99dp"
-                android:layout_height="55dp"
-                android:layout_alignBottom="@+id/button_upload"
-                android:layout_alignParentStart="true"
-                android:layout_marginStart="130dp"
-                android:layout_marginBottom="64dp"
-                android:hint="min stock" />
+                <!-- Upload Button -->
+                <Button
+                    android:id="@+id/button_upload"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/pievienot_att"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/description"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    android:layout_marginTop="16dp" />
 
-            <EditText
-                android:id="@+id/max_stock"
-                android:layout_width="99dp"
-                android:layout_height="55dp"
-                android:layout_alignBottom="@+id/button_upload"
-                android:layout_alignParentStart="true"
-                android:layout_marginStart="239dp"
-                android:layout_marginBottom="64dp"
-                android:hint="max stock" />
+                <!-- File Name TextView -->
+                <TextView
+                    android:id="@+id/textViewFileName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/no_file_selected"
+                    android:textSize="12sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/button_upload"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    android:layout_marginTop="8dp" />
 
+                <!-- Submit Button -->
+                <Button
+                    android:id="@+id/button_submit"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="24dp"
+                    android:text="@string/submit"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/textViewFileName" />
 
-            <EditText
-                android:id="@+id/description"
-                android:layout_width="match_parent"
-                android:layout_height="64dp"
-                android:layout_below="@+id/button_upload"
-                android:layout_alignParentEnd="true"
-                android:layout_marginTop="16dp"
-                android:layout_marginEnd="-11dp"
-                android:hint="Apraksts">
-
-            </EditText>
-
-            <Button
-                android:id="@+id/button_upload"
-                style="?attr/colorPrimaryVariant"
-                android:layout_width="187dp"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/skaits"
-                android:layout_alignParentEnd="true"
-                android:layout_marginTop="80dp"
-                android:layout_marginEnd="179dp"
-                android:hint="Pievienot attēlu"/>
-
-            <Button
-                android:id="@+id/button_submit"
-                style="?attr/colorPrimaryVariant"
-                android:textColor="?attr/colorOnPrimary"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/spinner_unit"
-                android:layout_alignParentEnd="true"
-                android:layout_centerVertical="true"
-                android:layout_marginTop="282dp"
-                android:layout_marginEnd="115dp"
-                android:paddingLeft="40dp"
-                android:paddingRight="40dp"
-                android:text="@string/submit"
-                android:textAlignment="center" />
-    </RelativeLayout>
-
+        </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

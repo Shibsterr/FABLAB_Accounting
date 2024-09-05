@@ -290,7 +290,6 @@ public class HomeFragment extends Fragment{
 
         return scrollView;
     }
-
     public void openNewEventActivity(){
         Intent intent = new Intent(getContext(), NewEvent.class);
         startActivity(intent);

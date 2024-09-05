@@ -52,8 +52,7 @@
         <activity
             android:name=".Splashscreen"
             android:exported="true"
-            android:theme="@style/Theme.FABLAB"
-            android:configChanges="locale">
+            android:theme="@style/Theme.FABLAB">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -63,7 +62,7 @@
         <activity
             android:name=".MainActivity"
             android:exported="true"
-            android:configChanges="locale">
+            android:configChanges="locale|orientation">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
             </intent-filter>

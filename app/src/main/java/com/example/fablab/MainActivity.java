@@ -163,6 +163,7 @@ public class MainActivity extends AppCompatActivity {
 
         resources.updateConfiguration(configuration, resources.getDisplayMetrics());
 
+
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
 

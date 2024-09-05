@@ -14,7 +14,9 @@ android {
         versionName = "1.0"
         namespace = "com.example.fablab"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        resConfigs("en", "lv")
     }
+
     packagingOptions {
         resources.excludes.add("META-INF/*")
     }

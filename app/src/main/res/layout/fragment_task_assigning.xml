@@ -14,7 +14,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Assign Task"
+            android:text="@string/assign_task"
             android:textSize="20sp"
             android:textStyle="bold"
             android:layout_marginBottom="16dp"/>
@@ -23,7 +23,7 @@
             android:id="@+id/spinnerUsers"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Select User"
+            android:hint="@string/select_user"
             android:layout_marginBottom="16dp"/>
 
         <DatePicker
@@ -42,21 +42,21 @@
                 android:id="@+id/radioButtonUrgent"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Urgent"
+                android:text="@string/urgent"
                 android:checked="true"/>
 
             <RadioButton
                 android:id="@+id/radioButtonNotUrgent"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Not Urgent"/>
+                android:text="@string/not_urgent"/>
         </RadioGroup>
 
         <EditText
             android:id="@+id/editTextDescription"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Task Description"
+            android:hint="@string/task_description"
             android:inputType="textMultiLine"
             android:minLines="3"
             android:gravity="top"
@@ -66,7 +66,7 @@
             android:id="@+id/buttonAssignTask"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Assign Task"/>
+            android:text="@string/assign_task"/>
 
     </LinearLayout>
 

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">FABLAB</string>
+    <string name="app_name" translatable="false">FABLAB</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
@@ -39,11 +39,11 @@
     <string name="addevent">Registration form</string>
 
     <!-- Settings -->
-    <string name="select">Select</string>
+    <string name="select" translatable="false">Select</string>
 
     <!-- Preference Titles -->
-    <string name="messages_header">Messages</string>
-    <string name="sync_header">Sync</string>
+    <string name="messages_header" translatable="false">Messages</string>
+    <string name="sync_header" translatable="false">Sync</string>
     <string name="language_settings_header">Language Settings</string>
 
     <!-- Messages Preferences -->
@@ -109,4 +109,39 @@
     <string name="select_language">Select Language</string>
     <string name="english">English</string>
     <string name="latvian">Latvian</string>
+    <string name="sort_logs">Sort Logs</string>
+    <string name="currently_sorted_by_name">Currently sorted by: Name</string>
+    <string name="currently_sorted_by_most_recent_log">Currently sorted by: Most Recent Log</string>
+    <string name="currently_sorted_by_oldest_log">Currently sorted by: Oldest Log</string>
+    <string name="currently_sorted_by_item_name">Currently sorted by: Item Name</string>
+    <string name="assign_task">Assign Task</string>
+    <string name="select_user">Select User</string>
+    <string name="urgent">Urgent</string>
+    <string name="not_urgent">Not Urgent</string>
+    <string name="task_description">Task Description</string>
+    <string name="room_nr">Room nr</string>
+    <string name="station_nr">Station nr</string>
+    <string name="item_name">"Subject name "</string>
+    <string name="describe_problem">"Describe the problem and how it happened "</string>
+    <string name="apraksti_probl">"Describe the problem "</string>
+    <string name="nosutit">Send</string>
+    <string name="no_equipment_to_show">No equipment to show</string>
+    <string name="refresh">Refresh</string>
+    <string name="tas_desc">Task Description</string>
+    <string name="complete_btn">Complete</string>
+    <string name="time">Deadline: 31/12/2022</string>
+    <string name="status">Status: Incomplete</string>
+    <string name="assignment_by">Assigned by: John Doe</string>
+    <string name="deadline">"Deadline: "</string>
+    <string name="status_item">"Status: "</string>
+    <string name="assigned_by_items">"Assigned by: "</string>
+    <string name="subtract">Subtract</string>
+    <string name="add">Add</string>
+    <string name="ievadi_skaitli_cik_liels_daudzums">Enter number (How big/quantity)</string>
+    <string name="pievienot_att">Add a picture</string>
+    <string name="apraksts">Description</string>
+    <string name="max_stock">max stock</string>
+    <string name="min_stock">min stock</string>
+    <string name="crit_stock">crit stock</string>
+    <string name="no_file_selected">No file selected</string>
 </resources>

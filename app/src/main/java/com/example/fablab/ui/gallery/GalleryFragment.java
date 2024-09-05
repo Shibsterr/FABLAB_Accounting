@@ -97,9 +97,9 @@ public class GalleryFragment extends Fragment {
         Button buttonComplete = taskView.findViewById(R.id.buttonComplete); // Add Complete button
 
         textViewDescription.setText(description);
-        textViewDeadline.setText("Deadline: " + deadline);
-        textViewStatus.setText("Status: " + status);
-        textViewAssignedBy.setText("Assigned by: " + assignedBy);
+        textViewDeadline.setText(getString(R.string.deadline) + deadline);
+        textViewStatus.setText(getString(R.string.status_item) + status);
+        textViewAssignedBy.setText(getString(R.string.assigned_by_items) + assignedBy);
 
         // Set click listener for Complete button
         buttonComplete.setOnClickListener(new View.OnClickListener() {

@@ -44,7 +44,7 @@
 
 
 ## Improvements:
-- [ ] Better sorting for logs
+- [x] Better sorting for logs
 - [x] Added a new log entry that shows which user scanned which QR code
 - [x] Domain checker for emails when registering
   - [x] Password checker (8 characters, capital letter, symbols)
@@ -53,12 +53,13 @@
 - [ ] Multiple languages (en,lv)
 - [ ] Loading screens
 - [ ] Internet checker for every page
-
+- [ ] 
 
 ## What do you need for Firebase:
 - [ ] Firebase Storage
 	- [ ] Equipment_Icons/
     - [ ] Equipment_instructions/
+    - [ ] Station_Icons/
 - [ ] Authentication system must use email and password
 - [ ] Realtime database
 	- [ ] Should create the nodes automatically. If not create them

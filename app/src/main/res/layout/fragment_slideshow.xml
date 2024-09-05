@@ -17,7 +17,7 @@
             android:layout_height="48dp"
             android:layout_marginStart="4dp"
             android:layout_marginTop="16dp"
-            android:hint="Telpas nr"
+            android:hint="@string/room_nr"
             android:inputType="number"
             android:textSize="13sp"
             app:layout_constraintEnd_toEndOf="@+id/stacijasnr_spinner"
@@ -30,7 +30,7 @@
             android:layout_width="254dp"
             android:layout_height="48dp"
             android:layout_marginStart="4dp"
-            android:hint="Stacijas nr"
+            android:hint="@string/station_nr"
             android:textSize="13sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/telpanr" />
@@ -41,7 +41,7 @@
             android:layout_height="48dp"
             android:layout_marginStart="4dp"
             android:layout_marginTop="8dp"
-            android:hint="Priekšmeta nosaukums"
+            android:hint="@string/item_name"
             android:textSize="13sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -53,7 +53,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="4dp"
             android:layout_marginTop="20dp"
-            android:text="Aprakstiet problēmu un kā tas notika"
+            android:text="@string/describe_problem"
             android:textSize="13sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/itemname" />
@@ -65,7 +65,7 @@
             android:layout_marginStart="4dp"
             android:layout_marginTop="4dp"
             android:gravity="top|start"
-            android:hint="Apraksti problēmu"
+            android:hint="@string/apraksti_probl"
             android:inputType="textMultiLine"
             android:lines="10"
             android:maxLines="15"
@@ -81,7 +81,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:text="Nosūtīt"
+            android:text="@string/nosutit"
             app:layout_constraintTop_toBottomOf="@+id/Description" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
