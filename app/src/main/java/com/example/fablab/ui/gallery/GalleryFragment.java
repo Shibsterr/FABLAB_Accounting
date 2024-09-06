@@ -30,15 +30,25 @@ public class GalleryFragment extends Fragment {
     private LinearLayout tasksLayout;
     private FirebaseAuth mAuth;
     private DatabaseReference mDatabase;
+    private Button refreshButton; // Add a reference for the refresh button
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_gallery, container, false);
 
         tasksLayout = view.findViewById(R.id.tasksLayout);
+        refreshButton = view.findViewById(R.id.refreshButton); // Initialize the refresh button
         mAuth = FirebaseAuth.getInstance();
         mDatabase = FirebaseDatabase.getInstance().getReference();
 
         loadTasks();
+
+        // Set OnClickListener for the refresh button
+        refreshButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                loadTasks();
+            }
+        });
 
         return view;
     }
@@ -58,6 +68,8 @@ public class GalleryFragment extends Fragment {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                 tasksLayout.removeAllViews();
+                                boolean hasTasks = false;
+
                                 for (DataSnapshot taskSnapshot : dataSnapshot.getChildren()) {
                                     String description = taskSnapshot.child("description").getValue(String.class);
                                     String deadline = taskSnapshot.child("deadline").getValue(String.class);
@@ -66,9 +78,17 @@ public class GalleryFragment extends Fragment {
                                     String taskKey = taskSnapshot.getKey();
                                     if (description != null && deadline != null && status != null && assignedBy != null) {
                                         if (!status.equals("complete")) {
+                                            hasTasks = true;
                                             addTaskToLayout(description, deadline, status, assignedBy, taskKey, currentUsername);
                                         }
                                     }
+                                }
+
+                                // If no tasks are found, show the refresh button
+                                if (!hasTasks) {
+                                    refreshButton.setVisibility(View.VISIBLE);
+                                } else {
+                                    refreshButton.setVisibility(View.GONE);
                                 }
                             }
 
@@ -113,7 +133,6 @@ public class GalleryFragment extends Fragment {
                         if (task.isSuccessful()) {
                             // Remove the task from the layout
                             tasksLayout.removeView(taskView);
-
                         } else {
                             // Handle the failure to update the task status
                             Toast.makeText(getContext(), "Failed to mark task as complete", Toast.LENGTH_SHORT).show();

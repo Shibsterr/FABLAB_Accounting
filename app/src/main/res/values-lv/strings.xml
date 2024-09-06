@@ -150,6 +150,8 @@
     <string name="no_internet_connection">Nav interneta savienojuma</string>
     <string name="check_con">Pārbaudiet interneta savienojumu un mēģiniet vēlreiz</string>
     <string name="try_again">Mēģiniet vēlreiz</string>
+    <string name="urgency">Vai tas ir steidzami?</string>
+    <string name="birthday" >Dzimšanas diena</string>
 
 
 </resources>

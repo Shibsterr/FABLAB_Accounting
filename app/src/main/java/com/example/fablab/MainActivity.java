@@ -148,11 +148,13 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        // Apply theme and language before calling super.onCreate
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         String selectedTheme = sharedPreferences.getString("theme_preference", "Theme.FABLAB");
         int themeResourceId = getResources().getIdentifier(selectedTheme, "style", getPackageName());
         setTheme(themeResourceId);
 
+        // Set locale based on saved language preference
         String languageCode = sharedPreferences.getString("language_preference", "en");
         Locale locale = new Locale(languageCode);
         Locale.setDefault(locale);
@@ -161,8 +163,10 @@ public class MainActivity extends AppCompatActivity {
         Configuration configuration = new Configuration(resources.getConfiguration());
         configuration.setLocale(locale);
 
+        // Update the configuration and display metrics
         resources.updateConfiguration(configuration, resources.getDisplayMetrics());
 
+        Log.d("MainActivity", "Language Code: " + languageCode);
         super.onCreate(savedInstanceState);
 
         networkChangeReceiver = new NetworkChangeReceiver();
@@ -172,28 +176,8 @@ public class MainActivity extends AppCompatActivity {
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
 
-//        if (isNetworkAvailable()) {
-            Log.d("MainActivity", "Its true you have net");
-            setContentView(R.layout.fragment_home);
-//        } else {
-//            Log.d("MainActivity", "Its false no net");
-//            setContentView(R.layout.activity_main_no_internet);
-//
-//            refreshbtn = findViewById(R.id.try_again_button);
-//            progbar = findViewById(R.id.progressBar);
-//
-//            progbar.setVisibility(View.GONE);
-//            refreshbtn.setVisibility(View.VISIBLE);
-//
-//            refreshbtn.setOnClickListener(v -> {
-//                progbar.setVisibility(View.VISIBLE);
-//                refreshbtn.setVisibility(View.GONE);
-//                startActivity(new Intent(MainActivity.this, MainActivity.class));
-//                finish();
-//            });
-//        }
-
         if (currentUser == null) {
+            setContentView(R.layout.fragment_home);
             startActivity(new Intent(MainActivity.this, RegisterUser.class));
         } else {
             ActivityMainBinding binding = ActivityMainBinding.inflate(getLayoutInflater());
@@ -277,7 +261,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
     @Override
     protected void onStart(){
         IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
@@ -321,8 +304,5 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (networkChangeReceiver != null) {
-            unregisterReceiver(networkChangeReceiver);
-        }
     }
 }

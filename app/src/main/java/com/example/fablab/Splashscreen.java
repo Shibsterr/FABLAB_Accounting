@@ -1,9 +1,9 @@
 package com.example.fablab;
 
-import android.content.Context;
 import android.content.Intent;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
+import android.content.SharedPreferences;
+import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.animation.Animation;
@@ -13,6 +13,9 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.preference.PreferenceManager;
+
+import java.util.Locale;
 
 public class Splashscreen extends AppCompatActivity {
 
@@ -24,6 +27,7 @@ public class Splashscreen extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         setContentView(R.layout.activity_splashscreen);
 
         imageView = findViewById(R.id.fablablogo);
@@ -36,6 +40,20 @@ public class Splashscreen extends AppCompatActivity {
         myhandler.postDelayed(new Runnable() {
             @Override
             public void run() {
+
+                // Set locale based on saved language preference
+                String languageCode = sharedPreferences.getString("language_preference", "en");
+                Locale locale = new Locale(languageCode);
+                Locale.setDefault(locale);
+
+                Resources resources = getResources();
+                Configuration configuration = new Configuration(resources.getConfiguration());
+                configuration.setLocale(locale);
+
+                // Update the configuration and display metrics
+                resources.updateConfiguration(configuration, resources.getDisplayMetrics());
+
+//                Log.d("MainActivity", "Language Code: " + languageCode);
 //                if(isNetworkAvailable()){       //if connection is true then there is a connection
                     startActivity(new Intent(Splashscreen.this, MainActivity.class));
                     finish();
@@ -66,10 +84,10 @@ public class Splashscreen extends AppCompatActivity {
         },2000);
     }
 
-    private boolean isNetworkAvailable() {
-        ConnectivityManager connectivityManager
-                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetworkInfo = connectivityManager != null ? connectivityManager.getActiveNetworkInfo() : null;
-        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
-    }
+//    private boolean isNetworkAvailable() {
+//        ConnectivityManager connectivityManager
+//                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+//        NetworkInfo activeNetworkInfo = connectivityManager != null ? connectivityManager.getActiveNetworkInfo() : null;
+//        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+//    }
 }

@@ -34,6 +34,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 
         // Set up language preference
         ListPreference languagePreference = findPreference("language_preference");
+
         if (languagePreference != null) {
             CharSequence[] languageEntries = {"English", "Latvian"};
             CharSequence[] languageValues = {"en", "lv"};
@@ -43,6 +44,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
             // Set the summary of the language preference to the current language
             languagePreference.setSummaryProvider(preference -> {
                 String languageValue = sharedPreferences.getString("language_preference", "en");
+                Log.d("LanguagePreference","saved language preference: "+languageValue);
                 return languageValue.equals("en") ? "English" : "Latvian";
             });
 
@@ -115,7 +117,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
             Resources newResources = context.getResources();
             Configuration newConfiguration = new Configuration(newResources.getConfiguration());
             newConfiguration.setLocale(locale);
-            getResources().updateConfiguration(newConfiguration, newResources.getDisplayMetrics());
+            resources.updateConfiguration(newConfiguration, newResources.getDisplayMetrics());
         }
     }
 

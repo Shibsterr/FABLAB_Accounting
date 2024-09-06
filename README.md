@@ -27,7 +27,7 @@
     - [x] Upon going below minimum sends the user to gmail and makes them send an email to request new stock
 - [x] Make the buttons auto adjust depending on screen size
 - [x] Add a forgot password button to login screen
-- [ ] Add certain screens if somethings missing (~~No Internet connection~~, No Equipment to show)
+- [ ] Add certain screens if somethings missing (~~No Internet connection~~, ~~No Equipment to show~~)
     - [x] Make it also check ur mobile data. 
     - [ ] Screens that say if there are no tasks also add a loading screen when you open the app to hide the loading data
 - [x] Ability to add/plan events inside a calendar as an user / or assign tasks as a worker to another worker
@@ -50,10 +50,15 @@
   - [x] Password checker (8 characters, capital letter, symbols)
 - [x] Add a QR code checker where it checks if its a valid code otherwise repeat the scan until it scans a correct code (by pattern)
 - [x] Date of birth picker during register
-- [ ] Multiple languages (en,lv)
-- [ ] Loading screens
 - [x] Internet checker for every page
-- [ ] 
+
+- [x] Multiple languages (en,lv)
+- [x] No tasks screen with a refresh button
+- [ ] Calendar that allows u to "sign up"
+- [ ] Loading screens
+- [x] Update the home fragment
+- - [x] Update the station showing animation
+
 
 ## What do you need for Firebase:
 - [ ] Firebase Storage

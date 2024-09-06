@@ -11,26 +11,38 @@
         android:orientation="vertical"
         android:padding="16dp">
 
+        <!-- Title -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/assign_task"
-            android:textSize="20sp"
+            android:textSize="22sp"
             android:textStyle="bold"
-            android:layout_marginBottom="16dp"/>
+            android:layout_marginBottom="24dp"/>
 
+        <!-- Spinner for selecting user -->
         <Spinner
             android:id="@+id/spinnerUsers"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/select_user"
-            android:layout_marginBottom="16dp"/>
+            android:layout_marginBottom="24dp"/>
 
+        <!-- Date Picker -->
         <DatePicker
             android:id="@+id/datePicker"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"/>
+            android:layout_marginBottom="24dp"/>
+
+        <!-- Urgency Radio Group -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/urgency"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="8dp"/>
 
         <RadioGroup
             android:id="@+id/radioGroupUrgency"
@@ -49,8 +61,17 @@
                 android:id="@+id/radioButtonNotUrgent"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/not_urgent"/>
+                android:text="@string/not_urgent" />
         </RadioGroup>
+
+        <!-- Task Description -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/task_description"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="8dp"/>
 
         <EditText
             android:id="@+id/editTextDescription"
@@ -58,15 +79,19 @@
             android:layout_height="wrap_content"
             android:hint="@string/task_description"
             android:inputType="textMultiLine"
-            android:minLines="3"
+            android:minLines="4"
             android:gravity="top"
-            android:layout_marginBottom="16dp"/>
+            android:layout_marginBottom="24dp"
+            android:background="@drawable/edit_text_background"/>
 
+        <!-- Assign Task Button -->
         <Button
             android:id="@+id/buttonAssignTask"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/assign_task"/>
+            android:text="@string/assign_task"
+            android:textColor="@android:color/white"
+            android:textSize="16sp"/>
 
     </LinearLayout>
 
