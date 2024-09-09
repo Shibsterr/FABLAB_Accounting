@@ -48,7 +48,7 @@ public class HomeFragment extends Fragment {
 
     private DatabaseReference databaseReference;
     private Button eventPage;
-    private Button hidingButton,calbtn;
+    private Button hidingButton, calbtn;
     private LinearLayout properLayout;
     private MaterialCalendarView calendarView;
     private List<String> stationsList;
@@ -101,7 +101,7 @@ public class HomeFragment extends Fragment {
         }
     }
 
-    private void toggleCalView(){
+    private void toggleCalView() {
         // Toggle calendarView
         if (calendarView.getVisibility() == View.VISIBLE) {
             calendarView.setVisibility(View.GONE);
@@ -109,12 +109,12 @@ public class HomeFragment extends Fragment {
             eventPage.setVisibility(View.GONE);
         } else {
             calendarView.setVisibility(View.VISIBLE);
-            expandLayout(calendarView); // Expand calendarViewe
+            expandLayout(calendarView); // Expand calendarView
             eventPage.setVisibility(View.VISIBLE);
         }
     }
 
-// Collapse and expand layout functions remain the same
+    // Collapse and expand layout functions remain the same
 
     private void setupCalendar() {
         calendarView.setOnDateChangedListener((widget, date, selected) -> {
@@ -141,13 +141,15 @@ public class HomeFragment extends Fragment {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     String station = snapshot.child("Name").getValue(String.class);
                     String description = snapshot.child("Description").getValue(String.class);
-                    int ID = snapshot.child("ID").getValue(Integer.class);
+                    Integer ID = snapshot.child("ID").getValue(Integer.class);
 
-                    stationsList.add(station);
-                    descriptionsList.add(description);
+                    if (station != null && description != null && ID != null) {
+                        stationsList.add(station);
+                        descriptionsList.add(description);
 
-                    createCardView(getContext(), properLayout, station, description, ID);
-                    createSpace(getContext(), properLayout);
+                        createCardView(getContext(), properLayout, station, description, ID);
+                        createSpace(getContext(), properLayout);
+                    }
                 }
             }
 
@@ -160,18 +162,20 @@ public class HomeFragment extends Fragment {
 
     private void loadEvents() {
         eventsDatabaseRef = FirebaseDatabase.getInstance().getReference().child("events");
-
         eventsDatabaseRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 eventsMap.clear();
 
                 for (DataSnapshot eventSnapshot : snapshot.getChildren()) {
-                    String date = eventSnapshot.child("date").getValue(String.class);
+                    String date = eventSnapshot.child("eventDate").getValue(String.class);
                     String description = eventSnapshot.child("description").getValue(String.class);
                     String status = eventSnapshot.child("status").getValue(String.class);
-                    Event event = new Event(date, description, status);
-                    eventsMap.put(date, event);
+
+                    if (date != null && description != null && status != null) {
+                        Event event = new Event(date, description, status);
+                        eventsMap.put(date, event);
+                    }
                 }
 
                 markEventsOnCalendar();
@@ -188,16 +192,23 @@ public class HomeFragment extends Fragment {
         calendarView.removeDecorators();
         for (Event event : eventsMap.values()) {
             CalendarDay calendarDay = parseDate(event.getDate());
-            calendarView.addDecorator(new EventDecorator(calendarDay, event.getStatus()));
+            if (calendarDay != null) {
+                calendarView.addDecorator(new EventDecorator(calendarDay, event.getStatus()));
+            }
         }
     }
 
     private CalendarDay parseDate(String date) {
-        String[] parts = date.split("-");
-        int year = Integer.parseInt(parts[0]);
-        int month = Integer.parseInt(parts[1]) - 1; // Calendar months are 0-based
-        int day = Integer.parseInt(parts[2]);
-        return CalendarDay.from(year, month, day);
+        try {
+            String[] parts = date.split("-");
+            int year = Integer.parseInt(parts[0]);
+            int month = Integer.parseInt(parts[1]) - 1; // Calendar months are 0-based
+            int day = Integer.parseInt(parts[2]);
+            return CalendarDay.from(year, month, day);
+        } catch (Exception e) {
+            Log.e("HomeFragment", "Date parsing error: " + e.getMessage());
+            return null;
+        }
     }
 
     private void displayEventsForDate(CalendarDay date) {
