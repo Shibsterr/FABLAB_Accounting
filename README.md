@@ -51,10 +51,13 @@
 - [x] Add a QR code checker where it checks if its a valid code otherwise repeat the scan until it scans a correct code (by pattern)
 - [x] Date of birth picker during register
 - [x] Internet checker for every page
-
 - [x] Multiple languages (en,lv)
 - [x] No tasks screen with a refresh button
+
 - [ ] Calendar that allows u to "sign up"
+- - [ ] Make it so that admins and workers can "accept" events before letting them show up as to make sure they arent any overlaps
+- - [ ] Add more statuses for the events
+- - [ ] Make them show on the calendar
 - [ ] Loading screens
 - [x] Update the home fragment
 - - [x] Update the station showing animation

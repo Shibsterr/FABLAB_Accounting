@@ -15,16 +15,16 @@
         <item>Consumable</item>
     </string-array>
 
-        <string-array name="units_list_cons">
-            <item>gb (Gabali)</item>
-            <item>metri</item>
-            <item>g</item>
-            <item>kg</item>
-            <item>l</item>
-        </string-array>
+    <string-array name="units_list_cons">
+        <item>Pieces</item>
+        <item>meters</item>
+        <item>g</item>
+        <item>kg</item>
+        <item>l</item>
+    </string-array>
 
         <string-array name="unit_list_assets">
-            <item>gb (Gabali)</item>
+            <item>Pieces</item>
         </string-array>
 
         <string-array name="theme_entries">

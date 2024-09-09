@@ -13,7 +13,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -34,27 +33,28 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-
-import org.naishadhparmar.zcustomcalendar.ZCustomCalendar;
+import com.prolificinteractive.materialcalendarview.CalendarDay;
+import com.prolificinteractive.materialcalendarview.DayViewDecorator;
+import com.prolificinteractive.materialcalendarview.DayViewFacade;
+import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
+import com.prolificinteractive.materialcalendarview.spans.DotSpan;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
-
 public class HomeFragment extends Fragment {
 
-    private ZCustomCalendar customCalendar;
-    private WebView mGoogleCalendarWebView;
     private DatabaseReference databaseReference;
     private Button eventPage;
-    private Button hidingButton;
+    private Button hidingButton,calbtn;
     private LinearLayout properLayout;
-    private LinearLayout eventDetailsLayout;
+    private MaterialCalendarView calendarView;
     private List<String> stationsList;
     private List<String> descriptionsList;
     private DatabaseReference eventsDatabaseRef;
+    private Map<String, Event> eventsMap = new HashMap<>();
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -63,10 +63,10 @@ public class HomeFragment extends Fragment {
 
         // Initialize views
         hidingButton = view.findViewById(R.id.hiding_button);
-//        mGoogleCalendarWebView = view.findViewById(R.id.google_calendar_webview);
         eventPage = view.findViewById(R.id.event_page_button);
         properLayout = view.findViewById(R.id.properLayout);
-        eventDetailsLayout = view.findViewById(R.id.event_details_layout);
+        calbtn = view.findViewById(R.id.calendar_button);
+        calendarView = view.findViewById(R.id.calendarView); // CalendarView reference
 
         // Initialize lists
         stationsList = new ArrayList<>();
@@ -75,15 +75,14 @@ public class HomeFragment extends Fragment {
         // Initialize Firebase Database reference
         eventsDatabaseRef = FirebaseDatabase.getInstance().getReference().child("events");
 
-        // Initialize ZCustomCalendar
-        customCalendar = view.findViewById(R.id.custom_calendar);
-        setupCalendar();
-
         // Set up button click listeners
-        hidingButton.setOnClickListener(v -> toggleProperLayout());
+        calbtn.setOnClickListener(v -> toggleCalView());
+        hidingButton.setOnClickListener(v -> toggleViews()); // Updated to toggle views including calendar
         eventPage.setOnClickListener(v -> openNewEventActivity());
-        view.findViewById(R.id.calendar_button).setOnClickListener(v -> loadGoogleCalendar());
         view.findViewById(R.id.stock_button).setOnClickListener(v -> Navigation.findNavController(v).navigate(R.id.equipmentFragment));
+
+        // Set up calendar
+        setupCalendar();
 
         // Load stations from Firebase
         loadStations();
@@ -91,70 +90,45 @@ public class HomeFragment extends Fragment {
         return view;
     }
 
+    // Method to toggle both properLayout and calendarView visibility
+    private void toggleViews() {
+        // Toggle properLayout
+        if (properLayout.getVisibility() == View.VISIBLE) {
+            collapseLayout(properLayout);
+        } else {
+            properLayout.setVisibility(View.VISIBLE);
+            expandLayout(properLayout);
+        }
+    }
+
+    private void toggleCalView(){
+        // Toggle calendarView
+        if (calendarView.getVisibility() == View.VISIBLE) {
+            calendarView.setVisibility(View.GONE);
+            collapseLayout(calendarView); // Collapse calendarView
+            eventPage.setVisibility(View.GONE);
+        } else {
+            calendarView.setVisibility(View.VISIBLE);
+            expandLayout(calendarView); // Expand calendarViewe
+            eventPage.setVisibility(View.VISIBLE);
+        }
+    }
+
+// Collapse and expand layout functions remain the same
+
     private void setupCalendar() {
-        customCalendar.setOnDateSelectedListener(date -> {
+        calendarView.setOnDateChangedListener((widget, date, selected) -> {
             // Display events for the selected date
             displayEventsForDate(date);
         });
 
-        customCalendar.setOnDateClickListener(date -> {
-            // Show event details if clicking on an absent day
-            if (isDateAbsent(date)) {
-                showEventDetails(date);
-            }
-        });
-    }
-
-    private boolean isDateAbsent(String date) {
-        // Implement logic to check if the date is marked as absent
-        return true; // Placeholder; adjust according to your data
-    }
-
-    private void displayEventsForDate(String date) {
-        eventDetailsLayout.removeAllViews(); // Clear previous details
-
-        eventsDatabaseRef.child(date).get().addOnCompleteListener(task -> {
-            if (task.isSuccessful() && task.getResult().exists()) {
-                Map<String, Object> events = (Map<String, Object>) task.getResult().getValue();
-                if (events != null) {
-                    for (Map.Entry<String, Object> entry : events.entrySet()) {
-                        String eventDetails = entry.getValue().toString();
-                        TextView eventView = new TextView(getContext());
-                        eventView.setText(eventDetails);
-                        eventDetailsLayout.addView(eventView);
-                    }
-                }
-            }
-        });
-
-        // Show event details layout
-        eventDetailsLayout.setVisibility(View.VISIBLE);
-    }
-
-    private void showEventDetails(String date) {
-        // Implement logic to show event details for the absent date
-        eventDetailsLayout.setVisibility(View.VISIBLE);
+        // Load events and mark calendar
+        loadEvents();
     }
 
     private void openNewEventActivity() {
         Intent intent = new Intent(getContext(), NewEvent.class);
         startActivity(intent);
-    }
-
-    private void loadGoogleCalendar() {
-        if (mGoogleCalendarWebView.getVisibility() == View.VISIBLE) {
-            Log.d("HomeFragment", "Calendar should be hidden");
-            eventPage.setVisibility(View.GONE);
-            mGoogleCalendarWebView.setVisibility(View.GONE);
-        } else {
-            Log.d("HomeFragment", "Calendar should be visible");
-            mGoogleCalendarWebView.setVisibility(View.VISIBLE);
-            eventPage.setVisibility(View.VISIBLE);
-
-            // Load the public calendar URL
-            String calendarUrl = "https://calendar.google.com/calendar/u/0?cid=ZmUxMTMwMDhhYzQyYjgyYTRmMzU3MzIyOGU3ODdkNzVjYzU1MjBmZGE5OGMyMDQ0OGRjMzUzMDc1Nzg0NzhjNkBncm91cC5jYWxlbmRhci5nb29nbGUuY29t";
-            mGoogleCalendarWebView.loadUrl(calendarUrl);
-        }
     }
 
     private void loadStations() {
@@ -179,9 +153,66 @@ public class HomeFragment extends Fragment {
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                Log.d("Homefragment", "Evil database not working");
+                Log.d("HomeFragment", "Failed to load stations: " + databaseError.getMessage());
             }
         });
+    }
+
+    private void loadEvents() {
+        eventsDatabaseRef = FirebaseDatabase.getInstance().getReference().child("events");
+
+        eventsDatabaseRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                eventsMap.clear();
+
+                for (DataSnapshot eventSnapshot : snapshot.getChildren()) {
+                    String date = eventSnapshot.child("date").getValue(String.class);
+                    String description = eventSnapshot.child("description").getValue(String.class);
+                    String status = eventSnapshot.child("status").getValue(String.class);
+                    Event event = new Event(date, description, status);
+                    eventsMap.put(date, event);
+                }
+
+                markEventsOnCalendar();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.d("HomeFragment", "Failed to load events: " + error.getMessage());
+            }
+        });
+    }
+
+    private void markEventsOnCalendar() {
+        calendarView.removeDecorators();
+        for (Event event : eventsMap.values()) {
+            CalendarDay calendarDay = parseDate(event.getDate());
+            calendarView.addDecorator(new EventDecorator(calendarDay, event.getStatus()));
+        }
+    }
+
+    private CalendarDay parseDate(String date) {
+        String[] parts = date.split("-");
+        int year = Integer.parseInt(parts[0]);
+        int month = Integer.parseInt(parts[1]) - 1; // Calendar months are 0-based
+        int day = Integer.parseInt(parts[2]);
+        return CalendarDay.from(year, month, day);
+    }
+
+    private void displayEventsForDate(CalendarDay date) {
+        String key = date.toString();
+        Event event = eventsMap.get(key);
+        if (event != null) {
+            // Display event details
+            properLayout.removeAllViews();
+            TextView eventDetails = new TextView(getContext());
+            eventDetails.setText(String.format("Description: %s\nStatus: %s", event.getDescription(), event.getStatus()));
+            properLayout.addView(eventDetails);
+            properLayout.setVisibility(View.VISIBLE);
+        } else {
+            properLayout.setVisibility(View.GONE);
+        }
     }
 
     private void createCardView(Context context, LinearLayout parent, String title, String description, int ID) {
@@ -232,15 +263,6 @@ public class HomeFragment extends Fragment {
         parent.addView(space);
     }
 
-    private void toggleProperLayout() {
-        if (properLayout.getVisibility() == View.VISIBLE) {
-            collapseLayout(properLayout);
-        } else {
-            properLayout.setVisibility(View.VISIBLE);
-            expandLayout(properLayout);
-        }
-    }
-
     private void collapseLayout(final View view) {
         final int initialHeight = view.getMeasuredHeight();
         ValueAnimator heightAnimator = ValueAnimator.ofInt(initialHeight, 0);
@@ -277,5 +299,61 @@ public class HomeFragment extends Fragment {
             view.setLayoutParams(layoutParams);
         });
         heightAnimator.start();
+    }
+
+    private class EventDecorator implements DayViewDecorator {
+        private final CalendarDay date;
+        private final String status;
+
+        public EventDecorator(CalendarDay date, String status) {
+            this.date = date;
+            this.status = status;
+        }
+
+        @Override
+        public boolean shouldDecorate(CalendarDay day) {
+            return day.equals(date);
+        }
+
+        @Override
+        public void decorate(DayViewFacade view) {
+            int color;
+            switch (status) {
+                case "Accepted":
+                    color = 0xFF00FF00; // Green
+                    break;
+                case "Declined":
+                    color = 0xFFFF0000; // Red
+                    break;
+                default:
+                    color = 0xFFFFA500; // Orange for Pending
+                    break;
+            }
+            view.addSpan(new DotSpan(10, color));
+        }
+    }
+
+    private static class Event {
+        private final String date;
+        private final String description;
+        private final String status;
+
+        public Event(String date, String description, String status) {
+            this.date = date;
+            this.description = description;
+            this.status = status;
+        }
+
+        public String getDate() {
+            return date;
+        }
+
+        public String getDescription() {
+            return description;
+        }
+
+        public String getStatus() {
+            return status;
+        }
     }
 }

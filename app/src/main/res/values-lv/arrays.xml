@@ -11,8 +11,8 @@
     </string-array>
 
     <string-array name="type_list">
-        <item>Asset</item>
-        <item>Consumable</item>
+        <item>Aktīvu</item>
+        <item>Patērējams</item>
     </string-array>
 
         <string-array name="units_list_cons">

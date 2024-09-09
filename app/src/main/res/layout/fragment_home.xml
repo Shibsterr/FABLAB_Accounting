@@ -33,10 +33,11 @@
             android:layout_marginBottom="16dp" />
 
         <!-- Google Calendar WebView -->
-        <org.naishadhparmar.zcustomcalendar.CustomCalendar
-            android:id="@+id/custom_calendar"
+        <com.prolificinteractive.materialcalendarview.MaterialCalendarView
+            android:id="@+id/calendarView"
             android:layout_width="match_parent"
-            android:layout_height="300dp"/>
+            android:layout_height="400dp"
+            android:visibility="gone"/>
 
         <!-- Event Page Button -->
         <Button
@@ -45,9 +46,9 @@
             android:layout_height="wrap_content"
             android:text="@string/new_event"
             android:background="@drawable/event_page_button"
-            android:visibility="visible"
-            android:layout_marginBottom="16dp"
-            android:layout_marginTop="8dp"/>
+            android:visibility="gone"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp" />
 
         <!-- Station Button -->
         <Button
@@ -57,7 +58,6 @@
             android:text="@string/stations"
             android:background="@drawable/station_rounded_button"
             android:textStyle="bold"
-            android:layout_marginTop="16dp"
             android:layout_marginBottom="16dp" />
 
         <!-- Proper Layout for Stations -->
@@ -78,6 +78,7 @@
             android:background="@drawable/stock_button"
             android:textStyle="bold"
             android:layout_marginBottom="16dp" />
+
 
     </LinearLayout>
 
