@@ -18,9 +18,9 @@ import com.google.firebase.database.FirebaseDatabase;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 public class NewEvent extends AppCompatActivity {
-
     private EditText titleText, descriptionText, numberOfPeopleText;
     private TextView dateText, startTimeText, endTimeText;
     private Button submitButton;
@@ -78,18 +78,21 @@ public class NewEvent extends AppCompatActivity {
                 return;
             }
 
-            // Create event object
+            // Create event object with a unique ID
+            String eventId = UUID.randomUUID().toString();
             Map<String, Object> eventMap = new HashMap<>();
+            eventMap.put("eventId", eventId);
             eventMap.put("title", title);
             eventMap.put("description", description);
             eventMap.put("eventDate", eventDate);
             eventMap.put("startTime", startTime);
             eventMap.put("endTime", endTime);
             eventMap.put("numberOfPeople", numberOfPeople);
+            eventMap.put("status", "Pending");
             eventMap.put("userId", currentUser.getUid());
 
-            // Push event to Firebase
-            eventsRef.push().setValue(eventMap)
+            // Save event under events/date/userId/eventId
+            eventsRef.child(eventDate).child(currentUser.getUid()).child(eventId).setValue(eventMap)
                     .addOnSuccessListener(aVoid -> {
                         Toast.makeText(NewEvent.this, "Event added successfully", Toast.LENGTH_SHORT).show();
                         finish(); // Close activity after successful submission
@@ -105,11 +108,16 @@ public class NewEvent extends AppCompatActivity {
         int month = calendar.get(Calendar.MONTH);
         int day = calendar.get(Calendar.DAY_OF_MONTH);
 
+        // Set the minimum date to today
+        Calendar minDate = Calendar.getInstance();
         DatePickerDialog datePickerDialog = new DatePickerDialog(
                 this, (view, selectedYear, selectedMonth, selectedDay) -> {
             eventDate = selectedYear + "-" + (selectedMonth + 1) + "-" + selectedDay;
             dateText.setText(eventDate);
         }, year, month, day);
+
+        // Ensure the user cannot select a past date
+        datePickerDialog.getDatePicker().setMinDate(calendar.getTimeInMillis());
         datePickerDialog.show();
     }
 

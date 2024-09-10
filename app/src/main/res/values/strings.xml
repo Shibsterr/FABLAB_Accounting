@@ -148,5 +148,7 @@
     <string name="check_con">Check your Internet Connection and Try Again</string>
     <string name="try_again">Try Again</string>
     <string name="urgency">Is it urgent?</string>
-    <string name="birthday" >Birthday</string>
+    <string name="birthday">Birthday</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

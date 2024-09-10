@@ -22,10 +22,12 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
 import com.example.fablab.NewEvent;
 import com.example.fablab.R;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -34,27 +36,27 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
-import com.prolificinteractive.materialcalendarview.DayViewDecorator;
-import com.prolificinteractive.materialcalendarview.DayViewFacade;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
-import com.prolificinteractive.materialcalendarview.spans.DotSpan;
+import com.prolificinteractive.materialcalendarview.OnDateSelectedListener;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 public class HomeFragment extends Fragment {
 
     private DatabaseReference databaseReference;
     private Button eventPage;
-    private Button hidingButton, calbtn;
+    private Button hidingButton, calbtn,stockbtn;
     private LinearLayout properLayout;
     private MaterialCalendarView calendarView;
     private List<String> stationsList;
     private List<String> descriptionsList;
     private DatabaseReference eventsDatabaseRef;
-    private Map<String, Event> eventsMap = new HashMap<>();
+    private Map<String, List<Event>> eventsMap = new HashMap<>();
+    private String userStatus;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -67,6 +69,8 @@ public class HomeFragment extends Fragment {
         properLayout = view.findViewById(R.id.properLayout);
         calbtn = view.findViewById(R.id.calendar_button);
         calendarView = view.findViewById(R.id.calendarView); // CalendarView reference
+        stockbtn = view.findViewById(R.id.stock_button);
+
 
         // Initialize lists
         stationsList = new ArrayList<>();
@@ -79,13 +83,28 @@ public class HomeFragment extends Fragment {
         calbtn.setOnClickListener(v -> toggleCalView());
         hidingButton.setOnClickListener(v -> toggleViews()); // Updated to toggle views including calendar
         eventPage.setOnClickListener(v -> openNewEventActivity());
-        view.findViewById(R.id.stock_button).setOnClickListener(v -> Navigation.findNavController(v).navigate(R.id.equipmentFragment));
+        stockbtn.setOnClickListener(v -> Navigation.findNavController(v).navigate(R.id.equipmentFragment));
 
         // Set up calendar
         setupCalendar();
 
         // Load stations from Firebase
         loadStations();
+
+        // Check user status and set up the UI
+        checkUserStatus();
+        calendarView.setOnDateChangedListener(new OnDateSelectedListener() {
+            @Override
+            public void onDateSelected(@NonNull MaterialCalendarView widget, @NonNull CalendarDay date, boolean selected) {
+                List<Event> eventsForDay = getEventsForDay(date);
+
+                if (eventsForDay != null && !eventsForDay.isEmpty()) {
+                    // Show dialog with events
+                    EventsDialogFragment eventsDialogFragment = EventsDialogFragment.newInstance(eventsForDay);
+                    eventsDialogFragment.show(getChildFragmentManager(), "eventsDialog");
+                }
+            }
+        });
 
         return view;
     }
@@ -119,7 +138,7 @@ public class HomeFragment extends Fragment {
     private void setupCalendar() {
         calendarView.setOnDateChangedListener((widget, date, selected) -> {
             // Display events for the selected date
-            displayEventsForDate(date);
+            getEventsForDay(date);
         });
 
         // Load events and mark calendar
@@ -160,75 +179,8 @@ public class HomeFragment extends Fragment {
         });
     }
 
-    private void loadEvents() {
-        eventsDatabaseRef = FirebaseDatabase.getInstance().getReference().child("events");
-        eventsDatabaseRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                eventsMap.clear();
-
-                for (DataSnapshot eventSnapshot : snapshot.getChildren()) {
-                    String date = eventSnapshot.child("eventDate").getValue(String.class);
-                    String description = eventSnapshot.child("description").getValue(String.class);
-                    String status = eventSnapshot.child("status").getValue(String.class);
-
-                    if (date != null && description != null && status != null) {
-                        Event event = new Event(date, description, status);
-                        eventsMap.put(date, event);
-                    }
-                }
-
-                markEventsOnCalendar();
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                Log.d("HomeFragment", "Failed to load events: " + error.getMessage());
-            }
-        });
-    }
-
-    private void markEventsOnCalendar() {
-        calendarView.removeDecorators();
-        for (Event event : eventsMap.values()) {
-            CalendarDay calendarDay = parseDate(event.getDate());
-            if (calendarDay != null) {
-                calendarView.addDecorator(new EventDecorator(calendarDay, event.getStatus()));
-            }
-        }
-    }
-
-    private CalendarDay parseDate(String date) {
-        try {
-            String[] parts = date.split("-");
-            int year = Integer.parseInt(parts[0]);
-            int month = Integer.parseInt(parts[1]) - 1; // Calendar months are 0-based
-            int day = Integer.parseInt(parts[2]);
-            return CalendarDay.from(year, month, day);
-        } catch (Exception e) {
-            Log.e("HomeFragment", "Date parsing error: " + e.getMessage());
-            return null;
-        }
-    }
-
-    private void displayEventsForDate(CalendarDay date) {
-        String key = date.toString();
-        Event event = eventsMap.get(key);
-        if (event != null) {
-            // Display event details
-            properLayout.removeAllViews();
-            TextView eventDetails = new TextView(getContext());
-            eventDetails.setText(String.format("Description: %s\nStatus: %s", event.getDescription(), event.getStatus()));
-            properLayout.addView(eventDetails);
-            properLayout.setVisibility(View.VISIBLE);
-        } else {
-            properLayout.setVisibility(View.GONE);
-        }
-    }
-
     private void createCardView(Context context, LinearLayout parent, String title, String description, int ID) {
         CardView cardView = new CardView(context);
-        cardView.setCardElevation(4);
 
         LinearLayout innerLayout = new LinearLayout(context);
         innerLayout.setOrientation(LinearLayout.VERTICAL);
@@ -265,6 +217,53 @@ public class HomeFragment extends Fragment {
 
         // Add to parent layout
         cardView.addView(innerLayout);
+
+        cardView.setOnClickListener(v -> {
+            // Retrieve the NavController associated with the activity
+            NavController navController = Navigation.findNavController(v);
+
+            // Check if the title is not null or empty
+            if (title != null && !title.isEmpty()) {
+                databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        // Check if the dataSnapshot is not empty
+                        if (dataSnapshot.exists()) {
+                            for (DataSnapshot stationSnapshot : dataSnapshot.getChildren()) {
+                                // Retrieve the name of the station
+                                String stationName = stationSnapshot.child("Name").getValue(String.class);
+
+                                // Check if the name of the station matches the title of the clicked card view
+                                if (stationName != null && stationName.equals(title)) {
+                                    // If a match is found, retrieve the name of the node (station) where the data is located
+                                    String stationNodeName = stationSnapshot.getKey();
+
+                                    // Navigate to the EquipmentListFragment with station node name as argument
+                                    Bundle bundle = new Bundle();
+                                    bundle.putString("stationNodeName", stationNodeName);
+                                    navController.navigate(R.id.equipmentListFragment, bundle);
+                                    return; // Exit the loop once a match is found
+                                }
+                            }
+                            // Handle the case where no matching station is found
+                            Log.d("StationNotFound", "No matching station found for title: " + title);
+                        } else {
+                            // Handle the case where no data is available in the dataSnapshot
+                            Log.d("EmptyDataSnapshot", "No data available in the dataSnapshot");
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        // Handle database error
+                        Log.e("DatabaseError", "Error: " + error.getMessage());
+                    }
+                });
+            } else {
+                // Handle the case where title is null or empty
+                Log.d("InvalidTitle", "Invalid title: " + title);
+            }
+        });
         parent.addView(cardView);
     }
 
@@ -312,59 +311,139 @@ public class HomeFragment extends Fragment {
         heightAnimator.start();
     }
 
-    private class EventDecorator implements DayViewDecorator {
-        private final CalendarDay date;
-        private final String status;
+    private void checkUserStatus() {
+        DatabaseReference userRef = FirebaseDatabase.getInstance().getReference()
+                .child("users")
+                .child(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid());
 
-        public EventDecorator(CalendarDay date, String status) {
-            this.date = date;
-            this.status = status;
-        }
+        userRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                userStatus = dataSnapshot.child("Statuss").getValue(String.class);
+                updateButtonVisibility();
+            }
 
-        @Override
-        public boolean shouldDecorate(CalendarDay day) {
-            return day.equals(date);
-        }
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.d("HomeFragment", "ERROR WITH USER STATUS");
+            }
+        });
+    }
 
-        @Override
-        public void decorate(DayViewFacade view) {
-            int color;
-            switch (status) {
-                case "Accepted":
-                    color = 0xFF00FF00; // Green
+    private void updateButtonVisibility() {
+        if (userStatus != null) {
+            switch (userStatus) {
+                case "Admin":
+                    calbtn.setVisibility(View.VISIBLE);
+                    stockbtn.setVisibility(View.VISIBLE);
+                    hidingButton.setVisibility(View.VISIBLE);
                     break;
-                case "Declined":
-                    color = 0xFFFF0000; // Red
+                case "Darbinieks":
+                    calbtn.setVisibility(View.VISIBLE);
+                    stockbtn.setVisibility(View.VISIBLE);
+                    hidingButton.setVisibility(View.GONE);
+                    break;
+                case "Lietotājs":
+                    calbtn.setVisibility(View.VISIBLE);
+                    stockbtn.setVisibility(View.GONE);
+                    hidingButton.setVisibility(View.VISIBLE);
                     break;
                 default:
-                    color = 0xFFFFA500; // Orange for Pending
+                    calbtn.setVisibility(View.GONE);
+                    stockbtn.setVisibility(View.GONE);
+                    hidingButton.setVisibility(View.GONE);
                     break;
             }
-            view.addSpan(new DotSpan(10, color));
         }
     }
 
-    private static class Event {
-        private final String date;
-        private final String description;
-        private final String status;
 
-        public Event(String date, String description, String status) {
-            this.date = date;
-            this.description = description;
-            this.status = status;
-        }
 
-        public String getDate() {
-            return date;
-        }
+    private void loadEvents() {
+        eventsDatabaseRef = FirebaseDatabase.getInstance().getReference().child("events");
+        eventsDatabaseRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                eventsMap.clear(); // Clear existing events before loading new ones
 
-        public String getDescription() {
-            return description;
-        }
+                // Iterate through each date node
+                for (DataSnapshot dateSnapshot : snapshot.getChildren()) {
+                    String date = dateSnapshot.getKey(); // Date node key
 
-        public String getStatus() {
-            return status;
+                    // Iterate through each user UID node under the date node
+                    for (DataSnapshot userSnapshot : dateSnapshot.getChildren()) {
+                        String userId = userSnapshot.getKey(); // User UID
+
+                        // Iterate through each event under the user UID node
+                        for (DataSnapshot eventSnapshot : userSnapshot.getChildren()) {
+                            String eventId = eventSnapshot.getKey(); // Event ID
+                            String title = eventSnapshot.child("title").getValue(String.class);
+                            String description = eventSnapshot.child("description").getValue(String.class);
+                            String startTime = eventSnapshot.child("startTime").getValue(String.class);
+                            String endTime = eventSnapshot.child("endTime").getValue(String.class);
+                            String numberOfPeople = eventSnapshot.child("numberOfPeople").getValue(String.class);
+                            String status = eventSnapshot.child("status").getValue(String.class);
+
+                            if (title != null && description != null && date != null && startTime != null && endTime != null && numberOfPeople != null && status != null && userId != null) {
+                                // Create the Event object with the new structure
+                                Event event = new Event(eventId, title, description, date, startTime, endTime, numberOfPeople, status, userId);
+
+                                // Add the event to the list of events for this date
+                                if (!eventsMap.containsKey(date)) {
+                                    eventsMap.put(date, new ArrayList<>());
+                                }
+                                eventsMap.get(date).add(event);
+                            }
+                        }
+                    }
+                }
+
+                markEventsOnCalendar(); // Mark the events on the calendar
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.d("HomeFragment", "Failed to load events: " + error.getMessage());
+            }
+        });
+    }
+    private void markEventsOnCalendar() {
+        calendarView.removeDecorators(); // Clear old decorators
+
+        // Iterate over the map
+        for (Map.Entry<String, List<Event>> entry : eventsMap.entrySet()) {
+            String dateString = entry.getKey();
+            List<Event> events = entry.getValue();
+
+            // Parse the date
+            CalendarDay calendarDay = parseDate(dateString);
+            if (calendarDay != null) {
+                // Add a decorator for each event
+                for (Event event : events) {
+                    calendarView.addDecorator(new EventDecorator(calendarDay, event.getStatus()));
+                }
+            }
         }
     }
+    private CalendarDay parseDate(String date) {
+        try {
+            String[] parts = date.split("-");
+            int year = Integer.parseInt(parts[0]);
+            int month = Integer.parseInt(parts[1]) - 1; // Calendar months are 0-based
+            int day = Integer.parseInt(parts[2]);
+            return CalendarDay.from(year, month, day);
+        } catch (Exception e) {
+            Log.e("HomeFragment", "Date parsing error: " + e.getMessage());
+            return null;
+        }
+    }
+    private List<Event> getEventsForDay(CalendarDay date) {
+        // Format date as "yyyy-MM-dd"
+        String dateKey = date.getYear() + "-" + (date.getMonth() + 1) + "-" + date.getDay();
+
+        // Return the list of events for the selected day, or an empty list if none
+        return eventsMap.getOrDefault(dateKey, new ArrayList<>());
+    }
+
+
 }
