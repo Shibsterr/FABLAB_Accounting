@@ -31,9 +31,9 @@
         <!-- Date Picker -->
         <DatePicker
             android:id="@+id/datePicker"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="24dp"/>
+            android:layout_marginBottom="24dp" />
 
         <!-- Urgency Radio Group -->
         <TextView
@@ -52,14 +52,14 @@
 
             <RadioButton
                 android:id="@+id/radioButtonUrgent"
-                android:layout_width="wrap_content"
+                android:layout_width="128dp"
                 android:layout_height="wrap_content"
-                android:text="@string/urgent"
-                android:checked="true"/>
+                android:checked="true"
+                android:text="@string/urgent" />
 
             <RadioButton
                 android:id="@+id/radioButtonNotUrgent"
-                android:layout_width="wrap_content"
+                android:layout_width="148dp"
                 android:layout_height="wrap_content"
                 android:text="@string/not_urgent" />
         </RadioGroup>
@@ -82,6 +82,8 @@
             android:minLines="4"
             android:gravity="top"
             android:layout_marginBottom="24dp"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
             android:background="@drawable/edit_text_background"/>
 
         <!-- Assign Task Button -->

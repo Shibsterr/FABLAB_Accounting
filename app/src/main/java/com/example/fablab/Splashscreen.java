@@ -52,34 +52,8 @@ public class Splashscreen extends AppCompatActivity {
 
                 // Update the configuration and display metrics
                 resources.updateConfiguration(configuration, resources.getDisplayMetrics());
-
-//                Log.d("MainActivity", "Language Code: " + languageCode);
-//                if(isNetworkAvailable()){       //if connection is true then there is a connection
                     startActivity(new Intent(Splashscreen.this, MainActivity.class));
                     finish();
-//                }else{ //else
-//                    Log.d("MainActivity","Its false no net");
-//                    // Inflate layout without internet connection
-//                    setContentView(R.layout.activity_main_no_internet); //no
-//
-//                    refreshbtn = findViewById(R.id.try_again_button);
-//                    progbar = findViewById(R.id.progressBar);
-//
-//                    progbar.setVisibility(View.INVISIBLE);
-//                    refreshbtn.setVisibility(View.VISIBLE);
-//
-//                    refreshbtn.setOnClickListener(v -> {
-//                        progbar.setVisibility(View.VISIBLE);
-//                        refreshbtn.setVisibility(View.INVISIBLE);
-//                        if(isNetworkAvailable()){
-//                            startActivity(new Intent(Splashscreen.this, MainActivity.class));
-//                            finish();
-//                        }else{
-//                            progbar.setVisibility(View.INVISIBLE);
-//                            refreshbtn.setVisibility(View.VISIBLE);
-//                        }
-//                    });
-//                }
             }
         },2000);
     }

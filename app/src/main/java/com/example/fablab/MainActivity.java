@@ -100,44 +100,6 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
 
-    private void addLogEntry(String data) {
-        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
-        String uid = currentUser.getUid();
-
-        DatabaseReference userRef = FirebaseDatabase.getInstance().getReference().child("users").child(uid);
-
-        userRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if (dataSnapshot.exists()) {
-                    String fullName = dataSnapshot.child("Vards un uzvards").getValue(String.class);
-                    String apraksts = "Noskanēja objektu";
-                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
-                    String dateTime = sdf.format(new Date());
-
-                    DatabaseReference logsRef = FirebaseDatabase.getInstance().getReference().child("Logs").child(dateTime);
-
-                    Map<String, Object> logEntry = new HashMap<>();
-                    logEntry.put("Priekšmeta kods", data);
-                    logEntry.put("Vārds uzvārds", fullName);
-                    logEntry.put("Epasts", currentUser.getEmail());
-                    logEntry.put("Laiks", dateTime);
-                    logEntry.put("Apraksts", apraksts);
-
-                    logsRef.setValue(logEntry)
-                            .addOnSuccessListener(aVoid -> Log.d("AddLogEntry", "Log entry added successfully"))
-                            .addOnFailureListener(e -> Log.e("AddLogEntry", "Error adding log entry", e));
-                } else {
-                    Log.e("AddLogEntry", "User data not found in Realtime Database");
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                Log.e("AddLogEntry", "Database error: " + databaseError.getMessage());
-            }
-        });
-    }
 
     private boolean isValidScan(String data) {
         return Pattern.matches(PATTERN_STRING, data) ||
@@ -262,14 +224,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onStart(){
+    protected void onStart() {
         IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
         registerReceiver(networkChangeReceiver, filter);
         super.onStart();
     }
 
     @Override
-    protected void onStop(){
+    protected void onStop() {
         unregisterReceiver(networkChangeReceiver);
         super.onStop();
     }
@@ -286,6 +248,16 @@ public class MainActivity extends AppCompatActivity {
         return NavigationUI.navigateUp(navController, mAppBarConfiguration) || super.onSupportNavigateUp();
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+    }
+
+    public boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager != null ? connectivityManager.getActiveNetworkInfo() : null;
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
     public void scanCode(MenuItem item) {
         ScanOptions options = new ScanOptions();
         options.setPrompt("Volume up to turn on flash");
@@ -295,14 +267,43 @@ public class MainActivity extends AppCompatActivity {
         barLauncher.launch(options);
     }
 
-    public boolean isNetworkAvailable() {
-        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetworkInfo = connectivityManager != null ? connectivityManager.getActiveNetworkInfo() : null;
-        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    private void addLogEntry(String data) {
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        String uid = currentUser.getUid();
+
+        DatabaseReference userRef = FirebaseDatabase.getInstance().getReference().child("users").child(uid);
+
+        userRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    String fullName = dataSnapshot.child("Vards un uzvards").getValue(String.class);
+                    String apraksts = "Noskanēja objektu";
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+                    String dateTime = sdf.format(new Date());
+
+                    DatabaseReference logsRef = FirebaseDatabase.getInstance().getReference().child("Logs").child(dateTime);
+
+                    Map<String, Object> logEntry = new HashMap<>();
+                    logEntry.put("Priekšmeta kods", data);
+                    logEntry.put("Vārds uzvārds", fullName);
+                    logEntry.put("Epasts", currentUser.getEmail());
+                    logEntry.put("Laiks", dateTime);
+                    logEntry.put("Apraksts", apraksts);
+
+                    logsRef.setValue(logEntry)
+                            .addOnSuccessListener(aVoid -> Log.d("AddLogEntry", "Log entry added successfully"))
+                            .addOnFailureListener(e -> Log.e("AddLogEntry", "Error adding log entry", e));
+                } else {
+                    Log.e("AddLogEntry", "User data not found in Realtime Database");
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.e("AddLogEntry", "Database error: " + databaseError.getMessage());
+            }
+        });
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-    }
 }

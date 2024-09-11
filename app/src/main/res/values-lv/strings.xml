@@ -24,7 +24,7 @@
 
     <string name="menu_home">Sākums</string>
     <string name="menu_equip">Jauns aprīkojums</string>
-    <string name="menu_assign">Uzdodiet uzdevumus</string>
+    <string name="menu_assign">Uzdot uzdevumu</string>
     <string name="menu_logs">Darbību žurnāls</string>
     <string name="menu_tasks">Uzdevumi</string>
     <string name="menu_report">Ziņojums</string>
@@ -152,6 +152,17 @@
     <string name="try_again">Mēģiniet vēlreiz</string>
     <string name="urgency">Vai tas ir steidzami?</string>
     <string name="birthday" >Dzimšanas diena</string>
+    <string name="add_event">Pievienot notikumu</string>
+    <string name="title">Nosaukums</string>
+    <string name="description">Apraksts</string>
+    <string name="pick_date">Izvēlieties datumu</string>
+    <string name="pick_start_time">Izvēlieties sākuma laiku</string>
+    <string name="pick_end_time">Izvēlieties beigu laiku</string>
+    <string name="number_of_people">Cilvēku skaits</string>
+    <string name="submit_event">Iesniegt</string>
+    <string name="accept">Accept</string>
+    <string name="decline">Decline</string>
+    <string name="finish">Finish</string>
 
 
 </resources>

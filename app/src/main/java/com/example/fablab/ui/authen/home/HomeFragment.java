@@ -37,7 +37,6 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
-import com.prolificinteractive.materialcalendarview.OnDateSelectedListener;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -55,7 +54,7 @@ public class HomeFragment extends Fragment {
     private List<String> stationsList;
     private List<String> descriptionsList;
     private DatabaseReference eventsDatabaseRef;
-    private Map<String, List<Event>> eventsMap = new HashMap<>();
+    private final Map<String, List<Event>> eventsMap = new HashMap<>();
     private String userStatus;
 
     @Override
@@ -93,23 +92,18 @@ public class HomeFragment extends Fragment {
 
         // Check user status and set up the UI
         checkUserStatus();
-        calendarView.setOnDateChangedListener(new OnDateSelectedListener() {
-            @Override
-            public void onDateSelected(@NonNull MaterialCalendarView widget, @NonNull CalendarDay date, boolean selected) {
-                List<Event> eventsForDay = getEventsForDay(date);
+        calendarView.setOnDateChangedListener((widget, date, selected) -> {
+            List<Event> eventsForDay = getEventsForDay(date);
 
-                if (eventsForDay != null && !eventsForDay.isEmpty()) {
-                    // Show dialog with events
-                    EventsDialogFragment eventsDialogFragment = EventsDialogFragment.newInstance(eventsForDay);
-                    eventsDialogFragment.show(getChildFragmentManager(), "eventsDialog");
-                }
+            if (eventsForDay != null && !eventsForDay.isEmpty()) {
+                // Show dialog with events
+                EventsDialogFragment eventsDialogFragment = EventsDialogFragment.newInstance(eventsForDay);
+                eventsDialogFragment.show(getChildFragmentManager(), "eventsDialog");
             }
         });
 
         return view;
     }
-
-    // Method to toggle both properLayout and calendarView visibility
     private void toggleViews() {
         // Toggle properLayout
         if (properLayout.getVisibility() == View.VISIBLE) {
@@ -119,7 +113,6 @@ public class HomeFragment extends Fragment {
             expandLayout(properLayout);
         }
     }
-
     private void toggleCalView() {
         // Toggle calendarView
         if (calendarView.getVisibility() == View.VISIBLE) {
@@ -132,24 +125,10 @@ public class HomeFragment extends Fragment {
             eventPage.setVisibility(View.VISIBLE);
         }
     }
-
-    // Collapse and expand layout functions remain the same
-
-    private void setupCalendar() {
-        calendarView.setOnDateChangedListener((widget, date, selected) -> {
-            // Display events for the selected date
-            getEventsForDay(date);
-        });
-
-        // Load events and mark calendar
-        loadEvents();
-    }
-
     private void openNewEventActivity() {
         Intent intent = new Intent(getContext(), NewEvent.class);
         startActivity(intent);
     }
-
     private void loadStations() {
         databaseReference = FirebaseDatabase.getInstance().getReference().child("stations");
         databaseReference.addValueEventListener(new ValueEventListener() {
@@ -178,7 +157,6 @@ public class HomeFragment extends Fragment {
             }
         });
     }
-
     private void createCardView(Context context, LinearLayout parent, String title, String description, int ID) {
         CardView cardView = new CardView(context);
 
@@ -266,13 +244,11 @@ public class HomeFragment extends Fragment {
         });
         parent.addView(cardView);
     }
-
     private void createSpace(Context context, LinearLayout parent) {
         Space space = new Space(context);
         space.setLayoutParams(new LinearLayout.LayoutParams(30, 30));
         parent.addView(space);
     }
-
     private void collapseLayout(final View view) {
         final int initialHeight = view.getMeasuredHeight();
         ValueAnimator heightAnimator = ValueAnimator.ofInt(initialHeight, 0);
@@ -292,7 +268,6 @@ public class HomeFragment extends Fragment {
         });
         heightAnimator.start();
     }
-
     private void expandLayout(final View view) {
         view.measure(View.MeasureSpec.makeMeasureSpec(((ViewGroup) view.getParent()).getWidth(), View.MeasureSpec.EXACTLY),
                 View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
@@ -310,7 +285,6 @@ public class HomeFragment extends Fragment {
         });
         heightAnimator.start();
     }
-
     private void checkUserStatus() {
         DatabaseReference userRef = FirebaseDatabase.getInstance().getReference()
                 .child("users")
@@ -329,7 +303,6 @@ public class HomeFragment extends Fragment {
             }
         });
     }
-
     private void updateButtonVisibility() {
         if (userStatus != null) {
             switch (userStatus) {
@@ -356,9 +329,15 @@ public class HomeFragment extends Fragment {
             }
         }
     }
+    private void setupCalendar() {
+        calendarView.setOnDateChangedListener((widget, date, selected) -> {
+            // Display events for the selected date
+            getEventsForDay(date);
+        });
 
-
-
+        // Load events and mark calendar
+        loadEvents();
+    }
     private void loadEvents() {
         eventsDatabaseRef = FirebaseDatabase.getInstance().getReference().child("events");
         eventsDatabaseRef.addValueEventListener(new ValueEventListener() {

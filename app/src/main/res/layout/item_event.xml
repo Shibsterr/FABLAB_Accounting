@@ -42,7 +42,7 @@
             android:layout_width="0dp"
             android:layout_height="48dp"
             android:layout_weight="1"
-            android:text="Accept"
+            android:text="@string/accept"
             android:layout_marginEnd="4dp"
             android:minWidth="0dp"
             android:padding="6dp"/>
@@ -53,7 +53,7 @@
             android:layout_width="0dp"
             android:layout_height="48dp"
             android:layout_weight="1"
-            android:text="Decline"
+            android:text="@string/decline"
             android:layout_marginEnd="4dp"
             android:minWidth="0dp"
             android:padding="6dp"/>
@@ -63,7 +63,7 @@
             android:layout_width="0dp"
             android:layout_height="48dp"
             android:layout_weight="1"
-            android:text="Finish"
+            android:text="@string/finish"
             android:minWidth="0dp"
             android:padding="6dp"/>
     </LinearLayout>

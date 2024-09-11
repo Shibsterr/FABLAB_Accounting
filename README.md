@@ -54,11 +54,14 @@
 - [x] Multiple languages (en,lv)
 - [x] No tasks screen with a refresh button
 
-- [ ] Calendar that allows u to "sign up"
-- - [ ] Make it so that admins and workers can "accept" events before letting them show up as to make sure they arent any overlaps
-- - [ ] Add more statuses for the events
-- - [ ] Make them show on the calendar
+- [x] Calendar that allows u to "sign up"
+- - [x] Make it so that admins and workers can "accept" events before letting them show up as to make sure they arent any overlaps
+- - [x] Add more statuses for the events
+- - [x] Make them show on the calendar
 - [ ] Loading screens
+- [ ] Add internet checker for every activity
+- [ ] Language changer for stations title, description
+- -
 - [x] Update the home fragment
 - - [x] Update the station showing animation
 

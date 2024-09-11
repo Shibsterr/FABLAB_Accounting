@@ -151,4 +151,15 @@
     <string name="birthday">Birthday</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="add_event">Add Event</string>
+    <string name="title">Title</string>
+    <string name="description">Description</string>
+    <string name="pick_date">Pick Date</string>
+    <string name="pick_start_time">Pick Start Time</string>
+    <string name="pick_end_time">Pick End Time</string>
+    <string name="number_of_people">Number of People</string>
+    <string name="submit_event">Submit</string>
+    <string name="accept">Accept</string>
+    <string name="decline">Decline</string>
+    <string name="finish">Finish</string>
 </resources>
