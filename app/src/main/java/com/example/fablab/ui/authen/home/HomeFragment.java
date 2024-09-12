@@ -5,6 +5,7 @@ import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
@@ -24,6 +25,7 @@ import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
+import androidx.preference.PreferenceManager;
 
 import com.example.fablab.NewEvent;
 import com.example.fablab.R;
@@ -131,14 +133,19 @@ public class HomeFragment extends Fragment {
     }
     private void loadStations() {
         databaseReference = FirebaseDatabase.getInstance().getReference().child("stations");
+
+        // Get the current language setting (default to "en")
+        String language = getCurrentLanguage();
+
         databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 properLayout.removeAllViews(); // Clear previous views
 
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    String station = snapshot.child("Name").getValue(String.class);
-                    String description = snapshot.child("Description").getValue(String.class);
+                    // Get translations based on the selected language
+                    String station = snapshot.child("Name").child(language).getValue(String.class);
+                    String description = snapshot.child("Description").child(language).getValue(String.class);
                     Integer ID = snapshot.child("ID").getValue(Integer.class);
 
                     if (station != null && description != null && ID != null) {
@@ -156,6 +163,11 @@ public class HomeFragment extends Fragment {
                 Log.d("HomeFragment", "Failed to load stations: " + databaseError.getMessage());
             }
         });
+    }
+    private String getCurrentLanguage() {
+        // You can retrieve this from shared preferences or app settings
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getContext());
+        return sharedPref.getString("language_preference", "en"); // Default is "en"
     }
     private void createCardView(Context context, LinearLayout parent, String title, String description, int ID) {
         CardView cardView = new CardView(context);
@@ -200,7 +212,7 @@ public class HomeFragment extends Fragment {
             // Retrieve the NavController associated with the activity
             NavController navController = Navigation.findNavController(v);
 
-            // Check if the title is not null or empty
+            // Check if the title (translated station name) is not null or empty
             if (title != null && !title.isEmpty()) {
                 databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
@@ -208,8 +220,8 @@ public class HomeFragment extends Fragment {
                         // Check if the dataSnapshot is not empty
                         if (dataSnapshot.exists()) {
                             for (DataSnapshot stationSnapshot : dataSnapshot.getChildren()) {
-                                // Retrieve the name of the station
-                                String stationName = stationSnapshot.child("Name").getValue(String.class);
+                                // Retrieve the translated name of the station under the correct language key
+                                String stationName = stationSnapshot.child("Name").child(getCurrentLanguage()).getValue(String.class);
 
                                 // Check if the name of the station matches the title of the clicked card view
                                 if (stationName != null && stationName.equals(title)) {
@@ -242,6 +254,7 @@ public class HomeFragment extends Fragment {
                 Log.d("InvalidTitle", "Invalid title: " + title);
             }
         });
+
         parent.addView(cardView);
     }
     private void createSpace(Context context, LinearLayout parent) {

@@ -206,11 +206,11 @@ public class NewEquipmentFragment extends Fragment {
                     editamount.setError("Skaits nedrīkst būt negatīvs!");
                     editamount.requestFocus();
                 } else {
-                        String telpa, stacija;
+                    String telpa, stacija;
                     // Convert strings to integers for comparison
-                        int critValue = Integer.parseInt(crit);
-                        int minValue = Integer.parseInt(min);
-                        int maxValue = Integer.parseInt(max);
+                    int critValue = Integer.parseInt(crit);
+                    int minValue = Integer.parseInt(min);
+                    int maxValue = Integer.parseInt(max);
                     code = code.toUpperCase();
                     String kods = code;
 
