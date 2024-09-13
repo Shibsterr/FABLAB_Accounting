@@ -7,9 +7,9 @@
     <string name="nav_header_subtitle">android.studio@android.com</string>
 
     <string name="nav_header_desc">Navigation header</string>
-    <string name="action_settings">Settings</string>
+    <string name="action_settings">Iestatījumi</string>
 
-    <string name="kods">Kods (HOP lietvedības nr)</string>
+    <string name="kods">Kods (HOP Lietvedības Nr)</string>
     <string name="nosaukums">Nosaukums inventāram</string>
     <string name="units">Mērvienība</string>
 
@@ -104,14 +104,14 @@
 
 
     <!-- main activity -->
-    <string name="change_language">Change Language</string>
-    <string name="scanned">Scanned: %1$s</string>
-    <string name="cancelled_scan">Cancelled scan</string>
-    <string name="cancelled_scan_permission">Cancelled due to missing camera permission</string>
-    <string name="invalid_scan">Invalid scan. Please try again.</string>
-    <string name="select_language">Select Language</string>
-    <string name="english">English</string>
-    <string name="latvian">Latvian</string>
+    <string name="change_language">Mainīt valodu</string>
+    <string name="scanned">Skenēts: %1$s</string>
+    <string name="cancelled_scan">Atcelta skenēšana</string>
+    <string name="cancelled_scan_permission">Atcelts, jo trūkst kameras atļaujas</string>
+    <string name="invalid_scan">Nederīga skenēšana. Lūdzu, mēģiniet vēlreiz.</string>
+    <string name="select_language">Izvēlieties valodu</string>
+    <string name="english">Angļu valoda</string>
+    <string name="latvian">latviski</string>
     <string name="sort_logs">Kārtot vēsturi</string>
     <string name="currently_sorted_by_name">Pašlaik sakārtots pēc: Vārds</string>
     <string name="currently_sorted_by_most_recent_log">Pašlaik sakārtots pēc: Jaunākais žurnāls</string>
@@ -160,9 +160,15 @@
     <string name="pick_end_time">Izvēlieties beigu laiku</string>
     <string name="number_of_people">Cilvēku skaits</string>
     <string name="submit_event">Iesniegt</string>
-    <string name="accept">Accept</string>
-    <string name="decline">Decline</string>
-    <string name="finish">Finish</string>
-
+    <string name="accept">Pieņemt</string>
+    <string name="decline">Noraidīt</string>
+    <string name="finish">Pabeigts</string>
+    <string name="ok_button" >Labi</string>
+    <string name="events_title" >Notikumi</string>
+    <string name="start_time" >Sākuma laiks: %1$s</string>
+    <string name="end_time" >Beigu laiks: %1$s</string>
+    <string name="titleE">Nosaukums: %1$s</string>
+    <string name="descriptionE">Apraksts: %1$s</string>
+    <string name="status_event">Statuss: %1$s</string>
 
 </resources>

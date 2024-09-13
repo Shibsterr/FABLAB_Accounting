@@ -9,6 +9,7 @@ import android.content.res.Resources;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -57,10 +58,10 @@ public class MainActivity extends AppCompatActivity {
     private TextView fullname, email;
     private Button refreshbtn;
     private ProgressBar progbar;
+    private View loadingScreen;
 
     private NetworkChangeReceiver networkChangeReceiver;
 
-    // Define the patterns
     private static final String PATTERN_STRING = "^[1-9][0-9]?_[1-9]_[1-2]?_[a-zA-Z0-9\\s]+$";
     private static final String PATTERN_LONGER = "^[1-9][0-9]?_[1-9][0-9]?_[1-2]_[a-zA-Z0-9\\s]+$";
     private static final String PATTERN = "^[1-9]_[1-9][0-9]?_[1-2]_[a-zA-Z0-9\\s]+$";
@@ -100,7 +101,6 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
 
-
     private boolean isValidScan(String data) {
         return Pattern.matches(PATTERN_STRING, data) ||
                 Pattern.matches(PATTERN_LONGER, data) ||
@@ -110,7 +110,9 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        // Apply theme and language before calling super.onCreate
+        super.onCreate(savedInstanceState);
+
+        // Apply theme and language before setting content view
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         String selectedTheme = sharedPreferences.getString("theme_preference", "Theme.FABLAB");
         int themeResourceId = getResources().getIdentifier(selectedTheme, "style", getPackageName());
@@ -129,98 +131,108 @@ public class MainActivity extends AppCompatActivity {
         resources.updateConfiguration(configuration, resources.getDisplayMetrics());
 
         Log.d("MainActivity", "Language Code: " + languageCode);
-        super.onCreate(savedInstanceState);
 
-        networkChangeReceiver = new NetworkChangeReceiver();
-        IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
-        registerReceiver(networkChangeReceiver, filter);
+        // Set the content view to the loading screen first
+        setContentView(R.layout.activity_loading);
+        loadingScreen = findViewById(R.id.progressBar);
 
-        FirebaseAuth mAuth = FirebaseAuth.getInstance();
-        FirebaseUser currentUser = mAuth.getCurrentUser();
+        // Load the main content after a delay to simulate loading
+        new Handler().postDelayed(() -> {
+            if (isNetworkAvailable()) {
+                FirebaseAuth mAuth = FirebaseAuth.getInstance();
+                FirebaseUser currentUser = mAuth.getCurrentUser();
 
-        if (currentUser == null) {
-            setContentView(R.layout.fragment_home);
-            startActivity(new Intent(MainActivity.this, RegisterUser.class));
-        } else {
-            ActivityMainBinding binding = ActivityMainBinding.inflate(getLayoutInflater());
-            setContentView(binding.getRoot());
+                if (currentUser == null) {
+                    startActivity(new Intent(MainActivity.this, RegisterUser.class));
+                    finish(); // Close the current activity
+                } else {
+                    ActivityMainBinding binding = ActivityMainBinding.inflate(getLayoutInflater());
+                    setContentView(binding.getRoot());
 
-            setSupportActionBar(binding.appBarMain.toolbar);
-            getSupportActionBar().setDisplayShowTitleEnabled(false);
+                    setSupportActionBar(binding.appBarMain.toolbar);
+                    getSupportActionBar().setDisplayShowTitleEnabled(false);
 
-            DrawerLayout drawer = binding.drawerLayout;
-            NavigationView navigationView = binding.navView;
-            mAppBarConfiguration = new AppBarConfiguration.Builder(
-                    R.id.nav_home, R.id.new_equip, R.id.nav_task, R.id.nav_assign, R.id.nav_logs, R.id.nav_report, R.id.nav_settings)
-                    .setOpenableLayout(drawer)
-                    .build();
+                    DrawerLayout drawer = binding.drawerLayout;
+                    NavigationView navigationView = binding.navView;
+                    mAppBarConfiguration = new AppBarConfiguration.Builder(
+                            R.id.nav_home, R.id.new_equip, R.id.nav_task, R.id.nav_assign, R.id.nav_logs, R.id.nav_report, R.id.nav_settings)
+                            .setOpenableLayout(drawer)
+                            .build();
 
-            NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
-            NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
-            NavigationUI.setupWithNavController(navigationView, navController);
+                    NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
+                    NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
+                    NavigationUI.setupWithNavController(navigationView, navController);
 
-            View headerView = navigationView.getHeaderView(0);
-            fullname = headerView.findViewById(R.id.nameSurname);
-            email = headerView.findViewById(R.id.epasts);
+                    View headerView = navigationView.getHeaderView(0);
+                    fullname = headerView.findViewById(R.id.nameSurname);
+                    email = headerView.findViewById(R.id.epasts);
 
-            mAuth = FirebaseAuth.getInstance();
-            DatabaseReference userRef = FirebaseDatabase.getInstance().getReference().child("users").child(Objects.requireNonNull(mAuth.getCurrentUser()).getUid());
+                    mAuth = FirebaseAuth.getInstance();
+                    DatabaseReference userRef = FirebaseDatabase.getInstance().getReference().child("users").child(Objects.requireNonNull(mAuth.getCurrentUser()).getUid());
 
-            userRef.addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    if (dataSnapshot.exists()) {
-                        String name = dataSnapshot.child("Vards un uzvards").getValue(String.class);
-                        String userEmail = dataSnapshot.child("epasts").getValue(String.class);
+                    userRef.addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            if (dataSnapshot.exists()) {
+                                String name = dataSnapshot.child("Vards un uzvards").getValue(String.class);
+                                String userEmail = dataSnapshot.child("epasts").getValue(String.class);
 
-                        if (name != null && userEmail != null) {
-                            fullname.setText(name);
-                            email.setText(userEmail);
-                        } else {
-                            fullname.setText("Not working");
-                            email.setText("Not working");
+                                if (name != null && userEmail != null) {
+                                    fullname.setText(name);
+                                    email.setText(userEmail);
+                                } else {
+                                    fullname.setText("Not working");
+                                    email.setText("Not working");
+                                }
+                            }
                         }
-                    }
-                }
 
-                @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
-                    Log.d("MainActivity", "ERROR WITH USER");
-                }
-            });
-
-            userRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    if (dataSnapshot.exists()) {
-                        String statuss = dataSnapshot.child("Statuss").getValue(String.class);
-                        Menu navMenu = navigationView.getMenu();
-
-                        if ("Lietotājs".equals(statuss)) {
-                            navMenu.findItem(R.id.new_equip).setVisible(false);
-                            navMenu.findItem(R.id.nav_task).setVisible(false);
-                            navMenu.findItem(R.id.nav_logs).setVisible(false);
-                            navMenu.findItem(R.id.nav_assign).setVisible(false);
-                        } else if ("Darbinieks".equals(statuss)) {
-                            navMenu.findItem(R.id.new_equip).setVisible(true);
-                            navMenu.findItem(R.id.nav_task).setVisible(true);
-                            navMenu.findItem(R.id.nav_logs).setVisible(false);
-                            navMenu.findItem(R.id.nav_assign).setVisible(true);
-                        } else if ("Admin".equals(statuss)) {
-                            navMenu.findItem(R.id.new_equip).setVisible(true);
-                            navMenu.findItem(R.id.nav_task).setVisible(true);
-                            navMenu.findItem(R.id.nav_logs).setVisible(true);
-                            navMenu.findItem(R.id.nav_assign).setVisible(true);
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+                            Log.d("MainActivity", "ERROR WITH USER");
                         }
-                    }
-                }
+                    });
 
-                @Override
-                public void onCancelled(@NonNull DatabaseError error) {
-                    Log.d("MainActivity", "ERROR WITH USER");
+                    userRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            if (dataSnapshot.exists()) {
+                                String statuss = dataSnapshot.child("Statuss").getValue(String.class);
+                                Menu navMenu = navigationView.getMenu();
+
+                                if ("Lietotājs".equals(statuss)) {
+                                    navMenu.findItem(R.id.new_equip).setVisible(false);
+                                    navMenu.findItem(R.id.nav_task).setVisible(false);
+                                    navMenu.findItem(R.id.nav_logs).setVisible(false);
+                                    navMenu.findItem(R.id.nav_assign).setVisible(false);
+                                } else if ("Darbinieks".equals(statuss)) {
+                                    navMenu.findItem(R.id.new_equip).setVisible(true);
+                                    navMenu.findItem(R.id.nav_task).setVisible(true);
+                                    navMenu.findItem(R.id.nav_logs).setVisible(false);
+                                    navMenu.findItem(R.id.nav_assign).setVisible(true);
+                                } else if ("Admin".equals(statuss)) {
+                                    navMenu.findItem(R.id.new_equip).setVisible(true);
+                                    navMenu.findItem(R.id.nav_task).setVisible(true);
+                                    navMenu.findItem(R.id.nav_logs).setVisible(true);
+                                    navMenu.findItem(R.id.nav_assign).setVisible(true);
+                                }
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+                            Log.d("MainActivity", "ERROR WITH USER");
+                        }
+                    });
+
+                    // Hide loading screen and show main content
+                    loadingScreen.setVisibility(View.GONE);
                 }
-            });
-        }
+            } else {
+                Toast.makeText(MainActivity.this, "No network connection", Toast.LENGTH_SHORT).show();
+                loadingScreen.setVisibility(View.GONE);
+            }
+        }, 2500); // Adjust the delay as needed
     }
 
     @Override
@@ -305,5 +317,4 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-
 }

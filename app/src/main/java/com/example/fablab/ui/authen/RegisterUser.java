@@ -52,6 +52,10 @@ public class RegisterUser extends AppCompatActivity implements View.OnClickListe
         configuration.setLocale(locale);
 
         resources.updateConfiguration(configuration, resources.getDisplayMetrics());
+
+        String selectedTheme = sharedPreferences.getString("theme_preference", "Theme.FABLAB");
+        int themeResourceId = getResources().getIdentifier(selectedTheme, "style", getPackageName());
+        setTheme(themeResourceId);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.user_register);
 
@@ -96,12 +100,32 @@ public class RegisterUser extends AppCompatActivity implements View.OnClickListe
         DatePickerDialog datePickerDialog = new DatePickerDialog(
                 RegisterUser.this,
                 (view, selectedYear, selectedMonth, selectedDay) -> {
-                    String dateString = selectedDay + "/" + (selectedMonth + 1) + "/" + selectedYear;
-                    date_of_birth.setText(dateString);
+                    // Check if the selected date is valid
+                    if (isValidDate(selectedYear, selectedMonth, selectedDay)) {
+                        String dateString = selectedDay + "/" + (selectedMonth + 1) + "/" + selectedYear;
+                        date_of_birth.setText(dateString);
+                    } else {
+                        Toast.makeText(RegisterUser.this, "Please select a valid date of birth.", Toast.LENGTH_SHORT).show();
+                    }
                 },
                 year, month, day);
+
+        // Set the maximum date to the current date
+        datePickerDialog.getDatePicker().setMaxDate(calendar.getTimeInMillis());
         datePickerDialog.show();
     }
+
+    // Helper method to check if the selected date is valid
+    private boolean isValidDate(int year, int month, int day) {
+        Calendar selectedDate = Calendar.getInstance();
+        selectedDate.set(year, month, day);
+
+        Calendar currentDate = Calendar.getInstance();
+
+        return !selectedDate.after(currentDate);
+    }
+
+
 
     private void userRegister() {
         String names = name_surname.getText().toString();
@@ -189,7 +213,7 @@ public class RegisterUser extends AppCompatActivity implements View.OnClickListe
     }
 
     private boolean isValidEmailDomain(String email) {
-        String[] validDomains = {"gmail.com", "yahoo.com", "outlook.com", "hotmail.com", "icloud.com"};
+        String[] validDomains = {"gmail.com", "yahoo.com", "outlook.com", "hotmail.com", "icloud.com","liepaja.edu.lv"};
         String domain = email.substring(email.lastIndexOf("@") + 1).toLowerCase();
         for (String validDomain : validDomains) {
             if (domain.equals(validDomain)) {

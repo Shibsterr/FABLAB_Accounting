@@ -60,7 +60,7 @@
 - - [x] Make them show on the calendar
 - [ ] Loading screens
 - [ ] Add internet checker for every activity
-- [ ] Language changer for stations title, description
+- [x] Language changer for stations title, description
 - -
 - [x] Update the home fragment
 - - [x] Update the station showing animation

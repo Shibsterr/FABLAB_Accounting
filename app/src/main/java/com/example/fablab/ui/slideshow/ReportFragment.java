@@ -2,6 +2,7 @@ package com.example.fablab.ui.slideshow;
 
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +16,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.preference.PreferenceManager;
 
 import com.example.fablab.R;
 import com.google.firebase.database.DataSnapshot;
@@ -26,7 +28,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SlideshowFragment extends Fragment {
+public class ReportFragment extends Fragment {
 
     private EditText descriptionEditText, edittelpanr, editname;
     private Spinner stacijaSpinner;
@@ -48,7 +50,11 @@ public class SlideshowFragment extends Fragment {
 
         return view;
     }
-
+    private String getCurrentLanguage() {
+        // You can retrieve this from shared preferences or app settings
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getContext());
+        return sharedPref.getString("language_preference", "en"); // Default is "en"
+    }
     private void loadStationNames() {
         DatabaseReference stationsRef = FirebaseDatabase.getInstance().getReference().child("stations");
         stationsRef.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -56,7 +62,7 @@ public class SlideshowFragment extends Fragment {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 List<String> stationNames = new ArrayList<>();
                 for (DataSnapshot stationSnapshot : dataSnapshot.getChildren()) {
-                    String stationName = stationSnapshot.child("Name").getValue(String.class);
+                    String stationName = stationSnapshot.child("Name").child(getCurrentLanguage()).getValue(String.class);
                     if (stationName != null) {
                         stationNames.add(stationName);
                     }

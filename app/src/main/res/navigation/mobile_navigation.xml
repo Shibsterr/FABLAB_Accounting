@@ -17,12 +17,12 @@
 
     <fragment
         android:id="@+id/nav_task"
-        android:name="com.example.fablab.ui.gallery.GalleryFragment"
+        android:name="com.example.fablab.ui.gallery.TaskFragment"
         tools:layout="@layout/fragment_gallery" />
 
     <fragment
         android:id="@+id/nav_report"
-        android:name="com.example.fablab.ui.slideshow.SlideshowFragment"
+        android:name="com.example.fablab.ui.slideshow.ReportFragment"
         tools:layout="@layout/fragment_slideshow" />
 
     <fragment

@@ -36,9 +36,15 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
     public void onBindViewHolder(@NonNull EventViewHolder holder, int position) {
         Event event = events.get(position);
 
-        holder.eventDetails.setText(event.getTitle() + "\n" + event.getDescription());
-        holder.startTime.setText("Start Time: " + event.getStartTime());
-        holder.endTime.setText("End Time: " + event.getEndTime());
+        holder.eventDetails.setText(
+                holder.itemView.getContext().getString(R.string.titleE, event.getTitle())
+                + "\n" +
+                holder.itemView.getContext().getString(R.string.descriptionE, event.getDescription()));
+
+        holder.event_status.setText(holder.itemView.getContext().getString(R.string.status_event, event.getStatus()));
+        holder.startTime.setText(holder.itemView.getContext().getString(R.string.start_time, event.getStartTime()));
+        holder.endTime.setText(holder.itemView.getContext().getString(R.string.end_time, event.getEndTime()));
+
 
         holder.acceptButton.setVisibility(View.GONE);
         holder.declineButton.setVisibility(View.GONE);
@@ -87,6 +93,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
         TextView eventDetails;
         TextView startTime;
         TextView endTime;
+        TextView event_status;
         Button acceptButton;
         Button declineButton;
         Button finishButton;
@@ -94,6 +101,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
         public EventViewHolder(@NonNull View itemView) {
             super(itemView);
             eventDetails = itemView.findViewById(R.id.event_details);
+            event_status = itemView.findViewById(R.id.event_status);
             startTime = itemView.findViewById(R.id.start_time);
             endTime = itemView.findViewById(R.id.end_time);
             acceptButton = itemView.findViewById(R.id.accept_button);

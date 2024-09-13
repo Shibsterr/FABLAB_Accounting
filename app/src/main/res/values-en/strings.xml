@@ -160,4 +160,11 @@
     <string name="accept">Accept</string>
     <string name="decline">Decline</string>
     <string name="finish">Finish</string>
+    <string name="ok_button" >Ok</string>
+    <string name="events_title" >Events</string>
+    <string name="start_time" >Start Time: %1$s</string>
+    <string name="end_time" >End Time: %1$s</string>
+    <string name="titleE">Title: %1$s</string>
+    <string name="descriptionE">Description: %1$s</string>
+    <string name="status_event">Status: %1$s</string>
 </resources>

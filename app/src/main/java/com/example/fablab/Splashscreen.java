@@ -28,6 +28,9 @@ public class Splashscreen extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        String selectedTheme = sharedPreferences.getString("theme_preference", "Theme.FABLAB");
+        int themeResourceId = getResources().getIdentifier(selectedTheme, "style", getPackageName());
+        setTheme(themeResourceId);
         setContentView(R.layout.activity_splashscreen);
 
         imageView = findViewById(R.id.fablablogo);

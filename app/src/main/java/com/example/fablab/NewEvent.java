@@ -147,12 +147,37 @@ public class NewEvent extends AppCompatActivity {
             String time = String.format("%02d:%02d", selectedHour, selectedMinute);
             if (isStartTime) {
                 startTime = time;
-                startTimeText.setText("Start Time: " + time);
+                startTimeText.setText(getString(R.string.start_time, time));
             } else {
+                // Check if end time is before start time
+                if (isEndTimeBeforeStartTime(time)) {
+                    Toast.makeText(NewEvent.this, "End time must be after start time", Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 endTime = time;
-                endTimeText.setText("End Time: " + time);
+                endTimeText.setText(getString(R.string.end_time, time));
             }
         }, hour, minute, true);
         timePickerDialog.show();
+    }
+
+    // Check if the end time is before the start time
+    private boolean isEndTimeBeforeStartTime(String endTime) {
+        if (startTime.isEmpty()) return false;
+
+        Calendar startCalendar = Calendar.getInstance();
+        Calendar endCalendar = Calendar.getInstance();
+
+        // Parse the start and end times
+        String[] startParts = startTime.split(":");
+        String[] endParts = endTime.split(":");
+
+        startCalendar.set(Calendar.HOUR_OF_DAY, Integer.parseInt(startParts[0]));
+        startCalendar.set(Calendar.MINUTE, Integer.parseInt(startParts[1]));
+
+        endCalendar.set(Calendar.HOUR_OF_DAY, Integer.parseInt(endParts[0]));
+        endCalendar.set(Calendar.MINUTE, Integer.parseInt(endParts[1]));
+
+        return endCalendar.before(startCalendar);
     }
 }

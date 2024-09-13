@@ -41,6 +41,10 @@ public class LoginUser extends AppCompatActivity implements View.OnClickListener
         configuration.setLocale(locale);
 
         resources.updateConfiguration(configuration, resources.getDisplayMetrics());
+
+        String selectedTheme = sharedPreferences.getString("theme_preference", "Theme.FABLAB");
+        int themeResourceId = getResources().getIdentifier(selectedTheme, "style", getPackageName());
+        setTheme(themeResourceId);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.user_login);
 

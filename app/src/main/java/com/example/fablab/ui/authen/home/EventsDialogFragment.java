@@ -49,6 +49,7 @@ public class EventsDialogFragment extends DialogFragment {
 
         recyclerView = view.findViewById(R.id.recyclerViewEvents);
 
+        assert getArguments() != null;
         events = (List<Event>) getArguments().getSerializable(ARG_EVENTS);
 
         if (events == null || events.isEmpty()) {
@@ -57,8 +58,8 @@ public class EventsDialogFragment extends DialogFragment {
         }
 
         builder.setView(view)
-                .setTitle("Events")
-                .setPositiveButton("OK", (dialog, id) -> dismiss());
+                .setTitle(getString(R.string.events_title))
+                .setPositiveButton(getString(R.string.ok_button), (dialog, id) -> dismiss());
 
         checkUserStatus(); // Ensure we get user status before setting up the adapter
 
@@ -94,17 +95,17 @@ public class EventsDialogFragment extends DialogFragment {
         adapter = new EventAdapter(events, userStatus, new EventAdapter.OnEventActionListener() {
             @Override
             public void onAccept(Event event) {
-                updateEventStatus(event.getEventDate(), event.getUserId(), "Accepted");
+                updateEventStatus(event.getEventDate(), event.getUserId(), "Accepted", event.getEventId());
             }
 
             @Override
             public void onDecline(Event event) {
-                updateEventStatus(event.getEventDate(), event.getUserId(), "Declined");
+                updateEventStatus(event.getEventDate(), event.getUserId(), "Declined", event.getEventId());
             }
 
             @Override
             public void onFinish(Event event) {
-                updateEventStatus(event.getEventDate(), event.getUserId(), "Finished");
+                updateEventStatus(event.getEventDate(), event.getUserId(), "Finished", event.getEventId());
             }
         });
 
@@ -112,32 +113,22 @@ public class EventsDialogFragment extends DialogFragment {
         recyclerView.setAdapter(adapter);
     }
 
-    private void updateEventStatus(String eventDate, String userId, String newStatus) {
-        DatabaseReference eventsRef = FirebaseDatabase.getInstance().getReference().child("events").child(eventDate).child(userId);
+    private void updateEventStatus(String eventDate, String userId, String newStatus, String eventId) {
+        // Reference to the specific event by its eventId
+        DatabaseReference eventRef = FirebaseDatabase.getInstance().getReference()
+                .child("events")
+                .child(eventDate)
+                .child(userId)
+                .child(eventId);
 
-        eventsRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                for (DataSnapshot eventSnapshot : snapshot.getChildren()) {
-                    Event event = eventSnapshot.getValue(Event.class);
-                    if (event != null) {
-                        eventSnapshot.getRef().child("status").setValue(newStatus).addOnCompleteListener(task -> {
-                            if (task.isSuccessful()) {
-                                Toast.makeText(getContext(), "Event status updated to " + newStatus, Toast.LENGTH_SHORT).show();
-                            } else {
-                                Toast.makeText(getContext(), "Failed to update event status", Toast.LENGTH_SHORT).show();
-                            }
-                        });
-                        return;
-                    }
-                }
-                Toast.makeText(getContext(), "Event not found", Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                Log.d("EventsDialogFragment", "Failed to find event: " + error.getMessage());
+        // Update the status of the specific event
+        eventRef.child("status").setValue(newStatus).addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                Toast.makeText(getContext(), "Event status updated to " + newStatus, Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(getContext(), "Failed to update event status", Toast.LENGTH_SHORT).show();
             }
         });
     }
 }
+

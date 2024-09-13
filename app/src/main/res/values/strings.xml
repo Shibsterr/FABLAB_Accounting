@@ -3,8 +3,8 @@
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
-    <string name="nav_header_title">Android Studio</string>
-    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_title" translatable="false">Android Studio</string>
+    <string name="nav_header_subtitle" translatable="false">android.studio@android.com</string>
 
     <string name="nav_header_desc">Navigation header</string>
     <string name="action_settings">Settings</string>
@@ -47,14 +47,14 @@
     <string name="language_settings_header">Language Settings</string>
 
     <!-- Messages Preferences -->
-    <string name="signature_title">Your signature</string>
-    <string name="reply_title">Default reply action</string>
+    <string name="signature_title" translatable="false">Your signature</string>
+    <string name="reply_title" translatable="false">Default reply action</string>
 
     <!-- Sync Preferences -->
-    <string name="sync_title">Sync email periodically</string>
-    <string name="attachment_title">Download incoming attachments</string>
-    <string name="attachment_summary_on">Automatically download attachments for incoming emails</string>
-    <string name="attachment_summary_off">Only download attachments when manually requested</string>
+    <string name="sync_title" translatable="false">Sync email periodically</string>
+    <string name="attachment_title" translatable="false">Download incoming attachments</string>
+    <string name="attachment_summary_on" translatable="false">Automatically download attachments for incoming emails</string>
+    <string name="attachment_summary_off" translatable="false">Only download attachments when manually requested</string>
 
     <!-- Authentication system -->
     <string name="email">Email</string>
@@ -161,4 +161,11 @@
     <string name="accept">Accept</string>
     <string name="decline">Decline</string>
     <string name="finish">Finish</string>
+    <string name="ok_button" >Ok</string>
+    <string name="events_title" >Events</string>
+    <string name="start_time" >Start Time: %1$s</string>
+    <string name="end_time" >End Time: %1$s</string>
+    <string name="titleE">Title: %1$s</string>
+    <string name="descriptionE">Description: %1$s</string>
+    <string name="status_event">Status:</string>
 </resources>

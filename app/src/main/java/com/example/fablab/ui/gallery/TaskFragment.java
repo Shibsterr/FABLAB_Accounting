@@ -25,7 +25,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-public class GalleryFragment extends Fragment {
+public class TaskFragment extends Fragment {
 
     private LinearLayout tasksLayout;
     private FirebaseAuth mAuth;
