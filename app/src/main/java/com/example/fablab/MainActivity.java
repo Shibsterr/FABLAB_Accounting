@@ -66,7 +66,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String PATTERN_LONGER = "^[1-9][0-9]?_[1-9][0-9]?_[1-2]_[a-zA-Z0-9\\s]+$";
     private static final String PATTERN = "^[1-9]_[1-9][0-9]?_[1-2]_[a-zA-Z0-9\\s]+$";
     private static final String SMALL_PATTERN = "^[1-9]_[1-9]_[1-2]_[a-zA-Z0-9\\s]+$";
-
+    private boolean isReceiverRegistered = false; // Flag to track receiver registration
     private final ActivityResultLauncher<ScanOptions> barLauncher = registerForActivityResult(new ScanContract(),
             result -> {
                 if (result.getContents() == null) {
@@ -232,20 +232,27 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(MainActivity.this, "No network connection", Toast.LENGTH_SHORT).show();
                 loadingScreen.setVisibility(View.GONE);
             }
-        }, 2500); // Adjust the delay as needed
+        }, 2000); // Adjust the delay as needed
     }
 
     @Override
     protected void onStart() {
-        IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
-        registerReceiver(networkChangeReceiver, filter);
         super.onStart();
+        if (!isReceiverRegistered) {
+            IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+            networkChangeReceiver = new NetworkChangeReceiver();
+            registerReceiver(networkChangeReceiver, filter);
+            isReceiverRegistered = true;
+        }
     }
 
     @Override
     protected void onStop() {
-        unregisterReceiver(networkChangeReceiver);
         super.onStop();
+        if (isReceiverRegistered) {
+            unregisterReceiver(networkChangeReceiver);
+            isReceiverRegistered = false;
+        }
     }
 
     @Override
@@ -262,6 +269,10 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
+        if (isReceiverRegistered) {  // Make sure it's only unregistered if registered
+            unregisterReceiver(networkChangeReceiver);
+            isReceiverRegistered = false;
+        }
         super.onDestroy();
     }
 

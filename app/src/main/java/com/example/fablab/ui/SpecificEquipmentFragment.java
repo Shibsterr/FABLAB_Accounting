@@ -3,6 +3,9 @@ package com.example.fablab.ui;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -20,6 +23,7 @@ import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
+import androidx.preference.PreferenceManager;
 
 import com.bumptech.glide.Glide;
 import com.example.fablab.R;
@@ -34,6 +38,7 @@ import com.google.firebase.storage.StorageReference;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Locale;
 import java.util.Objects;
 
 public class SpecificEquipmentFragment extends Fragment {
@@ -50,6 +55,20 @@ public class SpecificEquipmentFragment extends Fragment {
     }
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
+        // Set locale based on saved language preference
+        String languageCode = sharedPreferences.getString("language_preference", "en");
+        Locale locale = new Locale(languageCode);
+        Locale.setDefault(locale);
+
+        Resources resources = getResources();
+        Configuration configuration = new Configuration(resources.getConfiguration());
+        configuration.setLocale(locale);
+
+        // Update the configuration and display metrics
+        resources.updateConfiguration(configuration, resources.getDisplayMetrics());
+
+        Log.d("MainActivity", "Language Code: " + languageCode);
         super.onCreate(savedInstanceState);
         databaseReference = FirebaseDatabase.getInstance().getReference().child("stations");
     }
@@ -57,6 +76,21 @@ public class SpecificEquipmentFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_specific_equipment, container, false);
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
+        // Set locale based on saved language preference
+        String languageCode = sharedPreferences.getString("language_preference", "en");
+        Locale locale = new Locale(languageCode);
+        Locale.setDefault(locale);
+
+        Resources resources = getResources();
+        Configuration configuration = new Configuration(resources.getConfiguration());
+        configuration.setLocale(locale);
+
+        // Update the configuration and display metrics
+        resources.updateConfiguration(configuration, resources.getDisplayMetrics());
+
+        Log.d("MainActivity", "Language Code (spec eq)x: " + languageCode);
+
         titletext = view.findViewById(R.id.equip_title);
         desctext = view.findViewById(R.id.equip_desc);
         equipimg = view.findViewById(R.id.equip_image);

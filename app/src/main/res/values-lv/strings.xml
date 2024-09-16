@@ -170,5 +170,11 @@
     <string name="titleE">Nosaukums: %1$s</string>
     <string name="descriptionE">Apraksts: %1$s</string>
     <string name="status_event">Statuss: %1$s</string>
+    <string name="Instruction_stock">Instrukcija</string>
+    <string name="stock_st">Inventārs</string>
+    <string name="minimum_stock_0">Minimālais krājums: %1$s</string>
+    <string name="stock_0">Krājums: %1$s</string>
+    <string name="maximum_stock_0">Maksimālais krājums: %1$s</string>
+    <string name="critical_stock_0">Kritiskais krājums: %1$s</string>
 
 </resources>

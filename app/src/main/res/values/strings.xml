@@ -168,4 +168,10 @@
     <string name="titleE">Title: %1$s</string>
     <string name="descriptionE">Description: %1$s</string>
     <string name="status_event">Status:</string>
+    <string name="Instruction_stock">Instruction</string>
+    <string name="stock_st">Stock</string>
+    <string name="minimum_stock_0">Minimum stock: 0</string>
+    <string name="stock_0">Stock: 0</string>
+    <string name="maximum_stock_0">Maximum stock: 0</string>
+    <string name="critical_stock_0">Critical stock: 0</string>
 </resources>
