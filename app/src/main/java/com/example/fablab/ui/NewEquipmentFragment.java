@@ -264,7 +264,7 @@ public class NewEquipmentFragment extends Fragment {
                             Log.d("MainActivity", whatStat(stacija));
 
                             // Construct the reference to the image in Firebase Storage
-                            String imagePath = "gs://nomadic-sprite-414512.appspot.com/Equipment_Icons/" + kods + ".png";
+                            String imagePath = "gs://aaaaa-3cb94.appspot.com/Equipment_Icons/" + kods + ".png";
                             // Get a reference to the Firebase Storage instance
                             StorageReference storageRef = FirebaseStorage.getInstance().getReferenceFromUrl(imagePath);
                             // Get the download URL for the image

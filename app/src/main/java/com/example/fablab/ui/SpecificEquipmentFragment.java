@@ -89,7 +89,7 @@ public class SpecificEquipmentFragment extends Fragment {
         // Update the configuration and display metrics
         resources.updateConfiguration(configuration, resources.getDisplayMetrics());
 
-        Log.d("MainActivity", "Language Code (spec eq)x: " + languageCode);
+        Log.d("MainActivity", "Language Code (spec eq): " + languageCode);
 
         titletext = view.findViewById(R.id.equip_title);
         desctext = view.findViewById(R.id.equip_desc);
@@ -97,6 +97,9 @@ public class SpecificEquipmentFragment extends Fragment {
 
         instbtn = view.findViewById(R.id.instructions);
         stockbtn = view.findViewById(R.id.stock);
+
+        instbtn.setText(getString(R.string.Instruction_stock));
+        stockbtn.setText(getString(R.string.stock_st));
 
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
 

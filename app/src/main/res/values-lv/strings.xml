@@ -153,7 +153,7 @@
     <string name="urgency">Vai tas ir steidzami?</string>
     <string name="birthday" >Dzimšanas diena</string>
     <string name="add_event">Pievienot notikumu</string>
-    <string name="title">Nosaukums</string>
+    <string name="title">Stacija</string>
     <string name="description">Apraksts</string>
     <string name="pick_date">Izvēlieties datumu</string>
     <string name="pick_start_time">Izvēlieties sākuma laiku</string>
@@ -172,9 +172,13 @@
     <string name="status_event">Statuss: %1$s</string>
     <string name="Instruction_stock">Instrukcija</string>
     <string name="stock_st">Inventārs</string>
-    <string name="minimum_stock_0">Minimālais krājums: %1$s</string>
-    <string name="stock_0">Krājums: %1$s</string>
-    <string name="maximum_stock_0">Maksimālais krājums: %1$s</string>
-    <string name="critical_stock_0">Kritiskais krājums: %1$s</string>
+    <string name="minimum_stock_0">Minimālais krājums: %1$d</string>
+    <string name="stock_0">Krājums: %1$d</string>
+    <string name="maximum_stock_0">Maksimālais krājums: %1$d</string>
+    <string name="critical_stock_0">Kritiskais krājums: %1$d</string>
+    <string name="yoda_was_here">A</string>
+    <string name="man_im_dead">A</string>
+    <string name="status_succ">Notikuma status mainīts uz: %1$s</string>
+    <string name="status_err">Kļūda ar statusa nomaiņa!</string>
 
 </resources>

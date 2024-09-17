@@ -5,20 +5,20 @@
     android:background="#AAFFFFFF"
     android:gravity="center">
 
-<RelativeLayout
-android:layout_width="wrap_content"
-android:layout_height="wrap_content"
-android:background="@drawable/loading_background"
-android:padding="24dp"
-android:elevation="4dp"
-android:layout_gravity="center">
+    <RelativeLayout
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@drawable/loading_background"
+    android:padding="24dp"
+    android:elevation="4dp"
+    android:layout_gravity="center">
 
-<ProgressBar
-android:id="@+id/progressBar"
-android:layout_width="wrap_content"
-android:layout_height="wrap_content"
-android:layout_centerInParent="true" />
-
+    <ProgressBar
+    android:id="@+id/progressBar"
+        android:indeterminate="true"
+        android:indeterminateTint="@color/black"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_centerInParent="true" />
     </RelativeLayout>
-
-    </FrameLayout>
+</FrameLayout>

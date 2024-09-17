@@ -124,9 +124,9 @@ public class EventsDialogFragment extends DialogFragment {
         // Update the status of the specific event
         eventRef.child("status").setValue(newStatus).addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
-                Toast.makeText(getContext(), "Event status updated to " + newStatus, Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), getString(R.string.status_succ, newStatus), Toast.LENGTH_SHORT).show();
             } else {
-                Toast.makeText(getContext(), "Failed to update event status", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), getString(R.string.status_err), Toast.LENGTH_SHORT).show();
             }
         });
     }

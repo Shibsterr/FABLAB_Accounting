@@ -54,7 +54,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
             holder.acceptButton.setVisibility(View.VISIBLE);
             holder.declineButton.setVisibility(View.VISIBLE);
             holder.finishButton.setVisibility(View.VISIBLE);
-        } else if ("Worker".equals(userStatus)) {
+        } else if ("Darbinieks".equals(userStatus)) {
             holder.acceptButton.setVisibility(View.VISIBLE);
             holder.finishButton.setVisibility(View.VISIBLE);
         }

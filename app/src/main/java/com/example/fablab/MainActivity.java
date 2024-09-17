@@ -59,7 +59,6 @@ public class MainActivity extends AppCompatActivity {
     private Button refreshbtn;
     private ProgressBar progbar;
     private View loadingScreen;
-
     private NetworkChangeReceiver networkChangeReceiver;
 
     private static final String PATTERN_STRING = "^[1-9][0-9]?_[1-9]_[1-2]?_[a-zA-Z0-9\\s]+$";
@@ -232,7 +231,7 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(MainActivity.this, "No network connection", Toast.LENGTH_SHORT).show();
                 loadingScreen.setVisibility(View.GONE);
             }
-        }, 2000); // Adjust the delay as needed
+        }, 2500); // Adjust the delay as needed
     }
 
     @Override

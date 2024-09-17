@@ -146,7 +146,7 @@
 
         <Button
             android:id="@+id/subtractbutton"
-            android:layout_width="170dp"
+            android:layout_width="wrap_content"
             android:layout_height="65dp"
             android:layout_marginTop="16dp"
             android:drawableLeft="@drawable/remove_circle"
@@ -159,7 +159,7 @@
 
         <Button
             android:id="@+id/addbutton"
-            android:layout_width="150dp"
+            android:layout_width="wrap_content"
             android:layout_height="65dp"
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"

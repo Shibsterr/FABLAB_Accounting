@@ -71,20 +71,6 @@ public class SpecStockEquipmentFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_spec_stock_equipment, container, false);
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
-        // Set locale based on saved language preference
-        String languageCode = sharedPreferences.getString("language_preference", "en");
-        Locale locale = new Locale(languageCode);
-        Locale.setDefault(locale);
-
-        Resources resources = getResources();
-        Configuration configuration = new Configuration(resources.getConfiguration());
-        configuration.setLocale(locale);
-
-        // Update the configuration and display metrics
-        resources.updateConfiguration(configuration, resources.getDisplayMetrics());
-
-        Log.d("MainActivity", "Language Code: " + languageCode);
         // Retrieve the data passed from the previous fragment
         Bundle bundle = getArguments();
 

@@ -34,6 +34,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -41,6 +42,7 @@ import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -95,7 +97,7 @@ public class HomeFragment extends Fragment {
         // Check user status and set up the UI
         checkUserStatus();
         calendarView.setOnDateChangedListener((widget, date, selected) -> {
-            List<Event> eventsForDay = getEventsForDay(date);
+            List<Event> eventsForDay = displayEventsForDate(date);
 
             if (eventsForDay != null && !eventsForDay.isEmpty()) {
                 // Show dialog with events
@@ -345,52 +347,62 @@ public class HomeFragment extends Fragment {
     private void setupCalendar() {
         calendarView.setOnDateChangedListener((widget, date, selected) -> {
             // Display events for the selected date
-            getEventsForDay(date);
+            displayEventsForDate(date);
         });
 
-        // Load events and mark calendar
-        loadEvents();
+        // Load events from the current month onwards
+        loadEventsFromCurrentMonth();
     }
-    private void loadEvents() {
+
+    private void loadEventsFromCurrentMonth() {
+        // Determine the start date (first day of the current month)
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.DAY_OF_MONTH, 1); // First day of the month
+        String startDate = formatDate(calendar);
+
+        // Query Firebase to get events starting from the current month
         eventsDatabaseRef = FirebaseDatabase.getInstance().getReference().child("events");
-        eventsDatabaseRef.addValueEventListener(new ValueEventListener() {
+        Query query = eventsDatabaseRef.orderByKey().startAt(startDate);
+
+        // Clear existing events and start loading
+        eventsMap.clear();
+
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                eventsMap.clear(); // Clear existing events before loading new ones
+                // Use a Map to optimize the storage and retrieval of events
+                Map<String, List<Event>> tempEventsMap = new HashMap<>();
 
-                // Iterate through each date node
                 for (DataSnapshot dateSnapshot : snapshot.getChildren()) {
-                    String date = dateSnapshot.getKey(); // Date node key
+                    String date = dateSnapshot.getKey();
 
-                    // Iterate through each user UID node under the date node
                     for (DataSnapshot userSnapshot : dateSnapshot.getChildren()) {
-                        String userId = userSnapshot.getKey(); // User UID
-
-                        // Iterate through each event under the user UID node
                         for (DataSnapshot eventSnapshot : userSnapshot.getChildren()) {
-                            String eventId = eventSnapshot.getKey(); // Event ID
+                            String eventId = eventSnapshot.getKey();
                             String title = eventSnapshot.child("title").getValue(String.class);
                             String description = eventSnapshot.child("description").getValue(String.class);
                             String startTime = eventSnapshot.child("startTime").getValue(String.class);
                             String endTime = eventSnapshot.child("endTime").getValue(String.class);
                             String numberOfPeople = eventSnapshot.child("numberOfPeople").getValue(String.class);
                             String status = eventSnapshot.child("status").getValue(String.class);
+                            String userId = userSnapshot.getKey();
 
-                            if (title != null && description != null && date != null && startTime != null && endTime != null && numberOfPeople != null && status != null && userId != null) {
-                                // Create the Event object with the new structure
+                            if (title != null && description != null && date != null &&
+                                    startTime != null && endTime != null && numberOfPeople != null &&
+                                    status != null && userId != null) {
+
                                 Event event = new Event(eventId, title, description, date, startTime, endTime, numberOfPeople, status, userId);
 
-                                // Add the event to the list of events for this date
-                                if (!eventsMap.containsKey(date)) {
-                                    eventsMap.put(date, new ArrayList<>());
-                                }
-                                eventsMap.get(date).add(event);
+                                // Add event to the temporary map
+                                tempEventsMap.computeIfAbsent(date, k -> new ArrayList<>()).add(event);
                             }
                         }
                     }
                 }
 
-                markEventsOnCalendar(); // Mark the events on the calendar
+                // Assign the loaded events to the main map and mark events on the calendar
+                eventsMap.putAll(tempEventsMap);
+                markEventsOnCalendar();
             }
 
             @Override
@@ -399,24 +411,36 @@ public class HomeFragment extends Fragment {
             }
         });
     }
+
+    private String formatDate(Calendar calendar) {
+        int year = calendar.get(Calendar.YEAR);
+        int month = calendar.get(Calendar.MONTH) + 1; // Calendar months are 0-based
+        int day = calendar.get(Calendar.DAY_OF_MONTH);
+        return String.format("%04d-%02d-%02d", year, month, day);
+    }
+
     private void markEventsOnCalendar() {
         calendarView.removeDecorators(); // Clear old decorators
 
-        // Iterate over the map
+        // Use a batch process to optimize adding decorators
+        List<EventDecorator> decorators = new ArrayList<>();
         for (Map.Entry<String, List<Event>> entry : eventsMap.entrySet()) {
             String dateString = entry.getKey();
             List<Event> events = entry.getValue();
-
-            // Parse the date
             CalendarDay calendarDay = parseDate(dateString);
+
             if (calendarDay != null) {
-                // Add a decorator for each event
+                // Add decorators for events
                 for (Event event : events) {
-                    calendarView.addDecorator(new EventDecorator(calendarDay, event.getStatus()));
+                    decorators.add(new EventDecorator(calendarDay, event.getStatus()));
                 }
             }
         }
+
+        // Apply all decorators at once
+        calendarView.addDecorators(decorators);
     }
+
     private CalendarDay parseDate(String date) {
         try {
             String[] parts = date.split("-");
@@ -429,13 +453,15 @@ public class HomeFragment extends Fragment {
             return null;
         }
     }
-    private List<Event> getEventsForDay(CalendarDay date) {
+
+    private List<Event> displayEventsForDate(CalendarDay date) {
         // Format date as "yyyy-MM-dd"
         String dateKey = date.getYear() + "-" + (date.getMonth() + 1) + "-" + date.getDay();
-
         // Return the list of events for the selected day, or an empty list if none
         return eventsMap.getOrDefault(dateKey, new ArrayList<>());
     }
+
+
 
 
 }

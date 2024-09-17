@@ -169,8 +169,12 @@
     <string name="status_event">Status: %1$s</string>
     <string name="Instruction_stock">Instruction</string>
     <string name="stock_st">Stock</string>
-    <string name="minimum_stock_0">Minimum stock: %1$s</string>
-    <string name="stock_0">Stock: %1$s</string>
-    <string name="maximum_stock_0">Maximum stock: %1$s</string>
-    <string name="critical_stock_0">Critical stock: %1$s</string>
+    <string name="minimum_stock_0">Minimum stock: %1$d</string>
+    <string name="stock_0">Stock: %1$d</string>
+    <string name="maximum_stock_0">Maximum stock: %1$d</string>
+    <string name="critical_stock_0">Critical stock: %1$d</string>
+    <string name="yoda_was_here">A</string>
+    <string name="man_im_dead">A</string>
+    <string name="status_succ">Event status updated to: %1$s</string>
+    <string name="status_err">Failed to update event status</string>
 </resources>
