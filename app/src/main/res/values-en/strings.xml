@@ -9,7 +9,7 @@
     <string name="nav_header_desc">Navigation header</string>
     <string name="action_settings">Settings</string>
 
-    <string name="kods">Code (HOP record keeping number)</string>
+    <string name="kods">Internal code</string>
     <string name="nosaukums">Name of the inventory item</string>
     <string name="units">Unit</string>
 
@@ -177,4 +177,42 @@
     <string name="man_im_dead">A</string>
     <string name="status_succ">Event status updated to: %1$s</string>
     <string name="status_err">Failed to update event status</string>
+    <string name="stock_new">Stock</string>
+    <string name="izg_code">Izglītības pārvaldes code</string>
+    <string name="enter_value_max_8_digits">Enter value (max 8 digits)</string>
+    <string name="desc_text" >Description</string>
+    <string name="info_izg_code">
+        <![CDATA[
+    <b>Enter a numeric limit for the equipment</b>, which can be up to 8 digits long. This limit is used for tracking purposes and should be within the expected range for the equipment.
+        ]]>
+</string>
+
+    <string name="info_stock">
+        <![CDATA[
+    <br><b>Critical Stock:</b> Specify the stock level at which you need to reorder this equipment immediately. If the stock falls below this number, you will be alerted.</br>
+    <br><b>Min Stock:</b> The minimum quantity of the equipment you want to keep in stock. When stock reaches this level, consider ordering more.</br>
+    <br><b>Max Stock:</b> The maximum quantity of the equipment you want to keep in stock. This helps prevent overstocking.</br>
+        ]]>
+</string>
+
+    <string name="info_code">
+        <![CDATA[
+    <br><b>This field represents the unique identifier for each piece of equipment, following a specific format:</b></br>
+    <br><b>Example:</b> 2_3_1_Drill</br>
+    <br>- <b>Room Number:</b> 1 (Can be a two-digit number)</br>
+    <br>- <b>Station Number:</b> 3 (Can be a two-digit number)</br>
+    <br>- <b>Type of Item:</b> 1 (Asset) (2 = Consumable)</br>
+    <br>- <b>Name of Item:</b> Drill</br>
+    <br>Enter the equipment code according to this structure. The code should be unique and adhere to the specified format.
+        ]]>
+</string>
+
+
+
+
+
+
+    <string name="info_code_title">Information</string>
+    <string name="info_default">No information available.</string>
+
 </resources>

@@ -73,6 +73,9 @@ dependencies {
     implementation("com.google.firebase:firebase-functions:20.4.0")
     annotationProcessor("com.github.bumptech.glide:compiler:4.12.0")
 
+    implementation ("com.sun.mail:android-mail:1.6.7")
+    implementation ("com.sun.mail:android-activation:1.6.7")
+    
     implementation ("com.github.prolificinteractive:material-calendarview:1.4.3")
     implementation ("com.google.api-client:google-api-client:2.0.0")
     implementation ("com.google.oauth-client:google-oauth-client-jetty:1.34.1")

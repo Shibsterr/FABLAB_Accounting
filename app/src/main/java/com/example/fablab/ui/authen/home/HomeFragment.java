@@ -8,9 +8,11 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.DragEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +24,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
+import androidx.core.view.ViewCompat;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -203,13 +206,21 @@ public class HomeFragment extends Fragment {
         descriptionView.setText(description);
         descriptionView.setTextSize(12);
 
+        TextView idView = new TextView(context);
+        idView.setText("ID: " + ID);
+        idView.setTextColor(Color.parseColor("#FF5722"));
+        idView.setTextSize(14);
+        idView.setTypeface(null, Typeface.BOLD);
+
         innerLayout.addView(imageView);
         innerLayout.addView(titleView);
         innerLayout.addView(descriptionView);
+        innerLayout.addView(idView);
 
-        // Add to parent layout
+        // Add inner layout to cardView
         cardView.addView(innerLayout);
 
+        // Click listener for card view
         cardView.setOnClickListener(v -> {
             // Retrieve the NavController associated with the activity
             NavController navController = Navigation.findNavController(v);
@@ -257,8 +268,68 @@ public class HomeFragment extends Fragment {
             }
         });
 
+        // Long click listener to start drag
+        cardView.setOnLongClickListener(v -> {
+            // Set a drag shadow and start the drag
+            View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(cardView);
+            ViewCompat.startDragAndDrop(cardView, null, shadowBuilder, cardView, 0);
+            return true;
+        });
+
+        // Add the card view to the parent layout
         parent.addView(cardView);
+
+        // Drag listener on the parent layout to handle drop events
+        parent.setOnDragListener((v, event) -> {
+            switch (event.getAction()) {
+                case DragEvent.ACTION_DRAG_STARTED:
+                    return true;
+
+                case DragEvent.ACTION_DRAG_ENTERED:
+                case DragEvent.ACTION_DRAG_LOCATION:
+                    return true;
+
+                case DragEvent.ACTION_DRAG_EXITED:
+                    return true;
+
+                case DragEvent.ACTION_DROP:
+                    // Get the view being dragged
+                    View draggedView = (View) event.getLocalState();
+
+                    // Remove the dragged view from its current position
+                    parent.removeView(draggedView);
+
+                    // Get the Y position of the drop event
+                    int dropY = (int) event.getY();
+
+                    // Insert the dragged view at the correct position based on Y-coordinate
+                    int dropPosition = calculateDropPosition(parent, dropY);
+                    parent.addView(draggedView, dropPosition);
+
+                    return true;
+
+                case DragEvent.ACTION_DRAG_ENDED:
+                    return true;
+
+                default:
+                    return false;
+            }
+        });
     }
+    private int calculateDropPosition(LinearLayout parent, int dropY) {
+        for (int i = 0; i < parent.getChildCount(); i++) {
+            View child = parent.getChildAt(i);
+            int childTop = child.getTop();
+            int childBottom = child.getBottom();
+
+            // Check if dropY is within the bounds of this child view
+            if (dropY > childTop && dropY < childBottom) {
+                return i;
+            }
+        }
+        return parent.getChildCount();
+    }
+
     private void createSpace(Context context, LinearLayout parent) {
         Space space = new Space(context);
         space.setLayoutParams(new LinearLayout.LayoutParams(30, 30));
@@ -300,6 +371,9 @@ public class HomeFragment extends Fragment {
         });
         heightAnimator.start();
     }
+
+
+
     private void checkUserStatus() {
         DatabaseReference userRef = FirebaseDatabase.getInstance().getReference()
                 .child("users")

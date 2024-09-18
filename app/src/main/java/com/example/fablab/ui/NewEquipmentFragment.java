@@ -19,6 +19,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -27,6 +28,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 
 import com.example.fablab.MainActivity;
@@ -53,7 +55,8 @@ public class NewEquipmentFragment extends Fragment {
     private String selectedType, selectedUnit;
     private View view;
     private Button btnsubmit, btnUploadImage;
-    private EditText editcode, editname, editamount, editcrit, editmin, editmax, editdescr;
+    private ImageButton infoCode, infoStock,infoIntegerLimit;
+    private EditText editcode, editname, editamount, editcrit, editmin, editmax, editdescr, editizcode;
 
     // Declare a boolean variable to track whether an image has been captured
     private boolean isImageCaptured = false;
@@ -75,6 +78,8 @@ public class NewEquipmentFragment extends Fragment {
         btnsubmit = view.findViewById(R.id.button_submit);
         btnUploadImage = view.findViewById(R.id.button_upload);
         editdescr = view.findViewById(R.id.description);
+        editizcode = view.findViewById(R.id.edit_integer_limit);
+
         editcrit = view.findViewById(R.id.crit_stock);
         editmax = view.findViewById(R.id.max_stock);
         editmin = view.findViewById(R.id.min_stock);
@@ -119,10 +124,21 @@ public class NewEquipmentFragment extends Fragment {
         });
 
         // Disable the upload image button initially
+
         btnUploadImage.setEnabled(false);
 
+        // Initialize Buttons
+        infoCode = view.findViewById(R.id.info_code);
+        infoStock = view.findViewById(R.id.info_stock);
+        infoIntegerLimit = view.findViewById(R.id.info_izg_code);
+
+        // Set up Click Listeners
+        infoCode.setOnClickListener(v -> showInfoDialog("code"));
+        infoStock.setOnClickListener(v -> showInfoDialog("stock"));
+        infoIntegerLimit.setOnClickListener(v -> showInfoDialog("integer_limit"));
+
         // Set listeners for text changes in EditText fields to enable/disable the upload image button accordingly
-        EditText[] editTexts = {editcode, editname, editamount, editdescr, editcrit, editmax, editmin};
+        EditText[] editTexts = {editcode, editname, editamount, editdescr, editcrit, editmax, editmin,editizcode};
         for (EditText editText : editTexts) {
             editText.addTextChangedListener(new TextWatcher() {
                 @Override
@@ -161,11 +177,12 @@ public class NewEquipmentFragment extends Fragment {
             String crit = String.valueOf(editcrit.getText());
             String min = String.valueOf(editmin.getText());
             String max = String.valueOf(editmax.getText());
+            String izg_code = String.valueOf(editizcode.getText());
 
             // Check for null values
             if (TextUtils.isEmpty(code) || TextUtils.isEmpty(name) || TextUtils.isEmpty(selectedType) ||
                     TextUtils.isEmpty(selectedUnit) || TextUtils.isEmpty(skaits) || TextUtils.isEmpty(desc) ||
-                    TextUtils.isEmpty(crit) || TextUtils.isEmpty(min) || TextUtils.isEmpty(max)) {
+                    TextUtils.isEmpty(crit) || TextUtils.isEmpty(min) || TextUtils.isEmpty(max) || TextUtils.isEmpty(izg_code)) {
                 Toast.makeText(getContext(), "Please fill in all fields", Toast.LENGTH_SHORT).show();
                 Log.d("MainActivity", "One or more fields are empty");
 
@@ -198,6 +215,10 @@ public class NewEquipmentFragment extends Fragment {
 
                 if (TextUtils.isEmpty(max)){
                     editmax.setError("Aizpildi ar skaitli!");
+                }
+
+                if(TextUtils.isEmpty(izg_code)){
+                    editizcode.setError("Netika ievadīts izglītības inventāra kods!");
                 }
 
             }else{
@@ -250,11 +271,16 @@ public class NewEquipmentFragment extends Fragment {
                             // Delete the currently stored picture
                             deleteCurrentImage();
                         } else {
-                            // Check if an image has been captured
-                            if (!isImageCaptured) {
-                                Toast.makeText(getContext(), "Please capture an image first", Toast.LENGTH_SHORT).show();
-                                return; // Exit the method if no image is captured
-                            }
+
+                            if(izg_code.length() != 8) {
+                                editizcode.setError("Kods netika ievadīts līdz galam!");
+                                editizcode.requestFocus();
+                            }else{
+                                // Check if an image has been captured
+                                if (!isImageCaptured) {
+                                    Toast.makeText(getContext(), "Please capture an image first", Toast.LENGTH_SHORT).show();
+                                    return; // Exit the method if no image is captured
+                                }
 
                             //Realtime database
                             DatabaseReference databaseRef = FirebaseDatabase.getInstance().getReference();
@@ -283,6 +309,7 @@ public class NewEquipmentFragment extends Fragment {
                                 Stockequips.put("Min Stock", minValue);
                                 Stockequips.put("Critical Stock", critValue);
                                 Stockequips.put("Description", desc);
+                                Stockequips.put("IzgKods", izg_code);
                                 Stockequips.put("Attēls", imageUrl);
 
                                 equipsRef.setValue(Stockequips);     //sends to the stock equipment
@@ -296,6 +323,7 @@ public class NewEquipmentFragment extends Fragment {
                                 equips.put("Mērvienība", selectedUnit);
                                 equips.put("Skaits", skaits);
                                 equips.put("Description", desc);
+                                equips.put("IzgKods", izg_code);
                                 equips.put("Attēls", imageUrl);
 
                                 stationRef.setValue(equips);    //sends to the station equipment to display
@@ -305,6 +333,7 @@ public class NewEquipmentFragment extends Fragment {
                                 getActivity().finish();
                                 Log.d("MainActivity", "Added a new equipment");
                             });
+                            }
                         }
                     }else{
                         deleteCurrentImage();
@@ -326,6 +355,11 @@ public class NewEquipmentFragment extends Fragment {
 
 
         return view;
+    }
+    private void showInfoDialog(String infoType) {
+        // Create and show the dialog based on the infoType
+        DialogFragment dialog = InfoDialogFragment.newInstance(infoType);
+        dialog.show(getChildFragmentManager(), "infoDialog");
     }
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -459,9 +493,6 @@ public class NewEquipmentFragment extends Fragment {
                     deleteCurrentImage();
                 });
     }
-
-
-
     private String whatStat(String stacija) {       //needs to be dynamically changed
         String whatStation = "";
 

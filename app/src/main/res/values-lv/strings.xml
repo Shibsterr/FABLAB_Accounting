@@ -9,7 +9,7 @@
     <string name="nav_header_desc">Navigation header</string>
     <string name="action_settings">Iestatījumi</string>
 
-    <string name="kods">Kods (HOP Lietvedības Nr)</string>
+    <string name="kods">Iekšējais kods</string>
     <string name="nosaukums">Nosaukums inventāram</string>
     <string name="units">Mērvienība</string>
 
@@ -180,5 +180,39 @@
     <string name="man_im_dead">A</string>
     <string name="status_succ">Notikuma status mainīts uz: %1$s</string>
     <string name="status_err">Kļūda ar statusa nomaiņa!</string>
+    <string name="stock_new">Inventārs</string>
+    <string name="izg_code">Izglītības pārvaldes kods</string>
+    <string name="enter_value_max_8_digits">Ievadiet izglītības kodu (ne mazāk kā 8 cipari)</string>
+    <string name="desc_text" >Apraksts</string>
+    <string name="info_izg_code">
+        <![CDATA[
+    <b>Ievadiet numerisko ierobežojumu aprīkojumam</b>, kuram var būt līdz 8 cipariem. Šis ierobežojums tiek izmantots izsekošanai un jābūt atbilstošam paredzētajam aprīkojuma diapazonam.
+        ]]>
+</string>
+
+    <string name="info_stock">
+        <![CDATA[
+    <br><b>Kritiskā krāja:</b> Norādiet krājuma līmeni, pie kura jums nekavējoties jāveic atkārtota pasūtīšana. Ja krājums nokrīt zem šī skaitļa, saņemsiet brīdinājumu.</br>
+    <br><b>Minimālais krājums:</b> Minimālais aprīkojuma daudzums, ko vēlaties uzturēt krājumā. Kad krājums sasniedz šo līmeni, apsveriet iespēju pasūtīt vairāk.</br>
+    <br><b>Maksimālais krājums:</b> Maksimālais aprīkojuma daudzums, ko vēlaties uzturēt krājumā. Tas palīdz novērst pārmērīgu krājumu uzkrāšanu.</br>
+        ]]>
+</string>
+
+    <string name="info_code">
+    <![CDATA[
+    <br><b>Šis lauks pārstāv unikālo identifikatoru katram aprīkojuma gabalam, kas atbilst konkrētam formātam:</b>
+    <br><b>Piemērs:</b> 2_3_1_Skrūvgriezis</br>
+    <br>- <b>Telpas numurs:</b> 2 (Drīkst būt div cipar skaitlis)</br>
+    <br>- <b>Stacijas numurs:</b> 3 (Drīkst būt div cipar skaitlis)</br>
+    <br>- <b>Preces veids:</b> 1 (Aktīvs) (2 = Patērejamais)</br>
+    <br>- <b>Preces nosaukums:</b> Skrūvgriezis</br>
+    <br>Ievadiet aprīkojuma kodu saskaņā ar šo struktūru. Kodam jābūt unikālam un jāatbilst norādītajam formātam.</br>
+    ]]>
+</string>
+
+
+    <string name="info_code_title">Informācija</string>
+    <string name="info_default">Informācija nav pieejama.</string>
+
 
 </resources>

@@ -78,21 +78,11 @@ public class MainActivity extends AppCompatActivity {
                         Toast.makeText(MainActivity.this, "Cancelled due to missing camera permission", Toast.LENGTH_LONG).show();
                     }
                 } else {
-                    String data = result.getContents();
-                    Log.d("MainActivity", "Scanned data: " + data);
+                    String scannedCode = result.getContents();
+                    Log.d("MainActivity", "Scanned data: " + scannedCode);
 
-                    if (isValidScan(data)) {
-                        Bundle bundle = new Bundle();
-                        bundle.putString("code", data);
-
-                        SpecificEquipmentFragment specificEquipmentFragment = new SpecificEquipmentFragment();
-                        specificEquipmentFragment.setArguments(bundle);
-
-                        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
-                        navController.navigate(R.id.specificEquipmentFragment, bundle);
-
-                        Toast.makeText(MainActivity.this, "Scanned: " + data, Toast.LENGTH_LONG).show();
-                        addLogEntry(data);
+                    if (isValidScan(scannedCode)) {
+                        searchEquipmentInFirebase(scannedCode);
                     } else {
                         Toast.makeText(MainActivity.this, "Invalid scan. Please try again.", Toast.LENGTH_LONG).show();
                         scanCode(null); // Restart scanning
@@ -101,11 +91,59 @@ public class MainActivity extends AppCompatActivity {
             });
 
     private boolean isValidScan(String data) {
-        return Pattern.matches(PATTERN_STRING, data) ||
+        return data.length() == 8 || Pattern.matches(PATTERN_STRING, data) ||
                 Pattern.matches(PATTERN_LONGER, data) ||
                 Pattern.matches(PATTERN, data) ||
                 Pattern.matches(SMALL_PATTERN, data);
     }
+
+    private void searchEquipmentInFirebase(String scannedCode) {
+        DatabaseReference equipmentRef = FirebaseDatabase.getInstance().getReference("equipment");
+        equipmentRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                boolean found = false;
+
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    String kods = snapshot.child("Kods").getValue(String.class);
+                    String izgKods = snapshot.child("IzgKods").getValue(String.class);
+
+                    if (scannedCode.equals(kods) || scannedCode.equals(izgKods)) {
+                        String equipmentId = snapshot.getKey(); // Get the key of the equipment item
+                        openSpecificEquipmentFragment(equipmentId);
+                        found = true;
+                        break;
+                    }
+                }
+
+                if (!found) {
+                    Toast.makeText(MainActivity.this, "Item not found, please try again.", Toast.LENGTH_LONG).show();
+                    scanCode(null); // Restart scanning
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.w("MainActivity", "Failed to read value.", databaseError.toException());
+            }
+        });
+    }
+
+    private void openSpecificEquipmentFragment(String equipmentId) {
+        Bundle bundle = new Bundle();
+        bundle.putString("code", equipmentId);
+
+        SpecificEquipmentFragment specificEquipmentFragment = new SpecificEquipmentFragment();
+        specificEquipmentFragment.setArguments(bundle);
+
+        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
+        navController.navigate(R.id.specificEquipmentFragment, bundle);
+
+        Toast.makeText(MainActivity.this, "Scanned: " + equipmentId, Toast.LENGTH_LONG).show();
+        addLogEntry(equipmentId);
+    }
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
