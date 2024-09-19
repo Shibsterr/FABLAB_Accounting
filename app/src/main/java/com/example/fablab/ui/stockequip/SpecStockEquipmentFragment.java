@@ -44,7 +44,7 @@ public class SpecStockEquipmentFragment extends Fragment {
 
     private DatabaseReference databaseReference;
     private TextView titletext, desctext,
-            maxstc,minstc,critstc,basestock;
+            maxstc,minstc,critstc,basestock,roomtxt;
     private ImageView equipimg;
     private Button addbtn,subtractbtn;
 
@@ -81,7 +81,6 @@ public class SpecStockEquipmentFragment extends Fragment {
         maxstc = view.findViewById(R.id.maxstock);
         minstc = view.findViewById(R.id.minstock);
         critstc = view.findViewById(R.id.critstock);
-
         addbtn = view.findViewById(R.id.addbutton);
         subtractbtn = view.findViewById(R.id.subtractbutton);
 
@@ -110,7 +109,6 @@ public class SpecStockEquipmentFragment extends Fragment {
                             int maxStock = snapshot.child("Max Stock").getValue(Integer.class);
                             int critStock = snapshot.child("Critical Stock").getValue(Integer.class);
                             String stk = snapshot.child("Skaits").getValue(String.class);
-
 
                             String min,max,crit,stock;
                             stock = "Stock: "+stk;

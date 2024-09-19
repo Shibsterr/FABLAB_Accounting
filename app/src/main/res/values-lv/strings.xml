@@ -213,6 +213,7 @@
 
     <string name="info_code_title">Informācija</string>
     <string name="info_default">Informācija nav pieejama.</string>
+    <string name="room">Telpa:</string>
 
 
 </resources>

@@ -43,7 +43,7 @@ import java.util.Objects;
 
 public class SpecificEquipmentFragment extends Fragment {
     private DatabaseReference databaseReference;
-    private TextView titletext, desctext;
+    private TextView titletext, desctext, roomNumberText;
     private ImageView equipimg;
     private Button instbtn, stockbtn;
     private String test;
@@ -94,12 +94,11 @@ public class SpecificEquipmentFragment extends Fragment {
         titletext = view.findViewById(R.id.equip_title);
         desctext = view.findViewById(R.id.equip_desc);
         equipimg = view.findViewById(R.id.equip_image);
-
         instbtn = view.findViewById(R.id.instructions);
         stockbtn = view.findViewById(R.id.stock);
-
-        instbtn.setText(getString(R.string.Instruction_stock));
-        stockbtn.setText(getString(R.string.stock_st));
+        roomNumberText = view.findViewById(R.id.room_number); // Ensure this ID matches your XML
+//        instbtn.setText(getString(R.string.Instruction_stock));
+//        stockbtn.setText(getString(R.string.stock_st));
 
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
 
@@ -161,9 +160,10 @@ public class SpecificEquipmentFragment extends Fragment {
                                 String description = snapshot.child("Description").getValue(String.class);
                                 String imageUrl = snapshot.child("Attēls").getValue(String.class);
                                 test = snapshot.child("Kods").getValue(String.class);
+                                String roomNumber = snapshot.child("Telpa").getValue(String.class); // Retrieve room number
                                 Log.d("SpecificEquipmentFragment", "Description: " + description);
-
-                                // Update UI with the retrieved details
+                                String plz = "ROOM NUMBER: " + roomNumber;
+                                roomNumberText.setText(plz); // Set room number to TextView
                                 equipimg.setClipToOutline(true);
                                 titletext.setText(name);
                                 desctext.setText(description);
@@ -331,8 +331,10 @@ public class SpecificEquipmentFragment extends Fragment {
                                                 String equipmentName = snapshot.child("Nosaukums").getValue(String.class);
                                                 String description = snapshot.child("Description").getValue(String.class);
                                                 String imageUrl = snapshot.child("Attēls").getValue(String.class);
-
-                                                // Update UI with the retrieved details
+                                                String roomNumber = snapshot.child("Telpa").getValue(String.class); // Retrieve room number
+                                                Log.d("SpecificEquipmentFragment", "Description: " + description);
+                                                String plz = "ROOM NUMBER: " + roomNumber;
+                                                roomNumberText.setText(plz); // Set room number to TextView
                                                 equipimg.setClipToOutline(true);
                                                 titletext.setText(equipmentName);
                                                 desctext.setText(description);
@@ -383,12 +385,15 @@ public class SpecificEquipmentFragment extends Fragment {
                                 // Get the details of the equipment
                                 String imageName = snapshot.child("Attēls").getValue(String.class);
                                 String description = snapshot.child("Description").getValue(String.class);
-
-                                // Update UI with the retrieved details
+                                String roomNumber = snapshot.child("Telpa").getValue(String.class); // Retrieve room number
+                                Log.d("SpecificEquipmentFragment", "Description: " + description);
+                                String plz = "ROOM NUMBER: " + roomNumber;
+                                roomNumberText.setText(plz); // Set room number to TextView
                                 equipimg.setClipToOutline(true);
                                 titletext.setText(equipmentName);
                                 desctext.setText(description);
                                 Glide.with(requireContext()).load(imageName).into(equipimg);
+
 
                                 stockbtn.setOnClickListener(v -> {
                                     // Retrieve the NavController associated with the activity

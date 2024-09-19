@@ -211,4 +211,5 @@
 
     <string name="info_code_title">Information</string>
     <string name="info_default">No information available.</string>
+    <string name="room">Room:</string>
 </resources>

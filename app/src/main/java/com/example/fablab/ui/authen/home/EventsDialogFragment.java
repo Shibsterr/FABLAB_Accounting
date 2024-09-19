@@ -32,6 +32,7 @@ public class EventsDialogFragment extends DialogFragment {
     private String userStatus;
     private RecyclerView recyclerView;
     private EventAdapter adapter;
+    private DatabaseReference eventsRef;
 
     public static EventsDialogFragment newInstance(List<Event> events) {
         EventsDialogFragment fragment = new EventsDialogFragment();
@@ -78,6 +79,7 @@ public class EventsDialogFragment extends DialogFragment {
                 Log.d("EventsDialogFragment", "User status: " + userStatus);
 
                 setupRecyclerView();
+                setupEventListener(); // Set up real-time listener for event status updates
             }
 
             @Override
@@ -95,17 +97,29 @@ public class EventsDialogFragment extends DialogFragment {
         adapter = new EventAdapter(events, userStatus, new EventAdapter.OnEventActionListener() {
             @Override
             public void onAccept(Event event) {
-                updateEventStatus(event.getEventDate(), event.getUserId(), "Accepted", event.getEventId());
+                if (isEventValid(event)) {
+                    updateEventStatus(event.getEventDate(), event.getUserId(), "Accepted", event.getEventId());
+                } else {
+                    Log.e("EventsDialogFragment", "Invalid event data: " + event);
+                }
             }
 
             @Override
             public void onDecline(Event event) {
-                updateEventStatus(event.getEventDate(), event.getUserId(), "Declined", event.getEventId());
+                if (isEventValid(event)) {
+                    updateEventStatus(event.getEventDate(), event.getUserId(), "Declined", event.getEventId());
+                } else {
+                    Log.e("EventsDialogFragment", "Invalid event data: " + event);
+                }
             }
 
             @Override
             public void onFinish(Event event) {
-                updateEventStatus(event.getEventDate(), event.getUserId(), "Finished", event.getEventId());
+                if (isEventValid(event)) {
+                    updateEventStatus(event.getEventDate(), event.getUserId(), "Finished", event.getEventId());
+                } else {
+                    Log.e("EventsDialogFragment", "Invalid event data: " + event);
+                }
             }
         });
 
@@ -113,7 +127,53 @@ public class EventsDialogFragment extends DialogFragment {
         recyclerView.setAdapter(adapter);
     }
 
+    private boolean isEventValid(Event event) {
+        return event != null && event.getEventDate() != null && event.getUserId() != null && event.getEventId() != null;
+    }
+
+    private void setupEventListener() {
+        if (events == null || events.isEmpty()) {
+            return;
+        }
+
+        for (Event event : events) {
+            DatabaseReference eventRef = FirebaseDatabase.getInstance().getReference()
+                    .child("events")
+                    .child(event.getEventDate())
+                    .child(event.getUserId())
+                    .child(event.getEventId());
+
+            eventRef.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    String status = dataSnapshot.child("status").getValue(String.class);
+                    if (status != null) {
+                        for (Event e : events) {
+                            if (e.getEventId().equals(event.getEventId())) {
+                                e.setStatus(status);
+                                break;
+                            }
+                        }
+                        if (adapter != null) {
+                            adapter.notifyDataSetChanged();
+                        }
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                    Log.d("EventsDialogFragment", "ERROR WITH EVENT DATA");
+                }
+            });
+        }
+    }
+
     private void updateEventStatus(String eventDate, String userId, String newStatus, String eventId) {
+        if (eventDate == null || userId == null || eventId == null) {
+            Log.e("EventsDialogFragment", "Invalid parameters for updating event status");
+            return;
+        }
+
         // Reference to the specific event by its eventId
         DatabaseReference eventRef = FirebaseDatabase.getInstance().getReference()
                 .child("events")
@@ -131,4 +191,3 @@ public class EventsDialogFragment extends DialogFragment {
         });
     }
 }
-
