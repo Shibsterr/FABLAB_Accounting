@@ -86,7 +86,6 @@ public class SpecificEquipmentFragment extends Fragment {
         Configuration configuration = new Configuration(resources.getConfiguration());
         configuration.setLocale(locale);
 
-        // Update the configuration and display metrics
         resources.updateConfiguration(configuration, resources.getDisplayMetrics());
 
         Log.d("MainActivity", "Language Code (spec eq): " + languageCode);
@@ -96,9 +95,9 @@ public class SpecificEquipmentFragment extends Fragment {
         equipimg = view.findViewById(R.id.equip_image);
         instbtn = view.findViewById(R.id.instructions);
         stockbtn = view.findViewById(R.id.stock);
-        roomNumberText = view.findViewById(R.id.room_number); // Ensure this ID matches your XML
-//        instbtn.setText(getString(R.string.Instruction_stock));
-//        stockbtn.setText(getString(R.string.stock_st));
+        roomNumberText = (TextView) view.findViewById(R.id.room_number);
+        instbtn.setText(getString(R.string.Instruction_stock));
+        stockbtn.setText(getString(R.string.stock_st));
 
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
 
@@ -162,11 +161,11 @@ public class SpecificEquipmentFragment extends Fragment {
                                 test = snapshot.child("Kods").getValue(String.class);
                                 String roomNumber = snapshot.child("Telpa").getValue(String.class); // Retrieve room number
                                 Log.d("SpecificEquipmentFragment", "Description: " + description);
-                                String plz = "ROOM NUMBER: " + roomNumber;
-                                roomNumberText.setText(plz); // Set room number to TextView
+                                Log.d("SpecEquip", "Room number: "+ roomNumber);
                                 equipimg.setClipToOutline(true);
                                 titletext.setText(name);
                                 desctext.setText(description);
+                                roomNumberText.setText(getString(R.string.room, roomNumber)); // Set room number to TextView
                                 Glide.with(requireContext()).load(imageUrl).into(equipimg);
 
                                 break; // Exit loop once the equipment is found
@@ -333,8 +332,7 @@ public class SpecificEquipmentFragment extends Fragment {
                                                 String imageUrl = snapshot.child("Attēls").getValue(String.class);
                                                 String roomNumber = snapshot.child("Telpa").getValue(String.class); // Retrieve room number
                                                 Log.d("SpecificEquipmentFragment", "Description: " + description);
-                                                String plz = "ROOM NUMBER: " + roomNumber;
-                                                roomNumberText.setText(plz); // Set room number to TextView
+                                                roomNumberText.setText(getString(R.string.room, roomNumber)); // Set room number to TextView
                                                 equipimg.setClipToOutline(true);
                                                 titletext.setText(equipmentName);
                                                 desctext.setText(description);
@@ -387,8 +385,7 @@ public class SpecificEquipmentFragment extends Fragment {
                                 String description = snapshot.child("Description").getValue(String.class);
                                 String roomNumber = snapshot.child("Telpa").getValue(String.class); // Retrieve room number
                                 Log.d("SpecificEquipmentFragment", "Description: " + description);
-                                String plz = "ROOM NUMBER: " + roomNumber;
-                                roomNumberText.setText(plz); // Set room number to TextView
+                                roomNumberText.setText(getString(R.string.room, roomNumber)); // Set room number to TextView
                                 equipimg.setClipToOutline(true);
                                 titletext.setText(equipmentName);
                                 desctext.setText(description);

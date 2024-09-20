@@ -1,16 +1,19 @@
 package com.example.fablab.ui.stockequip;
 
+import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -46,7 +49,7 @@ public class SpecStockEquipmentFragment extends Fragment {
     private TextView titletext, desctext,
             maxstc,minstc,critstc,basestock,roomtxt;
     private ImageView equipimg;
-    private Button addbtn,subtractbtn;
+    private Button addbtn,subtractbtn, maxStockButton;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -83,8 +86,9 @@ public class SpecStockEquipmentFragment extends Fragment {
         critstc = view.findViewById(R.id.critstock);
         addbtn = view.findViewById(R.id.addbutton);
         subtractbtn = view.findViewById(R.id.subtractbutton);
+        maxStockButton = view.findViewById(R.id.maxstock_button);
 
-
+        maxStockButton.setOnClickListener(v -> showEditMaxStockDialog());
         addbtn.setOnClickListener(v -> onAddButtonClicked());
         subtractbtn.setOnClickListener(v -> onSubtractButtonClicked());
 
@@ -394,5 +398,79 @@ public class SpecStockEquipmentFragment extends Fragment {
     private void onSubtractButtonClicked() {
         showQuantityInputDialog(false);
     }
+    private void showEditMaxStockDialog() {
+        // Create an EditText view for user input
+        final EditText input = new EditText(getContext());
+        input.setInputType(InputType.TYPE_CLASS_NUMBER); // Only allow integer input
 
+        // Create the dialog
+        new AlertDialog.Builder(getContext())
+                .setTitle(getString(R.string.max_changetitle))
+                .setMessage(getString(R.string.max_change))
+                .setView(input)
+                .setPositiveButton("OK", (dialog, which) -> {
+                    String inputText = input.getText().toString();
+
+                    if (!inputText.isEmpty()) {
+                        try {
+                            int newMaxStock = Integer.parseInt(inputText);
+                            updateMaxStock(newMaxStock); // Update the maxStock in the UI and Firebase
+                        } catch (NumberFormatException e) {
+                            Toast.makeText(getContext(), "Invalid input", Toast.LENGTH_SHORT).show();
+                        }
+                    } else {
+                        Toast.makeText(getContext(), "Please enter a valid number", Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .setNegativeButton(getString(R.string.cancel), (dialog, which) -> dialog.cancel())
+                .show();
+    }
+    private void updateMaxStock(int newMaxStock) {
+        String equipmentName = titletext.getText().toString();
+        // Update the UI
+        maxstc.setText("Maximum stock: " + newMaxStock);
+
+        // Update the value in Firebase
+        DatabaseReference equipmentRef = FirebaseDatabase.getInstance().getReference().child("equipment");
+        Query query = equipmentRef.orderByChild("Nosaukums").equalTo(equipmentName);
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                        int currentStock = Integer.parseInt(basestock.getText().toString().replace("Stock: ", ""));
+                        int minStock = snapshot.child("Min Stock").getValue(Integer.class);
+                        int maxStock = snapshot.child("Max Stock").getValue(Integer.class);
+                        // Update the "Max Stock" value in the database
+                        snapshot.getRef().child("Max Stock").setValue(newMaxStock)
+                                .addOnSuccessListener(aVoid -> {
+                                    Toast.makeText(getContext(), "Max stock updated", Toast.LENGTH_SHORT).show();
+                                })
+                                .addOnFailureListener(e -> {
+                                    Toast.makeText(getContext(), "Failed to update max stock", Toast.LENGTH_SHORT).show();
+                                });
+
+                            if (currentStock <= minStock) {
+                                subtractbtn.setEnabled(false);
+                            } else {
+                                subtractbtn.setEnabled(true);
+                            }
+
+                            if (currentStock >= maxStock) {
+                                addbtn.setEnabled(false);
+                            } else {
+                                addbtn.setEnabled(true);
+                            }
+                    }
+                } else {
+                    Toast.makeText(getContext(), "Equipment not found", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.e("UpdateMaxStock", "Error updating max stock: " + databaseError.getMessage());
+            }
+        });
+    }
 }

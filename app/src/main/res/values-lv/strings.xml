@@ -213,7 +213,14 @@
 
     <string name="info_code_title">Informācija</string>
     <string name="info_default">Informācija nav pieejama.</string>
-    <string name="room">Telpa:</string>
+    <string name="room">Telpa: %1$s</string>
+    <string name="edit">Rediģēt</string>
+    <string name="max_change" >Ievadiet jauno maksimālo krājuma vērtību:</string>
+    <string name="max_changetitle" >Rediģēt maksimālo krājumu</string>
+    <string name="add_to_the_stock">Pievienojiet krājumam</string>
+    <string name="subtract_from_the_stock">Atņemiet no krājuma</string>
+    <string name="confirm">Apstiprināt</string>
+    <string name="cancel">Atcelt</string>
 
 
 </resources>

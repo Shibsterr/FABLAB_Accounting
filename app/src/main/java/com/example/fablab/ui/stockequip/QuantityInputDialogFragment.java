@@ -2,7 +2,6 @@ package com.example.fablab.ui.stockequip;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -44,26 +43,18 @@ public class QuantityInputDialogFragment extends DialogFragment {
         quantityEditText = view.findViewById(R.id.quantityEditText);
 
         if (isAddOperation) {
-            dialogTitleTextView.setText("Add to the stock");
+            dialogTitleTextView.setText(R.string.add_to_the_stock);
         } else {
-            dialogTitleTextView.setText("Subtract from the stock");
+            dialogTitleTextView.setText(R.string.subtract_from_the_stock);
         }
 
         builder.setView(view)
-                .setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        String quantityStr = quantityEditText.getText().toString();
-                        int quantity = Integer.parseInt(quantityStr);
-                        listener.onQuantityInput(quantity);
-                    }
+                .setPositiveButton(getString(R.string.confirm), (dialog, which) -> {
+                    String quantityStr = quantityEditText.getText().toString();
+                    int quantity = Integer.parseInt(quantityStr);
+                    listener.onQuantityInput(quantity);
                 })
-                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                });
+                .setNegativeButton(getString(R.string.cancel), (dialog, which) -> dialog.dismiss());
 
         return builder.create();
     }

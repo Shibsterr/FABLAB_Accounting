@@ -211,5 +211,12 @@
 
     <string name="info_code_title">Information</string>
     <string name="info_default">No information available.</string>
-    <string name="room">Room:</string>
+    <string name="room">Room: %1$s</string>
+    <string name="edit">Edit</string>
+    <string name="max_change" >Enter the new maximum stock value:</string>
+    <string name="max_changetitle" >Edit Maximum Stock</string>
+    <string name="add_to_the_stock">Add to the stock</string>
+    <string name="subtract_from_the_stock">Subtract from the stock</string>
+    <string name="confirm">Confirm</string>
+    <string name="cancel">Cancel</string>
 </resources>

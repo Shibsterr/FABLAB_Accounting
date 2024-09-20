@@ -9,124 +9,142 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".ui.stockequip.SpecStockEquipmentFragment">
 
-
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
+
+        <!-- Equipment Image -->
+
+        <!-- Equipment Title -->
 
         <ImageView
             android:id="@+id/equip_image"
             android:layout_width="129dp"
             android:layout_height="130dp"
-            android:layout_marginTop="40dp"
+            android:layout_marginTop="44dp"
             android:layout_marginEnd="15dp"
             android:adjustViewBounds="true"
             android:background="@drawable/round_outline"
             android:clipToOutline="true"
             android:scaleType="centerCrop"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.056"
+            app:layout_constraintHorizontal_bias="0.059"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/nav_home" />
 
+        <!-- Equipment Description -->
         <TextView
             android:id="@+id/equip_title"
-            android:layout_width="167dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="5dp"
-            android:layout_marginTop="40dp"
-            android:layout_marginEnd="62dp"
+            android:layout_width="195dp"
+            android:layout_height="26dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="44dp"
+            android:layout_marginEnd="8dp"
             android:text="man im dead"
             android:textAlignment="center"
+            android:textSize="18sp"
             android:textStyle="bold|italic"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintHorizontal_bias="0.127"
             app:layout_constraintStart_toEndOf="@+id/equip_image"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/equip_desc"
-            android:layout_width="205dp"
-            android:layout_height="150dp"
-            android:layout_marginStart="5dp"
-            android:layout_marginTop="4dp"
-            android:layout_marginEnd="12dp"
+            android:layout_width="236dp"
+            android:layout_height="98dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
             android:text="yoda was here"
+            android:textSize="16sp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toEndOf="@+id/equip_image"
             app:layout_constraintTop_toBottomOf="@+id/equip_title" />
 
         <View
             android:id="@+id/view"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="1dp"
-            android:layout_marginTop="36dp"
+            android:layout_marginTop="44dp"
             android:background="@color/black"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/equip_desc">
-
-        </View>
+            app:layout_constraintTop_toBottomOf="@+id/equip_desc" />
 
         <TextView
             android:id="@+id/stock"
             android:layout_width="match_parent"
-            android:layout_height="75dp"
-            android:layout_marginTop="4dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
             android:gravity="center_vertical"
-            android:paddingLeft="20sp"
+            android:paddingLeft="16dp"
             android:text="@string/stock_0"
             android:textColor="@color/black"
-            android:textSize="30sp"
+            android:textSize="20sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/view" />
 
+        <!-- Minimum Stock -->
         <TextView
             android:id="@+id/minstock"
             android:layout_width="match_parent"
-            android:layout_height="75dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
             android:gravity="center_vertical"
-            android:paddingLeft="20sp"
+            android:paddingLeft="16dp"
             android:text="@string/minimum_stock_0"
             android:textColor="@color/black"
-            android:textSize="30sp"
+            android:textSize="20sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/stock" />
 
+        <!-- Maximum Stock -->
+
         <TextView
             android:id="@+id/maxstock"
-            android:layout_width="match_parent"
-            android:layout_height="75dp"
-            android:layout_marginTop="72dp"
+            android:layout_width="244dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="8dp"
             android:gravity="center_vertical"
-            android:paddingLeft="20sp"
+            android:paddingLeft="16dp"
             android:text="@string/maximum_stock_0"
             android:textColor="@color/black"
-            android:textSize="30sp"
+            android:textSize="20sp"
             android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/maxstock_button"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/stock" />
+            app:layout_constraintTop_toBottomOf="@+id/minstock" />
+
+        <Button
+            android:id="@+id/maxstock_button"
+            android:layout_width="160dp"
+            android:layout_height="48dp"
+            android:layout_marginEnd="8dp"
+            android:drawableLeft="@drawable/edit_icon"
+            android:text="@string/edit"
+            app:layout_constraintBottom_toTopOf="@+id/critstock"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/maxstock"
+            app:layout_constraintVertical_bias="0.0" />
 
         <TextView
             android:id="@+id/critstock"
             android:layout_width="match_parent"
-            android:layout_height="75dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
             android:gravity="center_vertical"
-            android:paddingLeft="20sp"
+            android:paddingLeft="16dp"
             android:text="@string/critical_stock_0"
             android:textColor="@color/black"
-            android:textSize="30sp"
+            android:textSize="20sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
@@ -135,42 +153,38 @@
 
         <View
             android:id="@+id/view2"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="1dp"
+            android:layout_marginTop="32dp"
             android:background="@color/black"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/critstock">
-
-        </View>
-
-        <Button
-            android:id="@+id/subtractbutton"
-            android:layout_width="wrap_content"
-            android:layout_height="65dp"
-            android:layout_marginTop="16dp"
-            android:drawableLeft="@drawable/remove_circle"
-            android:text="@string/subtract"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.952"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/critstock" />
-
-        <Button
-            android:id="@+id/addbutton"
-            android:layout_width="wrap_content"
-            android:layout_height="65dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
-            android:drawableLeft="@drawable/add_circle"
-            android:text="@string/add"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/subtractbutton"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/critstock" />
 
+        <Button
+            android:id="@+id/subtractbutton"
+            android:layout_width="175dp"
+            android:layout_height="58dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="12dp"
+            android:drawableLeft="@drawable/remove_circle"
+            android:text="@string/subtract"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/view2" />
+
+        <Button
+            android:id="@+id/addbutton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:drawableLeft="@drawable/add_circle"
+            android:text="@string/add"
+            app:layout_constraintEnd_toStartOf="@+id/subtractbutton"
+            app:layout_constraintHorizontal_bias="0.131"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/view2" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>
