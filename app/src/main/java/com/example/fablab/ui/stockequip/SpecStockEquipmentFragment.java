@@ -1,8 +1,6 @@
 package com.example.fablab.ui.stockequip;
 
 import android.app.AlertDialog;
-import android.content.ActivityNotFoundException;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.content.res.Resources;
@@ -23,6 +21,7 @@ import androidx.fragment.app.Fragment;
 import androidx.preference.PreferenceManager;
 
 import com.bumptech.glide.Glide;
+import com.example.fablab.EmailSender;
 import com.example.fablab.R;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -162,7 +161,6 @@ public class SpecStockEquipmentFragment extends Fragment {
         return view;
     }
 
-
     private void showQuantityInputDialog(boolean isAddOperation) {
         QuantityInputDialogFragment dialogFragment = new QuantityInputDialogFragment(new QuantityInputDialogFragment.QuantityInputListener() {
             @Override
@@ -256,80 +254,49 @@ public class SpecStockEquipmentFragment extends Fragment {
         dialogFragment.show(getParentFragmentManager(), "quantity_input_dialog");
     }
 
-    // Method to fetch admin's email from the database and send email if stock is low
     private void sendEmailToAdmin() {
-        // Get the current user
+        int maxStock = Integer.parseInt(maxstc.getText().toString().replace("Maximum stock: ", ""));
+        int minStock = Integer.parseInt(minstc.getText().toString().replace("Minimum stock: ", ""));
+
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentUser != null) {
-            // Get a reference to the users node in the Realtime Database
             DatabaseReference usersRef = FirebaseDatabase.getInstance().getReference().child("users");
-
             usersRef.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     List<String> adminEmails = new ArrayList<>();
                     for (DataSnapshot userSnapshot : dataSnapshot.getChildren()) {
-                        // Get the user's status
                         String userStatus = userSnapshot.child("Statuss").getValue(String.class);
-                        if (userStatus != null && userStatus.equals("Admin")) {
-                            // User is an admin, fetch the admin's email
+                        if ("Admin".equals(userStatus)) {
                             String adminEmail = userSnapshot.child("epasts").getValue(String.class);
                             if (adminEmail != null) {
-                                // Now you have the admin's email, add it to the list
                                 adminEmails.add(adminEmail);
-                            } else {
-                                Log.e("FetchAdminEmail", "Admin email not found for user: " + userSnapshot.getKey());
                             }
                         }
                     }
-                    // Send email to all admin emails
-                    sendEmail(adminEmails);
+                    if (!adminEmails.isEmpty()) {
+                        String subject = "Paziņojums par zemu krājumu";
+                        String message = "Sveiki!\n\n" +
+                                "Uzmanību! Preces '" + titletext.getText().toString() + "' krājums ir zemā līmenī.\n" +
+                                "Detalizēta informācija:\n" +
+                                "Nosaukums: " + titletext.getText().toString() + "\n" +
+                                "Pašreizējais krājums: " + basestock.getText().toString().replace("Stock: ", "") + "\n" +
+                                "Minimālais krājums: " + minStock + "\n" +
+                                "Maksimālais krājums: " + maxStock + "\n" +
+                                "Paldies!";
+
+                        EmailSender emailSender = new EmailSender("fablabappnoreply@gmail.com", "xllk wqet dulg xabp");
+                        emailSender.sendEmail(adminEmails, subject, message);
+                    }
                 }
 
                 @Override
                 public void onCancelled(@NonNull DatabaseError databaseError) {
-                    Log.e("FetchAdminEmail", "Database error: " + databaseError.getMessage());
+                    Log.e("SendEmailToAdmin", "Database error: " + databaseError.getMessage());
                 }
             });
-
-        } else {
-            Log.e("FetchAdminEmail", "No user logged in");
         }
     }
-
-    // Method to send email to admin
-    private void sendEmail(List<String> adminEmails) {
-        // Get the current stock and maximum stock
-        int currentStock = Integer.parseInt(basestock.getText().toString().replace("Stock: ", ""));
-        int maxStock = Integer.parseInt(maxstc.getText().toString().replace("Maximum stock: ", ""));
-
-        // Calculate the quantity needed to reach maximum stock
-        int quantityNeeded = maxStock - currentStock;
-
-        // Create the email message
-        String subject = "Item Low Stock Notification";
-        String message = "Dear Admin,\n\n" +
-                "This is to inform you that the item '" + titletext.getText().toString() + "' is below the minimum stock level.\n" +
-                "Current Stock: " + currentStock + "\n" +
-                "Quantity needed to reach maximum stock: " + quantityNeeded + "\n\n" +
-                "Thank you.";
-
-        // Create an email intent
-        Intent intent = new Intent(Intent.ACTION_SEND);
-        intent.setType("message/rfc822");
-        intent.putExtra(Intent.EXTRA_EMAIL, adminEmails.toArray(new String[0])); // Pass the array of admin emails
-        intent.putExtra(Intent.EXTRA_SUBJECT, subject);
-        intent.putExtra(Intent.EXTRA_TEXT, message);
-
-        // Set the package name of the Gmail app to force usage
-        intent.setPackage("com.google.android.gm");
-        try {
-            startActivity(Intent.createChooser(intent, "Send mail..."));
-        } catch (ActivityNotFoundException ex) {
-            Toast.makeText(requireContext(), "There are no email clients installed.", Toast.LENGTH_SHORT).show();
-        }
-    }
-
     // Method to add a log entry to the Realtime Database
     private void addLogEntry(String equipmentName, int quantity, boolean isAddOperation) {
         // Get the current user's UID
@@ -473,4 +440,8 @@ public class SpecStockEquipmentFragment extends Fragment {
             }
         });
     }
+
+
+
+
 }

@@ -1,7 +1,5 @@
-package com.example.fablab.ui.slideshow;
+package com.example.fablab.ui.report;
 
-import android.content.ActivityNotFoundException;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -18,6 +16,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.preference.PreferenceManager;
 
+import com.example.fablab.EmailSender;
 import com.example.fablab.R;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -32,6 +31,7 @@ public class ReportFragment extends Fragment {
 
     private EditText descriptionEditText, edittelpanr, editname;
     private Spinner stacijaSpinner;
+    private EmailSender emailSender;
 
     @Nullable
     @Override
@@ -44,17 +44,21 @@ public class ReportFragment extends Fragment {
         stacijaSpinner = view.findViewById(R.id.stacijasnr_spinner);
 
         Button sendButton = view.findViewById(R.id.send_it);
-        sendButton.setOnClickListener(v -> sendEmail());
+        sendButton.setOnClickListener(v -> fetchAdminAndWorkerEmails());
 
-        loadStationNames(); // Load station names into the spinner
+        loadStationNames();
+
+        // Initialize EmailSender with your email and password
+        emailSender = new EmailSender("fablabappnoreply@gmail.com", "xllk wqet dulg xabp");
 
         return view;
     }
+
     private String getCurrentLanguage() {
-        // You can retrieve this from shared preferences or app settings
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getContext());
         return sharedPref.getString("language_preference", "en"); // Default is "en"
     }
+
     private void loadStationNames() {
         DatabaseReference stationsRef = FirebaseDatabase.getInstance().getReference().child("stations");
         stationsRef.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -67,7 +71,6 @@ public class ReportFragment extends Fragment {
                         stationNames.add(stationName);
                     }
                 }
-                // Populate spinner with station names
                 ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_spinner_item, stationNames);
                 spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                 stacijaSpinner.setAdapter(spinnerAdapter);
@@ -80,10 +83,8 @@ public class ReportFragment extends Fragment {
         });
     }
 
-    private void sendEmail() {
-        // Retrieve email list from Firebase Realtime Database based on user status
+    private void fetchAdminAndWorkerEmails() {
         DatabaseReference usersRef = FirebaseDatabase.getInstance().getReference().child("users");
-
         usersRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -91,60 +92,38 @@ public class ReportFragment extends Fragment {
                 for (DataSnapshot userSnapshot : dataSnapshot.getChildren()) {
                     String status = userSnapshot.child("Statuss").getValue(String.class);
                     String email = userSnapshot.child("epasts").getValue(String.class);
-                    if (email != null && ("Admin".equals(status) || "Darbinieks".equals(status))) {
+
+                    if (email != null && ("Admin".equalsIgnoreCase(status) || "Darbinieks".equalsIgnoreCase(status))) {
                         emails.add(email);
                     }
                 }
-                // Now you have the list of emails, you can use it to send the email
-                sendEmailToAdmin(emails);
+
+                if (!emails.isEmpty()) {
+                    sendEmailToAdmin(emails);
+                } else {
+                    Toast.makeText(getContext(), "No admins or workers found!", Toast.LENGTH_SHORT).show();
+                }
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                // Handle error
+                Toast.makeText(getContext(), "Failed to retrieve user data.", Toast.LENGTH_SHORT).show();
             }
         });
     }
 
     private void sendEmailToAdmin(List<String> emails) {
-        String text;
-        String telpanr, stacijanr, name;
+        String telpanr = edittelpanr.getText().toString();
+        String stacijanr = stacijaSpinner.getSelectedItem().toString();
+        String name = editname.getText().toString();
+        String description = descriptionEditText.getText().toString();
 
-        telpanr = String.valueOf(edittelpanr.getText());
-        stacijanr = String.valueOf(stacijaSpinner.getSelectedItem());
-        name = String.valueOf(editname.getText());
-
-        // Construct your email and send it to the list of emails
-        Intent emailIntent = new Intent(Intent.ACTION_SEND_MULTIPLE);
-        emailIntent.setType("message/rfc822");
-
-        // Convert the list of emails to a single string with comma-separated values
-        StringBuilder emailStringBuilder = new StringBuilder();
-        for (String email : emails) {
-            emailStringBuilder.append(email).append(",");
-        }
-        // Remove the trailing comma
-        String emailList = emailStringBuilder.toString();
-        if (emailList.endsWith(",")) {
-            emailList = emailList.substring(0, emailList.length() - 1);
-        }
-        text = "Telpa: " + telpanr +
+        String emailBody = "Telpa: " + telpanr +
                 "\nStacija: " + stacijanr +
                 "\nPriekšmetu nosaukums: " + name +
-                "\nProblēma: \n"
-                + descriptionEditText.getText().toString();
-        emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{emailList});
-        emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Problem Report");
-        emailIntent.putExtra(Intent.EXTRA_TEXT, text);
+                "\nProblēma: \n" + description;
 
-        // Set the package name of the Gmail app to force usage
-        emailIntent.setPackage("com.google.android.gm");
-        try {
-            startActivity(Intent.createChooser(emailIntent, "Send mail..."));
-        } catch (ActivityNotFoundException ex) {
-            Toast.makeText(requireContext(), "There are no email clients installed.", Toast.LENGTH_SHORT).show();
-        }
+        emailSender.sendEmail(emails, "Problem Report", emailBody);
+        Toast.makeText(getContext(), "Email sent in background.", Toast.LENGTH_SHORT).show();
     }
-
-
 }

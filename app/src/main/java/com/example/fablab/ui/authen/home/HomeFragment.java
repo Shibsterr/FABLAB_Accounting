@@ -106,9 +106,10 @@ public class HomeFragment extends Fragment {
                 eventsDialogFragment.show(getChildFragmentManager(), "eventsDialog");
             }
         });
-        restoreCardViewPositions(properLayout, getContext());
         return view;
     }
+
+
     private void toggleViews() {
         // Toggle properLayout
         if (properLayout.getVisibility() == View.VISIBLE) {
@@ -475,8 +476,6 @@ public class HomeFragment extends Fragment {
         heightAnimator.start();
     }
     //---------------------------------------------------------------------------------------
-
-
     private void checkUserStatus() {
         DatabaseReference userRef = FirebaseDatabase.getInstance().getReference()
                 .child("users")
@@ -615,8 +614,4 @@ public class HomeFragment extends Fragment {
         // Return the list of events for the selected day, or an empty list if none
         return eventsMap.getOrDefault(dateKey, new ArrayList<>());
     }
-
-
-
-
 }

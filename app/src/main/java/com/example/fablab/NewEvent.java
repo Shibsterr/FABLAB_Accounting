@@ -16,11 +16,16 @@ import androidx.preference.PreferenceManager;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
@@ -36,8 +41,13 @@ public class NewEvent extends AppCompatActivity {
     private String startTime = "";
     private String endTime = "";
 
+    // Email credentials (ensure to store them securely)
+    private static final String EMAIL = "fablabappnoreply@gmail.com"; // Change this to your email
+    private static final String PASSWORD = "xllk wqet dulg xabp"; // Change this to your password
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        // Language setup
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         String languageCode = sharedPreferences.getString("language_preference", "en");
         Locale locale = new Locale(languageCode);
@@ -46,8 +56,8 @@ public class NewEvent extends AppCompatActivity {
         Resources resources = getResources();
         Configuration configuration = new Configuration(resources.getConfiguration());
         configuration.setLocale(locale);
-
         resources.updateConfiguration(configuration, resources.getDisplayMetrics());
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.new_event);
 
@@ -110,6 +120,7 @@ public class NewEvent extends AppCompatActivity {
             eventsRef.child(eventDate).child(currentUser.getUid()).child(eventId).setValue(eventMap)
                     .addOnSuccessListener(aVoid -> {
                         Toast.makeText(NewEvent.this, "Event added successfully", Toast.LENGTH_SHORT).show();
+                        sendEmailToAdmins(title, description, numberOfPeople, eventDate, startTime, endTime);
                         finish(); // Close activity after successful submission
                     })
                     .addOnFailureListener(e -> Toast.makeText(NewEvent.this, "Failed to add event", Toast.LENGTH_SHORT).show());
@@ -179,5 +190,46 @@ public class NewEvent extends AppCompatActivity {
         endCalendar.set(Calendar.MINUTE, Integer.parseInt(endParts[1]));
 
         return endCalendar.before(startCalendar);
+    }
+
+    // Method to send email to admins
+    private void sendEmailToAdmins(String title, String description, String numberOfPeople, String eventDate, String startTime, String endTime) {
+        // Create a string with the email body
+        String emailBody = "Ir izveidots jauns pasākums:\n" +
+                "Stacija: " + title +
+                "\nApraksts: " + description +
+                "\nCilvēka skaits: " + numberOfPeople +
+                "\nDatums: " + eventDate +
+                "\nSākuma laiks: " + startTime +
+                "\nBeigu laiks: " + endTime;
+
+        // Fetch admin and worker emails and send the email
+        DatabaseReference usersRef = FirebaseDatabase.getInstance().getReference().child("users");
+        usersRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                List<String> emails = new ArrayList<>();
+                for (DataSnapshot userSnapshot : dataSnapshot.getChildren()) {
+                    String status = userSnapshot.child("Statuss").getValue(String.class);
+                    String email = userSnapshot.child("epasts").getValue(String.class);
+
+                    // Add email if user is an admin or worker
+                    if (email != null && ("Admin".equalsIgnoreCase(status) || "Darbinieks".equalsIgnoreCase(status))) {
+                        emails.add(email);
+                    }
+                }
+
+                // Send email if there are recipients
+                if (!emails.isEmpty()) {
+                    EmailSender emailSender = new EmailSender(EMAIL, PASSWORD);
+                    emailSender.sendEmail(emails, "Izveidots jauns pasākums", emailBody);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                // Handle possible errors.
+            }
+        });
     }
 }
