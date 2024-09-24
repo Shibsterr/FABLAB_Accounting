@@ -180,7 +180,7 @@
     <string name="status_err">Failed to update event status</string>
     <string name="stock_new">Stock</string>
     <string name="izg_code">Izglītības pārvaldes kods</string>
-    <string name="enter_value_max_8_digits">Enter value (max 8 digits)</string>
+    <string name="enter_value_max_8_digits">Enter value</string>
     <string name="desc_text" >Description</string>
     <string name="info_izg_code">
         <![CDATA[

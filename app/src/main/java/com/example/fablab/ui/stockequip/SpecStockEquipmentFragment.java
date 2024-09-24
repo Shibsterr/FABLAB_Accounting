@@ -23,8 +23,6 @@ import androidx.preference.PreferenceManager;
 import com.bumptech.glide.Glide;
 import com.example.fablab.EmailSender;
 import com.example.fablab.R;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -49,7 +47,6 @@ public class SpecStockEquipmentFragment extends Fragment {
             maxstc,minstc,critstc,basestock,roomtxt;
     private ImageView equipimg;
     private Button addbtn,subtractbtn, maxStockButton;
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
@@ -69,7 +66,6 @@ public class SpecStockEquipmentFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
     }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_spec_stock_equipment, container, false);
@@ -160,100 +156,77 @@ public class SpecStockEquipmentFragment extends Fragment {
         }
         return view;
     }
-
     private void showQuantityInputDialog(boolean isAddOperation) {
-        QuantityInputDialogFragment dialogFragment = new QuantityInputDialogFragment(new QuantityInputDialogFragment.QuantityInputListener() {
-            @Override
-            public void onQuantityInput(int quantity) {
-                // Add or subtract the quantity based on user input
-                // Ensure it cannot go above max and below crit
-                // Update the stock accordingly
-                int currentStock = Integer.parseInt(basestock.getText().toString().replace("Stock: ", ""));
-                int newStock = isAddOperation ? currentStock + quantity : currentStock - quantity;
+        QuantityInputDialogFragment dialogFragment = new QuantityInputDialogFragment(quantity -> {
+            // Add or subtract the quantity based on user input
+            // Ensure it cannot go above max and below crit
+            // Update the stock accordingly
+            int currentStock = Integer.parseInt(basestock.getText().toString().replace("Stock: ", ""));
+            int newStock = isAddOperation ? currentStock + quantity : currentStock - quantity;
 
-                // Ensure stock does not go above max or below crit
-                int maxStock = Integer.parseInt(maxstc.getText().toString().replace("Maximum stock: ", ""));
-                int critStock = Integer.parseInt(critstc.getText().toString().replace("Critical stock: ", ""));
-                int minStock = Integer.parseInt(minstc.getText().toString().replace("Minimum stock: ", ""));
+            // Ensure stock does not go above max or below crit
+            int maxStock = Integer.parseInt(maxstc.getText().toString().replace("Maximum stock: ", ""));
+            int critStock = Integer.parseInt(critstc.getText().toString().replace("Critical stock: ", ""));
+            int minStock = Integer.parseInt(minstc.getText().toString().replace("Minimum stock: ", ""));
 
-                // Check if the new stock is below minimum stock
-                if (newStock < minStock) {
-                    // Send email to admin when stock falls below minimum level
-                    sendEmailToAdmin();
-                } else if (newStock > maxStock) {
-                    // Reset the new stock to maximum stock
-                    newStock = maxStock;
-                } else if (newStock < critStock) {
+            // Check if the new stock is below minimum stock
+            if (newStock < minStock) {
+                // Send email to admin when stock falls below minimum level
+                sendEmailToAdmin();
+            } else if (newStock > maxStock) {
+                // Reset the new stock to maximum stock
+                newStock = maxStock;
+            } else if (newStock < critStock) {
 //                    // Reset the new stock to critical stock
 //                    newStock = critStock;
-                    // Send email to admin when stock falls below critical level
-                    sendEmailToAdmin();
-                }
-
-
-                // Update the UI with the new stock value
-                basestock.setText("Stock: " + newStock);
-
-                // Update the stock in the database
-                String equipmentName = titletext.getText().toString();
-                DatabaseReference equipmentRef = FirebaseDatabase.getInstance().getReference().child("equipment");
-
-                Query query = equipmentRef.orderByChild("Nosaukums").equalTo(equipmentName);
-                query.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        // Check if the equipment with the given name exists in the database
-                        if (dataSnapshot.exists()) {
-                            for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                                // Get the current stock from the database
-                                int currentStockFromDB = Integer.parseInt(snapshot.child("Skaits").getValue(String.class));
-
-                                // Update the stock value in the database based on the operation
-                                int updatedStock = isAddOperation ? currentStockFromDB + quantity : currentStockFromDB - quantity;
-
-                                // Ensure stock does not go above max or below crit
-                                if (updatedStock > maxStock) {
-                                    updatedStock = maxStock;
-                                }
-
-                                // Update the stock value in the database
-                                snapshot.getRef().child("Skaits").setValue(String.valueOf(updatedStock));
-
-                                // Add a log entry to Realtimedatabase
-                                addLogEntry(equipmentName, quantity, isAddOperation);
-                                updateBtn();
-                            }
-                        }
-                    }
-
-                    private void updateBtn() {
-                        int currentStock = Integer.parseInt(basestock.getText().toString().replace("Stock: ", ""));
-                        // Disable the Subtract button if current stock is below or equal to minimum stock
-                        if (currentStock <= minStock) {
-                            subtractbtn.setEnabled(false);
-                        } else {
-                            subtractbtn.setEnabled(true);
-                        }
-
-                        // Disable the Add button if current stock is equal to or above maximum stock
-                        if (currentStock >= maxStock) {
-                            addbtn.setEnabled(false);
-                        } else {
-                            addbtn.setEnabled(true);
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-                        // Handle errors
-                        Log.e("UpdateStock", "Error updating stock: " + databaseError.getMessage());
-                    }
-                });
+                // Send email to admin when stock falls below critical level
+                sendEmailToAdmin();
             }
+
+
+            // Update the UI with the new stock value
+            basestock.setText("Stock: " + newStock);
+
+            // Update the stock in the database
+            String equipmentName = titletext.getText().toString();
+            DatabaseReference equipmentRef = FirebaseDatabase.getInstance().getReference().child("equipment");
+
+            Query query = equipmentRef.orderByChild("Nosaukums").equalTo(equipmentName);
+            query.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    // Check if the equipment with the given name exists in the database
+                    if (dataSnapshot.exists()) {
+                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                            // Get the current stock from the database
+                            int currentStockFromDB = Integer.parseInt(snapshot.child("Skaits").getValue(String.class));
+
+                            // Update the stock value in the database based on the operation
+                            int updatedStock = isAddOperation ? currentStockFromDB + quantity : currentStockFromDB - quantity;
+
+                            // Ensure stock does not go above max or below crit
+                            if (updatedStock > maxStock) {
+                                updatedStock = maxStock;
+                            }
+
+                            // Update the stock value in the database
+                            snapshot.getRef().child("Skaits").setValue(String.valueOf(updatedStock));
+
+                            // Add a log entry to Realtimedatabase
+                            addLogEntry(equipmentName, quantity, isAddOperation);
+                            updateBtn();
+                        }
+                    }
+                }
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                    // Handle errors
+                    Log.e("UpdateStock", "Error updating stock: " + databaseError.getMessage());
+                }
+            });
         }, isAddOperation);
         dialogFragment.show(getParentFragmentManager(), "quantity_input_dialog");
     }
-
     private void sendEmailToAdmin() {
         int maxStock = Integer.parseInt(maxstc.getText().toString().replace("Maximum stock: ", ""));
         int minStock = Integer.parseInt(minstc.getText().toString().replace("Minimum stock: ", ""));
@@ -297,7 +270,6 @@ public class SpecStockEquipmentFragment extends Fragment {
             });
         }
     }
-    // Method to add a log entry to the Realtime Database
     private void addLogEntry(String equipmentName, int quantity, boolean isAddOperation) {
         // Get the current user's UID
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
@@ -332,18 +304,8 @@ public class SpecStockEquipmentFragment extends Fragment {
 
                     // Add the log entry to the Realtime Database
                     logsRef.setValue(logEntry)
-                            .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                @Override
-                                public void onSuccess(Void aVoid) {
-                                    Log.d("AddLogEntry", "Log entry added successfully");
-                                }
-                            })
-                            .addOnFailureListener(new OnFailureListener() {
-                                @Override
-                                public void onFailure(@NonNull Exception e) {
-                                    Log.e("AddLogEntry", "Error adding log entry", e);
-                                }
-                            });
+                            .addOnSuccessListener(aVoid -> Log.d("AddLogEntry", "Log entry added successfully"))
+                            .addOnFailureListener(e -> Log.e("AddLogEntry", "Error adding log entry", e));
                 } else {
                     Log.e("AddLogEntry", "User data not found in Realtime Database");
                 }
@@ -355,13 +317,9 @@ public class SpecStockEquipmentFragment extends Fragment {
             }
         });
     }
-
-    // Call this method when the Add button is clicked
     private void onAddButtonClicked() {
         showQuantityInputDialog(true);
     }
-
-    // Call this method when the Subtract button is clicked
     private void onSubtractButtonClicked() {
         showQuantityInputDialog(false);
     }
@@ -412,22 +370,11 @@ public class SpecStockEquipmentFragment extends Fragment {
                         snapshot.getRef().child("Max Stock").setValue(newMaxStock)
                                 .addOnSuccessListener(aVoid -> {
                                     Toast.makeText(getContext(), "Max stock updated", Toast.LENGTH_SHORT).show();
+
                                 })
                                 .addOnFailureListener(e -> {
                                     Toast.makeText(getContext(), "Failed to update max stock", Toast.LENGTH_SHORT).show();
                                 });
-
-                            if (currentStock <= minStock) {
-                                subtractbtn.setEnabled(false);
-                            } else {
-                                subtractbtn.setEnabled(true);
-                            }
-
-                            if (currentStock >= maxStock) {
-                                addbtn.setEnabled(false);
-                            } else {
-                                addbtn.setEnabled(true);
-                            }
                     }
                 } else {
                     Toast.makeText(getContext(), "Equipment not found", Toast.LENGTH_SHORT).show();
@@ -439,9 +386,23 @@ public class SpecStockEquipmentFragment extends Fragment {
                 Log.e("UpdateMaxStock", "Error updating max stock: " + databaseError.getMessage());
             }
         });
+        updateBtn();
     }
+    private void updateBtn() {
+        int currentStock = Integer.parseInt(basestock.getText().toString().replace("Stock: ", ""));
+        int minStock = Integer.parseInt(minstc.getText().toString().replace("Minimum stock: ", ""));
+        int maxStock = Integer.parseInt(maxstc.getText().toString().replace("Maximum stock: ", ""));
 
-
-
+        if (currentStock <= minStock) {
+            subtractbtn.setEnabled(false);
+        } else {
+            subtractbtn.setEnabled(true);
+        }
+        if (currentStock >= maxStock) {
+            addbtn.setEnabled(false);
+        } else {
+            addbtn.setEnabled(true);
+        }
+    }
 
 }

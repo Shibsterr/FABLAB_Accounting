@@ -143,9 +143,9 @@
     <string name="ievadi_skaitli_cik_liels_daudzums">Ievadi skaitli (Cik liels/daudzums)</string>
     <string name="pievienot_att">Pievienot attēlu</string>
     <string name="apraksts">Apraksts</string>
-    <string name="max_stock">max krājums</string>
-    <string name="min_stock">min krājums</string>
-    <string name="crit_stock">crit krājums</string>
+    <string name="max_stock">maksimālais krājums</string>
+    <string name="min_stock">minimālais krājums</string>
+    <string name="crit_stock">kritiskais krājums</string>
     <string name="no_file_selected">Nav atlasīts neviens fails</string>
     <string name="no_internet_connection">Nav interneta savienojuma</string>
     <string name="check_con">Pārbaudiet interneta savienojumu un mēģiniet vēlreiz</string>
@@ -181,8 +181,8 @@
     <string name="status_succ">Notikuma status mainīts uz: %1$s</string>
     <string name="status_err">Kļūda ar statusa nomaiņa!</string>
     <string name="stock_new">Inventārs</string>
-    <string name="izg_code">Izglītības pārvaldes kods</string>
-    <string name="enter_value_max_8_digits">Ievadiet izglītības kodu (ne mazāk kā 8 cipari)</string>
+    <string name="izg_code">Izglītības pārvaldes kods (nemazāk kā 8 cipari)</string>
+    <string name="enter_value_max_8_digits">Ievadiet izglītības kodu</string>
     <string name="desc_text" >Apraksts</string>
     <string name="info_izg_code">
         <![CDATA[

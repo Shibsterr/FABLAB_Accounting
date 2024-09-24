@@ -29,17 +29,17 @@
 - [x] Add a forgot password button to login screen
 - [ ] Add certain screens if somethings missing (~~No Internet connection~~, ~~No Equipment to show~~)
     - [x] Make it also check ur mobile data. 
-    - [ ] Screens that say if there are no tasks also add a loading screen when you open the app to hide the loading data
+    - [x] Screens that say if there are no tasks also add a loading screen when you open the app to hide the loading data
 - [x] Ability to add/plan events inside a calendar as an user / or assign tasks as a worker to another worker
-- [ ] Add icons to the home page buttons (Not required)
+- [x] Add icons to the home page buttons (Not required)
 - [x] Add settings (~~theme changer~~, ~~password changer/reset~~)
-  - [ ] Multi language support (Will take the longest as you must add everything inside the strings.xml file so that you can translate it properly)
+  - [x] Multi language support (Will take the longest as you must add everything inside the strings.xml file so that you can translate it properly)
 - [x] Add a sidebar navigation which is only seen by the admin where you can see all the logs displayed.
 - [ ] Make sure the layouts are fit to be on many different screen sizes
 - [x] Permissions for newer phones may be removed (External storage write is an example) ?
 - [ ] Visually make it look nicer (Better colors and such)
 - [ ] Update the splashscreen if needed
-- [ ] Calendar viewing for normal users to see which days are unavailable and allow them to assing one (Could just store it inside the database)
+- [x] Calendar viewing for normal users to see which days are unavailable and allow them to assing one (Could just store it inside the database)
 - [ ] Change whatStat method inside NewEquipmentFragment its not dynamic currently and wont work.
 
 
@@ -53,13 +53,12 @@
 - [x] Internet checker for every page
 - [x] Multiple languages (en,lv)
 - [x] No tasks screen with a refresh button
-
 - [x] Calendar that allows u to "sign up"
 - - [x] Make it so that admins and workers can "accept" events before letting them show up as to make sure they arent any overlaps
 - - [x] Add more statuses for the events
 - - [x] Make them show on the calendar
-- [ ] Loading screens
-- [ ] Add internet checker for every activity
+- [x] Loading screens
+- [x] Add internet checker for every activity
 - [x] Language changer for stations title, description
 - -
 - [x] Update the home fragment

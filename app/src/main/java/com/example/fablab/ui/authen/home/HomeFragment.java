@@ -31,7 +31,6 @@ import androidx.preference.PreferenceManager;
 
 import com.example.fablab.NewEvent;
 import com.example.fablab.R;
-import com.example.fablab.ui.authen.home.stations.CardViewPosition;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -44,11 +43,13 @@ import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
+import java.util.TreeMap;
 
 public class HomeFragment extends Fragment {
 
@@ -62,7 +63,7 @@ public class HomeFragment extends Fragment {
     private DatabaseReference eventsDatabaseRef;
     private final Map<String, List<Event>> eventsMap = new HashMap<>();
     private String userStatus;
-
+    private Set<Integer> addedCardViewIds = new HashSet<>();
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout
@@ -106,10 +107,32 @@ public class HomeFragment extends Fragment {
                 eventsDialogFragment.show(getChildFragmentManager(), "eventsDialog");
             }
         });
+        restoreCardViewPositions(properLayout,getContext());
         return view;
     }
+    @Override
+    public void onResume() {
+        super.onResume();
+        // Restore positions when the fragment resumes
+        restoreCardViewPositions(properLayout, getContext());
+        Log.d("onResume", "Restoring CardView positions in onResume");
+    }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        // Save positions when the fragment pauses (user navigates away)
+        saveCardViewPositions(properLayout, getContext());
+        Log.d("onPause", "Saving CardView positions in onPause");
+    }
 
+    @Override
+    public void onStop() {
+        super.onStop();
+        // Also save positions when the fragment is stopped
+        saveCardViewPositions(properLayout, getContext());
+        Log.d("onStop", "Saving CardView positions in onStop");
+    }
     private void toggleViews() {
         // Toggle properLayout
         if (properLayout.getVisibility() == View.VISIBLE) {
@@ -138,7 +161,6 @@ public class HomeFragment extends Fragment {
     private void loadStations() {
         databaseReference = FirebaseDatabase.getInstance().getReference().child("stations");
 
-        // Get the current language setting
         String language = getCurrentLanguage();
         Log.d("LanguageCheck", "Current language: " + language);
 
@@ -148,6 +170,8 @@ public class HomeFragment extends Fragment {
                 Log.d("DataSnapshot", "DataSnapshot content: " + dataSnapshot.toString());
                 properLayout.removeAllViews(); // Clear previous views
 
+                addedCardViewIds.clear(); // Clear the set of added CardView IDs
+
                 if (dataSnapshot.exists()) {
                     for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                         String station = snapshot.child("Name").child(language).getValue(String.class);
@@ -156,10 +180,10 @@ public class HomeFragment extends Fragment {
 
                         Log.d("DataSnapshot", "Station Name: " + station + ", Description: " + description + ", ID: " + ID);
 
-                        if (station != null && description != null && ID != null) {
-//                            restoreCardViewPositions(properLayout, getContext());
+                        if (station != null && description != null && ID != null && !addedCardViewIds.contains(ID)) {
+                            // Create CardViews for stations
                             createCardView(getContext(), properLayout, station, description, ID);
-
+                            addedCardViewIds.add(ID); // Add the ID to the set of added CardView IDs
                         } else {
                             Log.d("DataCheck", "Incomplete station data: " + snapshot.getKey());
                         }
@@ -167,6 +191,8 @@ public class HomeFragment extends Fragment {
                 } else {
                     Log.d("EmptyDataSnapshot", "No stations found in the dataSnapshot");
                 }
+                // Restore CardView positions AFTER all stations are loaded
+                restoreCardViewPositions(properLayout, getContext());
             }
 
             @Override
@@ -186,7 +212,11 @@ public class HomeFragment extends Fragment {
             return;
         }
 
-        Log.d("CreateCardView", "Creating CardView with Title: " + title + ", Description: " + description + ", ID: " + ID);
+        Log.d("CreateCardView",
+                "Creating CardView with Title: "
+                        + title +
+                        ", Description: " + description +
+                        "" + ", ID: " + ID);
 
         CardView cardView = new CardView(context);
 
@@ -239,7 +269,8 @@ public class HomeFragment extends Fragment {
         innerLayout.addView(idView);
 
         cardView.addView(innerLayout);
-        cardView.setId(View.generateViewId());
+        int uniqueId = View.generateViewId(); // Generates a unique ID
+        cardView.setId(uniqueId);
 
         // Click listener for card view
         cardView.setOnClickListener(v -> {
@@ -297,23 +328,14 @@ public class HomeFragment extends Fragment {
                     return true;
 
                 case DragEvent.ACTION_DROP:
-                    // Get the view being dragged
                     View draggedView = (View) event.getLocalState();
-
-                    // Get the Y position of the drop event
                     int dropY = (int) event.getY();
-
-                    // Find the view to swap with
                     View targetView = findViewUnderY(parent, dropY);
 
                     if (targetView != null && targetView != draggedView) {
-                        // Swap positions of draggedView and targetView
                         swapCardViews(parent, draggedView, targetView);
+                        saveCardViewPositions(parent, context);
                     }
-
-                    // Update CardView positions
-                    saveCardViewPositions(parent, context);
-
                     return true;
 
                 default:
@@ -322,7 +344,7 @@ public class HomeFragment extends Fragment {
         });
 
         // Restore CardView positions when the layout is initialized
-        restoreCardViewPositions(parent, context);
+//        restoreCardViewPositions(parent, context);
         // Ensure uniform size and spacing
         checkCardViewSize(parent);
     }
@@ -333,41 +355,30 @@ public class HomeFragment extends Fragment {
         }
 
         SharedPreferences sharedPref = context.getSharedPreferences("CardViewPositions", Context.MODE_PRIVATE);
+        Map<Integer, Integer> cardViewPositions = new HashMap<>();
 
-        // Create a list to store card views with their saved positions
-        ArrayList<CardViewPosition> cardViewPositions = new ArrayList<>();
+        // Collect existing CardViews and their saved positions
         for (int i = 0; i < parent.getChildCount(); i++) {
             View child = parent.getChildAt(i);
             if (child instanceof CardView) {
                 CardView cardView = (CardView) child;
                 int cardId = cardView.getId();
-                int position = sharedPref.getInt("CardViewPosition_" + cardId, 0);
-
-                if (position != 0) {
-                    cardViewPositions.add(new CardViewPosition(cardView, position));
+                int savedPosition = sharedPref.getInt("CardViewPosition_" + cardId, -1);
+                if (savedPosition != -1) {
+                    cardViewPositions.put(savedPosition, i);
                 }
             }
         }
 
-        // If there are no saved positions, default to creating new CardViews
-        if (cardViewPositions.isEmpty()) {
-            Log.d("RestoreCardViewPositions", "No saved positions found. Creating new CardViews.");
-            // Add your logic here to create and add new CardViews if needed
-            return;
+        // Sort and reorder CardViews based on saved positions
+        for (Map.Entry<Integer, Integer> entry : new TreeMap<>(cardViewPositions).entrySet()) {
+            int index = entry.getValue();
+            View cardView = parent.getChildAt(index);
+            parent.removeViewAt(index);
+            parent.addView(cardView, entry.getKey());
         }
 
-        // Sort the list by saved positions
-        cardViewPositions.sort(Comparator.comparingInt(cvp -> cvp.position));
-
-        // Remove all children from parent
-        parent.removeAllViews();
-
-        // Add card views back in the correct order
-        for (CardViewPosition cardViewPosition : cardViewPositions) {
-            parent.addView(cardViewPosition.cardView);
-        }
-
-        parent.requestLayout();
+        Log.d("RestoreCardViewPositions", "CardView positions restored.");
     }
     private void saveCardViewPositions(LinearLayout parent, Context context) {
         if (context == null) {
@@ -377,18 +388,20 @@ public class HomeFragment extends Fragment {
 
         SharedPreferences sharedPref = context.getSharedPreferences("CardViewPositions", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPref.edit();
+        editor.clear(); // Clear the existing saved positions
 
+        // Save the positions of the CardViews based on their order in the parent layout
         for (int i = 0; i < parent.getChildCount(); i++) {
             View child = parent.getChildAt(i);
             if (child instanceof CardView) {
                 CardView cardView = (CardView) child;
                 int cardId = cardView.getId();
-                int position = parent.indexOfChild(cardView);
-                editor.putInt("CardViewPosition_" + cardId, position);
+                editor.putInt("CardViewPosition_" + cardId, i); // Store position by card ID
+                Log.d("saveCardViewPositions", "Saving CardView position for ID: " + cardId + " at position: " + i);
             }
         }
 
-        editor.apply();
+        editor.apply(); // Apply the changes after looping through the positions
     }
     private void swapCardViews(LinearLayout parent, View view1, View view2) {
         int index1 = parent.indexOfChild(view1);
@@ -424,7 +437,7 @@ public class HomeFragment extends Fragment {
             View child = parent.getChildAt(i);
             if (child instanceof CardView) {
                 CardView cardView = (CardView) child;
-                Log.d("CardViewSize", "CardView " + i + " size: Width=" + cardView.getWidth() + ", Height=" + cardView.getHeight());
+//                Log.d("CardViewSize", "CardView " + i + " size: Width=" + cardView.getWidth() + ", Height=" + cardView.getHeight());
             }
         }
     }
