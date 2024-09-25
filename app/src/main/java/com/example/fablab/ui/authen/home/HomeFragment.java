@@ -12,7 +12,7 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.DragEvent;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,10 +20,10 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
-import androidx.core.view.ViewCompat;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -49,13 +49,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import java.util.TreeMap;
 
 public class HomeFragment extends Fragment {
 
     private DatabaseReference databaseReference;
+    private DatabaseReference userDatabaseReference;
     private Button eventPage;
-    private Button hidingButton, calbtn,stockbtn;
+    private Button hidingButton, calbtn, stockbtn;
     private LinearLayout properLayout;
     private MaterialCalendarView calendarView;
     private List<String> stationsList;
@@ -63,7 +63,9 @@ public class HomeFragment extends Fragment {
     private DatabaseReference eventsDatabaseRef;
     private final Map<String, List<Event>> eventsMap = new HashMap<>();
     private String userStatus;
+    private String currentUserUid; // Store the current user UID
     private Set<Integer> addedCardViewIds = new HashSet<>();
+
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout
@@ -77,13 +79,14 @@ public class HomeFragment extends Fragment {
         calendarView = view.findViewById(R.id.calendarView); // CalendarView reference
         stockbtn = view.findViewById(R.id.stock_button);
 
-
         // Initialize lists
         stationsList = new ArrayList<>();
         descriptionsList = new ArrayList<>();
 
         // Initialize Firebase Database reference
         eventsDatabaseRef = FirebaseDatabase.getInstance().getReference().child("events");
+        currentUserUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        userDatabaseReference = FirebaseDatabase.getInstance().getReference().child("users").child(currentUserUid).child("recentlyUsedStations");
 
         // Set up button click listeners
         calbtn.setOnClickListener(v -> toggleCalView());
@@ -94,10 +97,12 @@ public class HomeFragment extends Fragment {
         // Set up calendar
         setupCalendar();
 
-        // Load stations from Firebase
+        // Load stations from Firebase, including recently used order
         loadStations();
+
         // Check user status and set up the UI
         checkUserStatus();
+
         calendarView.setOnDateChangedListener((widget, date, selected) -> {
             List<Event> eventsForDay = getEventsForDay(date);
 
@@ -107,31 +112,8 @@ public class HomeFragment extends Fragment {
                 eventsDialogFragment.show(getChildFragmentManager(), "eventsDialog");
             }
         });
-        restoreCardViewPositions(properLayout,getContext());
+
         return view;
-    }
-    @Override
-    public void onResume() {
-        super.onResume();
-        // Restore positions when the fragment resumes
-        restoreCardViewPositions(properLayout, getContext());
-        Log.d("onResume", "Restoring CardView positions in onResume");
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        // Save positions when the fragment pauses (user navigates away)
-        saveCardViewPositions(properLayout, getContext());
-        Log.d("onPause", "Saving CardView positions in onPause");
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        // Also save positions when the fragment is stopped
-        saveCardViewPositions(properLayout, getContext());
-        Log.d("onStop", "Saving CardView positions in onStop");
     }
     private void toggleViews() {
         // Toggle properLayout
@@ -162,62 +144,76 @@ public class HomeFragment extends Fragment {
         databaseReference = FirebaseDatabase.getInstance().getReference().child("stations");
 
         String language = getCurrentLanguage();
-        Log.d("LanguageCheck", "Current language: " + language);
 
-        databaseReference.addValueEventListener(new ValueEventListener() {
+        // Get recently used stations for the current user
+        userDatabaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                Log.d("DataSnapshot", "DataSnapshot content: " + dataSnapshot.toString());
-                properLayout.removeAllViews(); // Clear previous views
+            public void onDataChange(@NonNull DataSnapshot userSnapshot) {
+                Map<String, Integer> recentlyUsedMap = new HashMap<>();
 
-                addedCardViewIds.clear(); // Clear the set of added CardView IDs
+                if (userSnapshot.exists()) {
+                    for (DataSnapshot stationSnapshot : userSnapshot.getChildren()) {
+                        String stationId = stationSnapshot.getKey();
+                        Integer usageCount = stationSnapshot.getValue(Integer.class);
+                        recentlyUsedMap.put(stationId, usageCount);
+                    }
+                }
 
-                if (dataSnapshot.exists()) {
-                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                        String station = snapshot.child("Name").child(language).getValue(String.class);
-                        String description = snapshot.child("Description").child(language).getValue(String.class);
-                        Integer ID = snapshot.child("ID").getValue(Integer.class);
+                // Now load stations from the main database
+                databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        properLayout.removeAllViews(); // Clear previous views
+                        addedCardViewIds.clear(); // Clear the set of added CardView IDs
 
-                        Log.d("DataSnapshot", "Station Name: " + station + ", Description: " + description + ", ID: " + ID);
+                        if (dataSnapshot.exists()) {
+                            List<DataSnapshot> stationSnapshots = new ArrayList<>();
+                            for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                                stationSnapshots.add(snapshot);
+                            }
 
-                        if (station != null && description != null && ID != null && !addedCardViewIds.contains(ID)) {
-                            // Create CardViews for stations
-                            createCardView(getContext(), properLayout, station, description, ID);
-                            addedCardViewIds.add(ID); // Add the ID to the set of added CardView IDs
-                        } else {
-                            Log.d("DataCheck", "Incomplete station data: " + snapshot.getKey());
+                            // Sort stations by recently used count
+                            stationSnapshots.sort((s1, s2) -> {
+                                Long id1 = s1.child("ID").getValue(Long.class); // Fetch as Long
+                                Long id2 = s2.child("ID").getValue(Long.class); // Fetch as Long
+                                Integer count1 = recentlyUsedMap.getOrDefault(id1.toString(), 0); // Convert Long to String for map key
+                                Integer count2 = recentlyUsedMap.getOrDefault(id2.toString(), 0); // Convert Long to String for map key
+                                return count2.compareTo(count1); // Sort by descending usage
+                            });
+
+                            // Add stations as CardViews in sorted order
+                            for (DataSnapshot snapshot : stationSnapshots) {
+                                String station = snapshot.child("Name").child(language).getValue(String.class);
+                                String description = snapshot.child("Description").child(language).getValue(String.class);
+                                Integer ID = snapshot.child("ID").getValue(Integer.class);
+
+                                if (station != null && description != null && ID != null && !addedCardViewIds.contains(ID)) {
+                                    createCardView(getContext(), properLayout, station, description, ID);
+                                    addedCardViewIds.add(ID); // Add the ID to the set of added CardView IDs
+                                }
+                            }
                         }
                     }
-                } else {
-                    Log.d("EmptyDataSnapshot", "No stations found in the dataSnapshot");
-                }
-                // Restore CardView positions AFTER all stations are loaded
-                restoreCardViewPositions(properLayout, getContext());
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                        Log.d("HomeFragment", "Failed to load stations: " + databaseError.getMessage());
+                    }
+                });
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                Log.d("HomeFragment", "Failed to load stations: " + databaseError.getMessage());
+                Log.d("HomeFragment", "Failed to load recently used stations: " + databaseError.getMessage());
             }
         });
     }
     private String getCurrentLanguage() {
-        // You can retrieve this from shared preferences or app settings
+        // Retrieve from shared preferences or app settings
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getContext());
         return sharedPref.getString("language_preference", "en"); // Default is "en"
     }
     private void createCardView(Context context, LinearLayout parent, String title, String description, int ID) {
-        if (context == null) {
-            Log.e("CreateCardView", "Context is null");
-            return;
-        }
-
-        Log.d("CreateCardView",
-                "Creating CardView with Title: "
-                        + title +
-                        ", Description: " + description +
-                        "" + ", ID: " + ID);
-
         CardView cardView = new CardView(context);
 
         // Set layout parameters for CardView
@@ -225,12 +221,14 @@ public class HomeFragment extends Fragment {
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT
         );
-        cardParams.setMargins(16, 16, 16, 16); // Adjust margins as needed
+        cardParams.setMargins(24, 24, 24, 24);
         cardView.setLayoutParams(cardParams);
+        cardView.setMinimumHeight(200);
 
+        // Adjusting padding for the inner layout
         LinearLayout innerLayout = new LinearLayout(context);
         innerLayout.setOrientation(LinearLayout.VERTICAL);
-        innerLayout.setPadding(50, 50, 50, 50);
+        innerLayout.setPadding(30, 30, 30, 30);
         innerLayout.setBackgroundResource(R.drawable.my_custom_background);
 
         ImageView imageView = new ImageView(context);
@@ -249,6 +247,7 @@ public class HomeFragment extends Fragment {
         });
 
         TextView titleView = new TextView(context);
+
         titleView.setText(title);
         titleView.setTextSize(15);
         titleView.setTypeface(null, Typeface.BOLD);
@@ -258,22 +257,39 @@ public class HomeFragment extends Fragment {
         descriptionView.setTextSize(12);
 
         TextView idView = new TextView(context);
+
+        int idViewHeight = (int) TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP,
+                30,
+                context.getResources().getDisplayMetrics()
+        );
+
+        LinearLayout.LayoutParams idParams = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                idViewHeight
+        );
+        idView.setLayoutParams(idParams);
         idView.setText("ID: " + ID);
         idView.setTextColor(Color.parseColor("#FF5722"));
         idView.setTextSize(14);
         idView.setTypeface(null, Typeface.BOLD);
 
+
+        // Add views to inner layout
         innerLayout.addView(imageView);
         innerLayout.addView(titleView);
         innerLayout.addView(descriptionView);
         innerLayout.addView(idView);
 
         cardView.addView(innerLayout);
-        int uniqueId = View.generateViewId(); // Generates a unique ID
-        cardView.setId(uniqueId);
 
-        // Click listener for card view
+        // Add the CardView to the parent layout
+        parent.addView(cardView);
+
+        // Handle click event
         cardView.setOnClickListener(v -> {
+            Toast.makeText(context, "Clicked on: " + title + " (ID: " + ID + ")", Toast.LENGTH_SHORT).show();
+            updateRecentlyUsedStation(ID); // Update the recently used station count using ID
             NavController navController = Navigation.findNavController(v);
 
             if (title != null && !title.isEmpty()) {
@@ -306,151 +322,25 @@ public class HomeFragment extends Fragment {
                 Log.d("InvalidTitle", "Invalid title: " + title);
             }
         });
-
-        // Long click listener to start drag
-        cardView.setOnLongClickListener(v -> {
-            View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(cardView);
-            ViewCompat.startDragAndDrop(cardView, null, shadowBuilder, cardView, 0);
-            return true;
-        });
-
-        parent.addView(cardView);
-        Log.d("CreateCardView", "CardView added to parent layout.");
-
-        // Drag listener on the parent layout to handle drop events
-        parent.setOnDragListener((v, event) -> {
-            switch (event.getAction()) {
-                case DragEvent.ACTION_DRAG_STARTED:
-                case DragEvent.ACTION_DRAG_EXITED:
-                case DragEvent.ACTION_DRAG_LOCATION:
-                case DragEvent.ACTION_DRAG_ENTERED:
-                case DragEvent.ACTION_DRAG_ENDED:
-                    return true;
-
-                case DragEvent.ACTION_DROP:
-                    View draggedView = (View) event.getLocalState();
-                    int dropY = (int) event.getY();
-                    View targetView = findViewUnderY(parent, dropY);
-
-                    if (targetView != null && targetView != draggedView) {
-                        swapCardViews(parent, draggedView, targetView);
-                        saveCardViewPositions(parent, context);
-                    }
-                    return true;
-
-                default:
-                    return false;
-            }
-        });
-
-        // Restore CardView positions when the layout is initialized
-//        restoreCardViewPositions(parent, context);
-        // Ensure uniform size and spacing
-        checkCardViewSize(parent);
     }
-    private void restoreCardViewPositions(LinearLayout parent, Context context) {
-        if (context == null) {
-            Log.e("RestoreCardViewPositions", "Context is null");
-            return;
-        }
 
-        SharedPreferences sharedPref = context.getSharedPreferences("CardViewPositions", Context.MODE_PRIVATE);
-        Map<Integer, Integer> cardViewPositions = new HashMap<>();
 
-        // Collect existing CardViews and their saved positions
-        for (int i = 0; i < parent.getChildCount(); i++) {
-            View child = parent.getChildAt(i);
-            if (child instanceof CardView) {
-                CardView cardView = (CardView) child;
-                int cardId = cardView.getId();
-                int savedPosition = sharedPref.getInt("CardViewPosition_" + cardId, -1);
-                if (savedPosition != -1) {
-                    cardViewPositions.put(savedPosition, i);
+    private void updateRecentlyUsedStation(int stationId) {
+        userDatabaseReference.child(String.valueOf(stationId)).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                int usageCount = 1;
+                if (dataSnapshot.exists()) {
+                    usageCount = dataSnapshot.getValue(Integer.class) + 1;
                 }
-            }
-        }
-
-        // Sort and reorder CardViews based on saved positions
-        for (Map.Entry<Integer, Integer> entry : new TreeMap<>(cardViewPositions).entrySet()) {
-            int index = entry.getValue();
-            View cardView = parent.getChildAt(index);
-            parent.removeViewAt(index);
-            parent.addView(cardView, entry.getKey());
-        }
-
-        Log.d("RestoreCardViewPositions", "CardView positions restored.");
-    }
-    private void saveCardViewPositions(LinearLayout parent, Context context) {
-        if (context == null) {
-            Log.e("SaveCardViewPositions", "Context is null");
-            return;
-        }
-
-        SharedPreferences sharedPref = context.getSharedPreferences("CardViewPositions", Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPref.edit();
-        editor.clear(); // Clear the existing saved positions
-
-        // Save the positions of the CardViews based on their order in the parent layout
-        for (int i = 0; i < parent.getChildCount(); i++) {
-            View child = parent.getChildAt(i);
-            if (child instanceof CardView) {
-                CardView cardView = (CardView) child;
-                int cardId = cardView.getId();
-                editor.putInt("CardViewPosition_" + cardId, i); // Store position by card ID
-                Log.d("saveCardViewPositions", "Saving CardView position for ID: " + cardId + " at position: " + i);
-            }
-        }
-
-        editor.apply(); // Apply the changes after looping through the positions
-    }
-    private void swapCardViews(LinearLayout parent, View view1, View view2) {
-        int index1 = parent.indexOfChild(view1);
-        int index2 = parent.indexOfChild(view2);
-
-        Log.d("SwapCardViews", "Current Index: index1=" + index1 + ", index2=" + index2);
-
-        // Ensure indices are valid
-        if (index1 >= 0 && index1 < parent.getChildCount() && index2 >= 0 && index2 < parent.getChildCount()) {
-            // Remove both views
-            parent.removeViewAt(index1);
-
-            // Adjust index2 if index1 < index2
-            if (index1 < index2) {
-                // If index1 is less than index2, the index2 has moved one position left after removal
-                index2--;
+                userDatabaseReference.child(String.valueOf(stationId)).setValue(usageCount);
             }
 
-            // Remove the second view
-            parent.removeViewAt(index2);
-
-            // Add both views back in the swapped order
-            parent.addView(view1, index2);
-            parent.addView(view2, index1);
-
-            Log.d("SwapCardViews", "Views swapped at index1=" + index1 + ", index2=" + index2);
-        } else {
-            Log.e("SwapCardViews", "Invalid indices: index1=" + index1 + ", index2=" + index2);
-        }
-    }
-    private void checkCardViewSize(LinearLayout parent) {
-        for (int i = 0; i < parent.getChildCount(); i++) {
-            View child = parent.getChildAt(i);
-            if (child instanceof CardView) {
-                CardView cardView = (CardView) child;
-//                Log.d("CardViewSize", "CardView " + i + " size: Width=" + cardView.getWidth() + ", Height=" + cardView.getHeight());
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.d("HomeFragment", "Failed to update recently used station count: " + databaseError.getMessage());
             }
-        }
-    }
-    private View findViewUnderY(LinearLayout parent, int y) {
-        for (int i = 0; i < parent.getChildCount()+1; i++) {
-            View child = parent.getChildAt(i);
-            int top = child.getTop();
-            int bottom = child.getBottom();
-            if (y > top && y < bottom) {
-                return child;
-            }
-        }
-        return null;
+        });
     }
     private void collapseLayout(final View view) {
         final int initialHeight = view.getMeasuredHeight();
@@ -511,14 +401,10 @@ public class HomeFragment extends Fragment {
         if (userStatus != null) {
             switch (userStatus) {
                 case "Admin":
-                    calbtn.setVisibility(View.VISIBLE);
-                    stockbtn.setVisibility(View.VISIBLE);
-                    hidingButton.setVisibility(View.VISIBLE);
-                    break;
                 case "Darbinieks":
                     calbtn.setVisibility(View.VISIBLE);
                     stockbtn.setVisibility(View.VISIBLE);
-                    hidingButton.setVisibility(View.GONE);
+                    hidingButton.setVisibility(View.VISIBLE);
                     break;
                 case "Lietotājs":
                     calbtn.setVisibility(View.VISIBLE);

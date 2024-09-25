@@ -122,26 +122,23 @@ public class TaskFragment extends Fragment {
         textViewAssignedBy.setText(getString(R.string.assigned_by_items) + assignedBy);
 
         // Set click listener for Complete button
-        buttonComplete.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Update task status to "complete" in the database
-                DatabaseReference taskRef = mDatabase.child("tasks").child(currentUsername).child(taskKey).child("status");
-                taskRef.setValue("complete").addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if (task.isSuccessful()) {
-                            // Remove the task from the layout
-                            tasksLayout.removeView(taskView);
-                        } else {
-                            // Handle the failure to update the task status
-                            Toast.makeText(getContext(), "Failed to mark task as complete", Toast.LENGTH_SHORT).show();
-                        }
+        buttonComplete.setOnClickListener(v -> {
+            // Update task status to "complete" in the database
+            DatabaseReference taskRef = mDatabase.child("tasks").child(currentUsername).child(taskKey).child("status");
+            taskRef.setValue("complete").addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                    if (task.isSuccessful()) {
+                        // Remove the task from the layout
+                        tasksLayout.removeView(taskView);
+                    } else {
+                        // Handle the failure to update the task status
+                        Toast.makeText(getContext(), "Failed to mark task as complete", Toast.LENGTH_SHORT).show();
                     }
-                });
-                Animation animation = AnimationUtils.loadAnimation(getContext(), R.anim.slide_out);
-                taskView.startAnimation(animation);
-            }
+                }
+            });
+            Animation animation = AnimationUtils.loadAnimation(getContext(), R.anim.slide_out);
+            taskView.startAnimation(animation);
         });
 
         tasksLayout.addView(taskView);
