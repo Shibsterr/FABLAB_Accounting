@@ -343,7 +343,6 @@ public class NewEquipmentFragment extends Fragment {
             }
 
         });
-
         btnUploadImage.setOnClickListener(v -> {
             if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
                 ActivityCompat.requestPermissions(requireActivity(), new String[]{Manifest.permission.CAMERA}, REQUEST_CAMERA);
@@ -351,9 +350,6 @@ public class NewEquipmentFragment extends Fragment {
                 takePicture();
             }
         });
-
-
-
         return view;
     }
     private void showInfoDialog(String infoType) {
@@ -374,7 +370,6 @@ public class NewEquipmentFragment extends Fragment {
             }
         }
     }
-
     private boolean checkCode(String kods) {
         //Allows spaces aswell
         String patternString = "^[1-9][0-9]?_[1-9]_[1-2]?_[a-zA-Z0-9\\s]+$"; //10_5_1_test1234
@@ -416,14 +411,12 @@ public class NewEquipmentFragment extends Fragment {
         }
         return matches;
     }
-
     private void takePicture() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if (takePictureIntent.resolveActivity(requireActivity().getPackageManager()) != null) {
             startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
         }
     }
-
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -439,8 +432,6 @@ public class NewEquipmentFragment extends Fragment {
             isImageCaptured = true;
         }
     }
-
-    // Method to delete the currently stored picture
     private void deleteCurrentImage() {
         // Construct the StorageReference for the current picture
         String imageName = editcode.getText().toString().toUpperCase() + ".png";

@@ -12,7 +12,6 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,7 +19,6 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
@@ -216,14 +214,14 @@ public class HomeFragment extends Fragment {
     private void createCardView(Context context, LinearLayout parent, String title, String description, int ID) {
         CardView cardView = new CardView(context);
 
-        // Set layout parameters for CardView
+        // Set layout parameters for CardView (Fixed size for height)
         LinearLayout.LayoutParams cardParams = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT
+                370
         );
         cardParams.setMargins(24, 24, 24, 24);
         cardView.setLayoutParams(cardParams);
-        cardView.setMinimumHeight(200);
+        cardView.setBackgroundResource(R.drawable.my_custom_background);
 
         // Adjusting padding for the inner layout
         LinearLayout innerLayout = new LinearLayout(context);
@@ -231,8 +229,10 @@ public class HomeFragment extends Fragment {
         innerLayout.setPadding(30, 30, 30, 30);
         innerLayout.setBackgroundResource(R.drawable.my_custom_background);
 
+        // Set a fixed size for the ImageView
         ImageView imageView = new ImageView(context);
-        imageView.setLayoutParams(new LinearLayout.LayoutParams(200, 200));
+        LinearLayout.LayoutParams imageParams = new LinearLayout.LayoutParams(150, 150);
+        imageView.setLayoutParams(imageParams);
 
         // Load image from Firebase Storage
         FirebaseStorage storage = FirebaseStorage.getInstance();
@@ -247,7 +247,6 @@ public class HomeFragment extends Fragment {
         });
 
         TextView titleView = new TextView(context);
-
         titleView.setText(title);
         titleView.setTextSize(15);
         titleView.setTypeface(null, Typeface.BOLD);
@@ -257,25 +256,12 @@ public class HomeFragment extends Fragment {
         descriptionView.setTextSize(12);
 
         TextView idView = new TextView(context);
-
-        int idViewHeight = (int) TypedValue.applyDimension(
-                TypedValue.COMPLEX_UNIT_DIP,
-                30,
-                context.getResources().getDisplayMetrics()
-        );
-
-        LinearLayout.LayoutParams idParams = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.WRAP_CONTENT,
-                idViewHeight
-        );
-        idView.setLayoutParams(idParams);
         idView.setText("ID: " + ID);
         idView.setTextColor(Color.parseColor("#FF5722"));
         idView.setTextSize(14);
         idView.setTypeface(null, Typeface.BOLD);
 
-
-        // Add views to inner layout
+        // Add views to the inner layout
         innerLayout.addView(imageView);
         innerLayout.addView(titleView);
         innerLayout.addView(descriptionView);
@@ -283,12 +269,10 @@ public class HomeFragment extends Fragment {
 
         cardView.addView(innerLayout);
 
-        // Add the CardView to the parent layout
         parent.addView(cardView);
 
-        // Handle click event
         cardView.setOnClickListener(v -> {
-            Toast.makeText(context, "Clicked on: " + title + " (ID: " + ID + ")", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(context, "Clicked on: " + title + " (ID: " + ID + ")", Toast.LENGTH_SHORT).show();
             updateRecentlyUsedStation(ID); // Update the recently used station count using ID
             NavController navController = Navigation.findNavController(v);
 
@@ -323,8 +307,6 @@ public class HomeFragment extends Fragment {
             }
         });
     }
-
-
     private void updateRecentlyUsedStation(int stationId) {
         userDatabaseReference.child(String.valueOf(stationId)).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override

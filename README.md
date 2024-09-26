@@ -64,6 +64,12 @@
 - [x] Update the home fragment
 - - [x] Update the station showing animation
 
+## 26.09.2024
+- [ ] Fix for different phone sizes
+- - [ ] ID's not showing
+- - [ ] stock button being moved away
+- 
+
 
 ## What do you need for Firebase:
 - [ ] Firebase Storage
