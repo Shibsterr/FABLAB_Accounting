@@ -181,7 +181,7 @@
     <string name="status_succ">Notikuma status mainīts uz: %1$s</string>
     <string name="status_err">Kļūda ar statusa nomaiņa!</string>
     <string name="stock_new">Inventārs</string>
-    <string name="izg_code">Izglītības pārvaldes kods (nemazāk kā 8 cipari)</string>
+    <string name="izg_code">Izglītības pārvaldes kods</string>
     <string name="enter_value_max_8_digits">Ievadiet izglītības kodu</string>
     <string name="desc_text" >Apraksts</string>
     <string name="info_izg_code">

@@ -15,20 +15,14 @@
         android:padding="16dp"
         android:gravity="center">
 
-        <Button
-            android:id="@+id/sort_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/sort_logs" />
+        <Spinner
+            android:id="@+id/sort_spinner"
+            android:layout_width="337dp"
+            android:layout_height="53dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
+            android:background="@drawable/spinner_border" />
 
-        <TextView
-            android:id="@+id/sort_textview"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:text=""
-            android:textSize="16sp"
-            android:textColor="#000000" />
     </LinearLayout>
 
     <!-- RecyclerView to display the logs -->

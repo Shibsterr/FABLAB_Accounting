@@ -178,7 +178,7 @@
     <string name="status_succ">Event status updated to: %1$s</string>
     <string name="status_err">Failed to update event status</string>
     <string name="stock_new">Stock</string>
-    <string name="izg_code">Izglītības pārvaldes code</string>
+    <string name="izg_code">Education administration code</string>
     <string name="enter_value_max_8_digits">Enter value</string>
     <string name="desc_text" >Description</string>
     <string name="info_izg_code">

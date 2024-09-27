@@ -217,7 +217,7 @@ public class HomeFragment extends Fragment {
         // Set layout parameters for CardView (Fixed size for height)
         LinearLayout.LayoutParams cardParams = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
-                370
+                LinearLayout.LayoutParams.WRAP_CONTENT
         );
         cardParams.setMargins(24, 24, 24, 24);
         cardView.setLayoutParams(cardParams);

@@ -4,8 +4,9 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.TextView;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -30,8 +31,6 @@ public class LogsFragment extends Fragment {
     private RecyclerView recyclerView;
     private LogAdapter adapter;
     private List<LogItem> logList;
-    private int currentSortOrder = 0;  // Tracks current sort order
-    private TextView sortTextView;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -45,15 +44,30 @@ public class LogsFragment extends Fragment {
         adapter = new LogAdapter(logList);
         recyclerView.setAdapter(adapter);
 
-        // Reference to the button and TextView
-        Button sortButton = view.findViewById(R.id.sort_button);
-        sortTextView = view.findViewById(R.id.sort_textview);
+        // Reference to the Spinner and TextView
+        Spinner sortSpinner = view.findViewById(R.id.sort_spinner);
+
+        // Set up the Spinner with sorting options
+        ArrayAdapter<CharSequence> spinnerAdapter = ArrayAdapter.createFromResource(getContext(),
+                R.array.sort_options, android.R.layout.simple_spinner_item);
+        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        sortSpinner.setAdapter(spinnerAdapter);
 
         // Populate logList with data from Firebase Realtime Database
         populateLogListFromDatabase();
 
-        // Handle sorting on button click
-        sortButton.setOnClickListener(v -> sortLogs());
+        // Handle sorting on spinner item selection
+        sortSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                sortLogs(position);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                // Do nothing
+            }
+        });
 
         return view;
     }
@@ -97,36 +111,33 @@ public class LogsFragment extends Fragment {
         });
     }
 
-    private void sortLogs() {
-        switch (currentSortOrder) {
+    private void sortLogs(int position) {
+        switch (position) {
             case 0:
                 // Sort by name
                 Collections.sort(logList, Comparator.comparing(LogItem::getUserName));
-                sortTextView.setText(R.string.currently_sorted_by_name);
+//                sortTextView.setText(R.string.currently_sorted_by_name);
                 Toast.makeText(getContext(), "Sorted by name", Toast.LENGTH_SHORT).show();
                 break;
             case 1:
                 // Sort by most recent log (date descending)
                 Collections.sort(logList, Comparator.comparing(LogItem::getDateTime).reversed());
-                sortTextView.setText(R.string.currently_sorted_by_most_recent_log);
+//                sortTextView.setText(R.string.currently_sorted_by_most_recent_log);
                 Toast.makeText(getContext(), "Sorted by most recent log", Toast.LENGTH_SHORT).show();
                 break;
             case 2:
                 // Sort by oldest log (date ascending)
                 Collections.sort(logList, Comparator.comparing(LogItem::getDateTime));
-                sortTextView.setText(R.string.currently_sorted_by_oldest_log);
+//                sortTextView.setText(R.string.currently_sorted_by_oldest_log);
                 Toast.makeText(getContext(), "Sorted by oldest log", Toast.LENGTH_SHORT).show();
                 break;
             case 3:
-                // Sort by another field, for example, "Noskanēts objekts"
+                // Sort by item name
                 Collections.sort(logList, Comparator.comparing(LogItem::getItemName));
-                sortTextView.setText(R.string.currently_sorted_by_item_name);
+//                sortTextView.setText(R.string.currently_sorted_by_item_name);
                 Toast.makeText(getContext(), "Sorted by item name", Toast.LENGTH_SHORT).show();
                 break;
         }
-
-        // Update sort order (cycle through 4 options)
-        currentSortOrder = (currentSortOrder + 1) % 4;
 
         // Notify the adapter to refresh the list
         adapter.notifyDataSetChanged();

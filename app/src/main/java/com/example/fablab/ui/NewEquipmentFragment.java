@@ -57,8 +57,6 @@ public class NewEquipmentFragment extends Fragment {
     private Button btnsubmit, btnUploadImage;
     private ImageButton infoCode, infoStock,infoIntegerLimit;
     private EditText editcode, editname, editamount, editcrit, editmin, editmax, editdescr, editizcode;
-
-    // Declare a boolean variable to track whether an image has been captured
     private boolean isImageCaptured = false;
     public NewEquipmentFragment() {
         //Empty constructor (REQUIRED)
@@ -124,7 +122,6 @@ public class NewEquipmentFragment extends Fragment {
         });
 
         // Disable the upload image button initially
-
         btnUploadImage.setEnabled(false);
 
         // Initialize Buttons
@@ -485,51 +482,85 @@ public class NewEquipmentFragment extends Fragment {
                 });
     }
     private String whatStat(String stacija) {       //needs to be dynamically changed
-        String whatStation = "";
+        final String[] whatStation = {""};
+//        DatabaseReference databaseRef = FirebaseDatabase.getInstance().getReference();
+//        DatabaseReference findstat = databaseRef.child("stations") ;
+//
+//        findstat.addListenerForSingleValueEvent(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(@NonNull DataSnapshot datasnapshot) {
+//                for (DataSnapshot snapshot : datasnapshot.getChildren()) {
+//                    String statname = snapshot.getKey();
+//                    DatabaseReference test = databaseRef.child("stations").child(statname);
+//
+//                    test.addListenerForSingleValueEvent(new ValueEventListener() {
+//                        @Override
+//                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+//                            int ID = snapshot.child("ID").getValue(Integer.class);
+//                            int check = Integer.parseInt(stacija);
+//                            Log.d("help","This is the ID: "+ID+" and this is the checker"+check);
+//                            if(ID == check){
+//                                whatStation[0] = statname;
+//                            }
+//                        }
+//                        @Override
+//                        public void onCancelled(@NonNull DatabaseError error) {
+//                            Log.d("help","ggwp");
+//                        }
+//                    });
+//                }
+//            }
+//
+//            @Override
+//            public void onCancelled(@NonNull DatabaseError error) {
+//
+//            }
+//
+//        });
 
         if (stacija.equals("1")) {
-            whatStation = "Heatpress_station";
+            whatStation[0] = "Heatpress_station";
 
         } else if (stacija.equals("2")) {
-            whatStation = "assembly_station";
+            whatStation[0] = "assembly_station";
 
         } else if (stacija.equals("3")) {
-            whatStation = "cad_station";
+            whatStation[0] = "cad_station";
 
         } else if (stacija.equals("4")) {
-            whatStation = "casting_station";
+            whatStation[0] = "casting_station";
 
         } else if (stacija.equals("5")) {
-            whatStation = "cnc_station";
+            whatStation[0] = "cnc_station";
 
         } else if (stacija.equals("6")) {
-            whatStation = "compost_station";
+            whatStation[0] = "compost_station";
 
         } else if (stacija.equals("7")) {
-            whatStation = "electro_station";
+            whatStation[0] = "electro_station";
 
         } else if (stacija.equals("8")) {
-            whatStation = "electronic_station";
+            whatStation[0] = "electronic_station";
 
         } else if (stacija.equals("9")) {
-            whatStation = "embroidery_station";
+            whatStation[0] = "embroidery_station";
 
         } else if (stacija.equals("10")) {
-            whatStation = "laser_station";
+            whatStation[0] = "laser_station";
 
         } else if (stacija.equals("11")) {
-            whatStation = "metalworking_station";
+            whatStation[0] = "metalworking_station";
 
         } else if (stacija.equals("12")) {
-            whatStation = "microscope_station";
+            whatStation[0] = "microscope_station";
 
         } else if (stacija.equals("13")) {
-            whatStation = "printer_3d";
+            whatStation[0] = "printer_3d";
 
         } else if (stacija.equals("14")) {
-            whatStation = "vinyl_station";
+            whatStation[0] = "vinyl_station";
 
         }
-        return whatStation;
+        return whatStation[0];
     }
 }

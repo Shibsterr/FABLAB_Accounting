@@ -64,12 +64,13 @@
 - [x] Update the home fragment
 - - [x] Update the station showing animation
 
-## 26.09.2024
+## 30.09.2024 - 1.10.2024
 - [ ] Fix for different phone sizes
-- - [ ] ID's not showing
-- - [ ] stock button being moved away
-- 
-
+- - [x] ID's not showing
+- - [x] stock button being moved away
+- [ ] Make whatstat method dynamic
+- [ ] redo task assign/task show
+- [x] dropdown logs
 
 ## What do you need for Firebase:
 - [ ] Firebase Storage

@@ -1,6 +1,7 @@
 plugins {
     id("com.android.application")
     id("com.google.gms.google-services")
+    id("com.google.firebase.firebase-perf")
 }
 
 android {
@@ -71,6 +72,7 @@ dependencies {
     implementation("androidx.preference:preference:1.2.1")
     implementation("com.google.firebase:firebase-messaging:23.4.1")
     implementation("com.google.firebase:firebase-functions:20.4.0")
+    implementation("com.google.firebase:firebase-perf:20.3.0")
     annotationProcessor("com.github.bumptech.glide:compiler:4.12.0")
 
     implementation ("com.sun.mail:android-mail:1.6.7")

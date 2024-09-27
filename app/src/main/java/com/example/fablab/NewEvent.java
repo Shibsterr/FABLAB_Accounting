@@ -47,8 +47,13 @@ public class NewEvent extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        // Language setup
+        // Apply theme and language before setting content view
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        String selectedTheme = sharedPreferences.getString("theme_preference", "Theme.FABLAB");
+        int themeResourceId = getResources().getIdentifier(selectedTheme, "style", getPackageName());
+        setTheme(themeResourceId);
+
+        // Set locale based on saved language preference
         String languageCode = sharedPreferences.getString("language_preference", "en");
         Locale locale = new Locale(languageCode);
         Locale.setDefault(locale);
@@ -56,6 +61,8 @@ public class NewEvent extends AppCompatActivity {
         Resources resources = getResources();
         Configuration configuration = new Configuration(resources.getConfiguration());
         configuration.setLocale(locale);
+
+        // Update the configuration and display metrics
         resources.updateConfiguration(configuration, resources.getDisplayMetrics());
 
         super.onCreate(savedInstanceState);

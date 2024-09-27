@@ -1,24 +1,19 @@
-<?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="#AAFFFFFF"
-    android:gravity="center">
-
-    <RelativeLayout
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:background="@drawable/loading_background"
-    android:padding="24dp"
-    android:elevation="4dp"
-    android:layout_gravity="center">
+    android:layout_height="match_parent">
 
     <ProgressBar
-    android:id="@+id/progressBar"
-        android:indeterminate="true"
-        android:indeterminateTint="@color/black"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_centerInParent="true" />
-    </RelativeLayout>
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:indeterminate="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal|bottom"
+        android:layout_marginBottom="20dp"
+        android:text="Loading data..."
+        android:textSize="18sp" />
 </FrameLayout>

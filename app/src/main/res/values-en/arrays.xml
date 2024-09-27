@@ -31,4 +31,11 @@
             <item>FABLAB</item>
             <item>Dabasmāja</item>
         </string-array>
+
+    <string-array name="sort_options">
+        <item>Sort by name</item>
+        <item>Sort by most recent log</item>
+        <item>Sort by oldest log</item>
+        <item>Sort by item name</item>
+    </string-array>
 </resources>

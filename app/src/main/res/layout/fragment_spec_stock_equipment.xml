@@ -13,10 +13,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <!-- Equipment Image -->
-
-        <!-- Equipment Title -->
-
         <ImageView
             android:id="@+id/equip_image"
             android:layout_width="129dp"
@@ -27,6 +23,7 @@
             android:background="@drawable/round_outline"
             android:clipToOutline="true"
             android:scaleType="centerCrop"
+            app:layout_constraintBottom_toBottomOf="@+id/equip_desc"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.059"
             app:layout_constraintStart_toStartOf="parent"
@@ -34,32 +31,31 @@
             app:srcCompat="@drawable/nav_home" />
 
         <!-- Equipment Description -->
+
         <TextView
             android:id="@+id/equip_title"
             android:layout_width="195dp"
             android:layout_height="26dp"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="44dp"
+            android:layout_marginTop="40dp"
             android:layout_marginEnd="8dp"
-            android:text="man im dead"
             android:textAlignment="center"
             android:textSize="18sp"
             android:textStyle="bold|italic"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.127"
+            app:layout_constraintHorizontal_bias="0.254"
             app:layout_constraintStart_toEndOf="@+id/equip_image"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/equip_desc"
             android:layout_width="236dp"
-            android:layout_height="98dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
             android:layout_marginEnd="8dp"
-            android:text="yoda was here"
             android:textSize="16sp"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toEndOf="@+id/equip_image"
             app:layout_constraintTop_toBottomOf="@+id/equip_title" />
 
@@ -74,11 +70,15 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/equip_desc" />
 
+        <!-- Minimum Stock -->
+
+        <!-- Maximum Stock -->
+
         <TextView
             android:id="@+id/stock"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_width="264dp"
+            android:layout_height="48dp"
+            android:layout_marginTop="12dp"
             android:gravity="center_vertical"
             android:paddingLeft="16dp"
             android:text="@string/stock_0"
@@ -86,15 +86,15 @@
             android:textSize="20sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/view" />
 
-        <!-- Minimum Stock -->
         <TextView
             android:id="@+id/minstock"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_width="264dp"
+            android:layout_height="48dp"
+            android:layout_marginTop="12dp"
             android:gravity="center_vertical"
             android:paddingLeft="16dp"
             android:text="@string/minimum_stock_0"
@@ -102,16 +102,15 @@
             android:textSize="20sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/stock" />
 
-        <!-- Maximum Stock -->
-
         <TextView
             android:id="@+id/maxstock"
-            android:layout_width="244dp"
-            android:layout_height="40dp"
-            android:layout_marginTop="8dp"
+            android:layout_width="264dp"
+            android:layout_height="48dp"
+            android:layout_marginTop="16dp"
             android:gravity="center_vertical"
             android:paddingLeft="16dp"
             android:text="@string/maximum_stock_0"
@@ -125,9 +124,9 @@
 
         <Button
             android:id="@+id/maxstock_button"
-            android:layout_width="160dp"
-            android:layout_height="48dp"
-            android:layout_marginEnd="8dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="12dp"
             android:drawableLeft="@drawable/edit_icon"
             android:text="@string/edit"
             app:layout_constraintBottom_toTopOf="@+id/critstock"
@@ -137,8 +136,8 @@
 
         <TextView
             android:id="@+id/critstock"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_width="264dp"
+            android:layout_height="48dp"
             android:layout_marginTop="20dp"
             android:gravity="center_vertical"
             android:paddingLeft="16dp"
@@ -164,8 +163,8 @@
 
         <Button
             android:id="@+id/subtractbutton"
-            android:layout_width="175dp"
-            android:layout_height="58dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:layout_marginEnd="12dp"
             android:drawableLeft="@drawable/remove_circle"
