@@ -219,4 +219,5 @@
     <string name="subtract_from_the_stock">Subtract from the stock</string>
     <string name="confirm">Confirm</string>
     <string name="cancel">Cancel</string>
+    <string name="important">"Urgency status: "</string>
 </resources>

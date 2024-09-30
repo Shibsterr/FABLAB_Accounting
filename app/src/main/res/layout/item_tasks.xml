@@ -62,11 +62,25 @@
         app:layout_constraintTop_toBottomOf="@id/textViewTaskStatus"
         tools:text="Assigned by: John Doe" />
 
+    <TextView
+        android:id="@+id/textViewImportant"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/important"
+        android:textColor="@android:color/darker_gray"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/divider"
+        app:layout_constraintEnd_toEndOf="@+id/textViewAssignedBy"
+        app:layout_constraintStart_toStartOf="@+id/textViewAssignedBy"
+        app:layout_constraintTop_toBottomOf="@+id/textViewAssignedBy"
+        app:layout_constraintVertical_bias="0.625" />
+
     <View
         android:id="@+id/divider"
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="28dp"
         android:background="@android:color/darker_gray"
         app:layout_constraintTop_toBottomOf="@id/textViewAssignedBy" />
 

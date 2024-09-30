@@ -33,8 +33,11 @@ import androidx.fragment.app.Fragment;
 
 import com.example.fablab.MainActivity;
 import com.example.fablab.R;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
@@ -54,6 +57,7 @@ public class NewEquipmentFragment extends Fragment {
     Spinner spinnerType, spinnerUnit;
     private String selectedType, selectedUnit;
     private View view;
+    final String[] whatStation = {""};
     private Button btnsubmit, btnUploadImage;
     private ImageButton infoCode, infoStock,infoIntegerLimit;
     private EditText editcode, editname, editamount, editcrit, editmin, editmax, editdescr, editizcode;
@@ -481,86 +485,44 @@ public class NewEquipmentFragment extends Fragment {
                     deleteCurrentImage();
                 });
     }
-    private String whatStat(String stacija) {       //needs to be dynamically changed
-        final String[] whatStation = {""};
-//        DatabaseReference databaseRef = FirebaseDatabase.getInstance().getReference();
-//        DatabaseReference findstat = databaseRef.child("stations") ;
-//
-//        findstat.addListenerForSingleValueEvent(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(@NonNull DataSnapshot datasnapshot) {
-//                for (DataSnapshot snapshot : datasnapshot.getChildren()) {
-//                    String statname = snapshot.getKey();
-//                    DatabaseReference test = databaseRef.child("stations").child(statname);
-//
-//                    test.addListenerForSingleValueEvent(new ValueEventListener() {
-//                        @Override
-//                        public void onDataChange(@NonNull DataSnapshot snapshot) {
-//                            int ID = snapshot.child("ID").getValue(Integer.class);
-//                            int check = Integer.parseInt(stacija);
-//                            Log.d("help","This is the ID: "+ID+" and this is the checker"+check);
-//                            if(ID == check){
-//                                whatStation[0] = statname;
-//                            }
-//                        }
-//                        @Override
-//                        public void onCancelled(@NonNull DatabaseError error) {
-//                            Log.d("help","ggwp");
-//                        }
-//                    });
-//                }
-//            }
-//
-//            @Override
-//            public void onCancelled(@NonNull DatabaseError error) {
-//
-//            }
-//
-//        });
-
-        if (stacija.equals("1")) {
-            whatStation[0] = "Heatpress_station";
-
-        } else if (stacija.equals("2")) {
-            whatStation[0] = "assembly_station";
-
-        } else if (stacija.equals("3")) {
-            whatStation[0] = "cad_station";
-
-        } else if (stacija.equals("4")) {
-            whatStation[0] = "casting_station";
-
-        } else if (stacija.equals("5")) {
-            whatStation[0] = "cnc_station";
-
-        } else if (stacija.equals("6")) {
-            whatStation[0] = "compost_station";
-
-        } else if (stacija.equals("7")) {
-            whatStation[0] = "electro_station";
-
-        } else if (stacija.equals("8")) {
-            whatStation[0] = "electronic_station";
-
-        } else if (stacija.equals("9")) {
-            whatStation[0] = "embroidery_station";
-
-        } else if (stacija.equals("10")) {
-            whatStation[0] = "laser_station";
-
-        } else if (stacija.equals("11")) {
-            whatStation[0] = "metalworking_station";
-
-        } else if (stacija.equals("12")) {
-            whatStation[0] = "microscope_station";
-
-        } else if (stacija.equals("13")) {
-            whatStation[0] = "printer_3d";
-
-        } else if (stacija.equals("14")) {
-            whatStation[0] = "vinyl_station";
-
+    private String whatStat(String stacija) {
+        // Parse the station ID
+        int check;
+        try {
+            check = Integer.parseInt(stacija);  // Convert station ID from String to Integer
+        } catch (NumberFormatException e) {
+            Log.e("help", "Invalid station ID format");
+            return whatStation[0];  // Return an empty string if parsing fails
         }
-        return whatStation[0];
+
+        // Reference to the stations node in Firebase
+        DatabaseReference databaseRef = FirebaseDatabase.getInstance().getReference().child("stations");
+
+        // Query the database to find the station by ID
+        databaseRef.orderByChild("ID").equalTo(check).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot datasnapshot) {
+                if (datasnapshot.exists()) {
+                    for (DataSnapshot snapshot : datasnapshot.getChildren()) {
+                        // Get the station node key (station name)
+                        String statname = snapshot.getKey();
+                        Log.d("helpP", "Found station: " + statname);
+
+                        whatStation[0] = statname;  // Set the station name
+                        Log.d("helpP", "Found station[0]: " + whatStation[0]);
+                        break;
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.e("help", "Error fetching station data: " + error.getMessage());
+            }
+        });
+        Log.d("help3", whatStation[0]);
+        return whatStation[0];  // Return the station name (empty if not found)
     }
+
+
 }

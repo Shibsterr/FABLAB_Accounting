@@ -15,8 +15,6 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import com.example.fablab.R;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -75,11 +73,12 @@ public class TaskFragment extends Fragment {
                                     String deadline = taskSnapshot.child("deadline").getValue(String.class);
                                     String status = taskSnapshot.child("status").getValue(String.class);
                                     String assignedBy = taskSnapshot.child("assignedBy").getValue(String.class);
+                                    String urgent = taskSnapshot.child("urgency").getValue(String.class);
                                     String taskKey = taskSnapshot.getKey();
                                     if (description != null && deadline != null && status != null && assignedBy != null) {
                                         if (!status.equals("complete")) {
                                             hasTasks = true;
-                                            addTaskToLayout(description, deadline, status, assignedBy, taskKey, currentUsername);
+                                            addTaskToLayout(description, deadline, status, assignedBy, taskKey, currentUsername, urgent);
                                         }
                                     }
                                 }
@@ -108,33 +107,32 @@ public class TaskFragment extends Fragment {
         }
     }
 
-    private void addTaskToLayout(String description, String deadline, String status, String assignedBy, String taskKey, String currentUsername) {
+    private void addTaskToLayout(String description, String deadline, String status, String assignedBy, String taskKey, String currentUsername, String urgent) {
         View taskView = getLayoutInflater().inflate(R.layout.item_tasks, tasksLayout, false);
         TextView textViewDescription = taskView.findViewById(R.id.textViewTaskDescription);
         TextView textViewDeadline = taskView.findViewById(R.id.textViewTaskDeadline);
         TextView textViewStatus = taskView.findViewById(R.id.textViewTaskStatus);
         TextView textViewAssignedBy = taskView.findViewById(R.id.textViewAssignedBy);
+        TextView textViewUrgency = taskView.findViewById(R.id.textViewImportant);
         Button buttonComplete = taskView.findViewById(R.id.buttonComplete); // Add Complete button
 
         textViewDescription.setText(description);
         textViewDeadline.setText(getString(R.string.deadline) + deadline);
         textViewStatus.setText(getString(R.string.status_item) + status);
         textViewAssignedBy.setText(getString(R.string.assigned_by_items) + assignedBy);
+        textViewUrgency.setText(getString(R.string.important) + urgent);
 
         // Set click listener for Complete button
         buttonComplete.setOnClickListener(v -> {
             // Update task status to "complete" in the database
             DatabaseReference taskRef = mDatabase.child("tasks").child(currentUsername).child(taskKey).child("status");
-            taskRef.setValue("complete").addOnCompleteListener(new OnCompleteListener<Void>() {
-                @Override
-                public void onComplete(@NonNull Task<Void> task) {
-                    if (task.isSuccessful()) {
-                        // Remove the task from the layout
-                        tasksLayout.removeView(taskView);
-                    } else {
-                        // Handle the failure to update the task status
-                        Toast.makeText(getContext(), "Failed to mark task as complete", Toast.LENGTH_SHORT).show();
-                    }
+            taskRef.setValue("complete").addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    // Remove the task from the layout
+                    tasksLayout.removeView(taskView);
+                } else {
+                    // Handle the failure to update the task status
+                    Toast.makeText(getContext(), "Failed to mark task as complete", Toast.LENGTH_SHORT).show();
                 }
             });
             Animation animation = AnimationUtils.loadAnimation(getContext(), R.anim.slide_out);

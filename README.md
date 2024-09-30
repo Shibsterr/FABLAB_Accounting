@@ -60,12 +60,11 @@
 - [x] Loading screens
 - [x] Add internet checker for every activity
 - [x] Language changer for stations title, description
-- -
 - [x] Update the home fragment
 - - [x] Update the station showing animation
 
 ## 30.09.2024 - 1.10.2024
-- [ ] Fix for different phone sizes
+- [x] Fix for different phone sizes
 - - [x] ID's not showing
 - - [x] stock button being moved away
 - [ ] Make whatstat method dynamic
