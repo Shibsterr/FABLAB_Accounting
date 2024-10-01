@@ -199,7 +199,7 @@
         <![CDATA[
     <br><b>This field represents the unique identifier for each piece of equipment, following a specific format:</b></br>
     <br><b>Example:</b> 2_3_1_Drill</br>
-    <br>- <b>Room Number:</b> 1 (Can be a two-digit number)</br>
+    <br>- <b>Room Number:</b> 2 (Can be a two-digit number)</br>
     <br>- <b>Station Number:</b> 3 (Can be a two-digit number)</br>
     <br>- <b>Type of Item:</b> 1 (Asset) (2 = Consumable)</br>
     <br>- <b>Name of Item:</b> Drill</br>

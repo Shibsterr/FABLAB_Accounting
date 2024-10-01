@@ -3,13 +3,20 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="?android:attr/windowBackground"
+    android:padding="16dp"
     tools:context=".ui.assigning.TaskAssigningFragment">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="16dp">
+        android:background="@android:color/white"
+        android:elevation="4dp"
+        android:padding="24dp"
+        android:layout_margin="16dp"
+        android:clipToPadding="false"
+        android:layout_gravity="center_horizontal">
 
         <!-- Title -->
         <TextView
@@ -18,22 +25,28 @@
             android:text="@string/assign_task"
             android:textSize="22sp"
             android:textStyle="bold"
-            android:layout_marginBottom="24dp"/>
+            android:textColor="?android:textColorPrimary"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="32dp" />
 
         <!-- Spinner for selecting user -->
         <Spinner
             android:id="@+id/spinnerUsers"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/select_user"
-            android:layout_marginBottom="24dp"/>
+            android:layout_marginBottom="24dp"
+            android:background="@android:drawable/editbox_background"
+            android:padding="8dp"
+            android:layout_gravity="center_horizontal"
+            android:spinnerMode="dropdown" />
 
         <!-- Date Picker -->
         <DatePicker
             android:id="@+id/datePicker"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="24dp" />
+            android:layout_marginBottom="32dp"
+            android:layout_gravity="center_horizontal" />
 
         <!-- Urgency Radio Group -->
         <TextView
@@ -42,26 +55,30 @@
             android:text="@string/urgency"
             android:textSize="16sp"
             android:textStyle="bold"
-            android:layout_marginBottom="8dp"/>
+            android:textColor="?android:textColorPrimary"
+            android:layout_marginBottom="8dp" />
 
         <RadioGroup
             android:id="@+id/radioGroupUrgency"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:layout_marginBottom="24dp">
 
             <RadioButton
                 android:id="@+id/radioButtonUrgent"
-                android:layout_width="128dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:checked="true"
-                android:text="@string/urgent" />
+                android:text="@string/urgent"
+                android:textColor="?android:textColorPrimary"
+                android:layout_marginEnd="24dp" />
 
             <RadioButton
                 android:id="@+id/radioButtonNotUrgent"
-                android:layout_width="148dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/not_urgent" />
+                android:text="@string/not_urgent"
+                android:textColor="?android:textColorPrimary" />
         </RadioGroup>
 
         <!-- Task Description -->
@@ -71,7 +88,8 @@
             android:text="@string/task_description"
             android:textSize="16sp"
             android:textStyle="bold"
-            android:layout_marginBottom="8dp"/>
+            android:textColor="?android:textColorPrimary"
+            android:layout_marginBottom="8dp" />
 
         <EditText
             android:id="@+id/editTextDescription"
@@ -81,10 +99,11 @@
             android:inputType="textMultiLine"
             android:minLines="4"
             android:gravity="top"
+            android:padding="12dp"
             android:layout_marginBottom="24dp"
-            android:paddingStart="8dp"
-            android:paddingEnd="8dp"
-            android:background="@drawable/edit_text_background"/>
+            android:background="@drawable/edit_text_background"
+            android:textColorHint="@android:color/darker_gray"
+            android:textColor="?android:textColorPrimary" />
 
         <!-- Assign Task Button -->
         <Button
@@ -93,7 +112,12 @@
             android:layout_height="wrap_content"
             android:text="@string/assign_task"
             android:textColor="@android:color/white"
-            android:textSize="16sp"/>
+            android:background="?android:attr/colorAccent"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="16dp"
+            android:textSize="16sp"
+            android:elevation="4dp"
+            android:paddingVertical="12dp" />
 
     </LinearLayout>
 

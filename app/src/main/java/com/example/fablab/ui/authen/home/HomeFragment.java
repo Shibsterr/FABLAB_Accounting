@@ -214,50 +214,54 @@ public class HomeFragment extends Fragment {
     private void createCardView(Context context, LinearLayout parent, String title, String description, int ID) {
         CardView cardView = new CardView(context);
 
-        // Set layout parameters for CardView (Fixed size for height)
+        // Set layout parameters for CardView with fixed margin
         LinearLayout.LayoutParams cardParams = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT
         );
-        cardParams.setMargins(24, 24, 24, 24);
+        cardParams.setMargins(24, 24, 24, 24); // Adding consistent margins
         cardView.setLayoutParams(cardParams);
-        cardView.setBackgroundResource(R.drawable.my_custom_background);
+        cardView.setBackgroundResource(R.drawable.my_custom_background); // Custom background for the CardView
 
-        // Adjusting padding for the inner layout
+        // Inner layout for card content (vertical orientation and padding)
         LinearLayout innerLayout = new LinearLayout(context);
         innerLayout.setOrientation(LinearLayout.VERTICAL);
         innerLayout.setPadding(30, 30, 30, 30);
         innerLayout.setBackgroundResource(R.drawable.my_custom_background);
 
-        // Set a fixed size for the ImageView
+        // ImageView for station icon (fixed size)
         ImageView imageView = new ImageView(context);
         LinearLayout.LayoutParams imageParams = new LinearLayout.LayoutParams(150, 150);
         imageView.setLayoutParams(imageParams);
 
-        // Load image from Firebase Storage
+        // Load image from Firebase Storage based on station ID
         FirebaseStorage storage = FirebaseStorage.getInstance();
         StorageReference storageReference = storage.getReference().child("Station_Icons/" + ID + ".png");
 
+        // Loading image from Firebase with success/failure handling
         storageReference.getBytes(Long.MAX_VALUE).addOnSuccessListener(bytes -> {
             Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
             imageView.setImageBitmap(bitmap);
         }).addOnFailureListener(exception -> {
             Log.e("FirebaseStorageError", "Failed to load image: " + exception.getMessage());
-            imageView.setImageResource(R.drawable.placeholder_image);
+            imageView.setImageResource(R.drawable.placeholder_image); // Placeholder image in case of failure
         });
 
+        // TextView for the title of the station
         TextView titleView = new TextView(context);
         titleView.setText(title);
         titleView.setTextSize(15);
         titleView.setTypeface(null, Typeface.BOLD);
 
+        // TextView for station description
         TextView descriptionView = new TextView(context);
         descriptionView.setText(description);
         descriptionView.setTextSize(12);
 
+        // TextView for displaying station ID
         TextView idView = new TextView(context);
         idView.setText("ID: " + ID);
-        idView.setTextColor(Color.parseColor("#FF5722"));
+        idView.setTextColor(Color.parseColor("#FF5722")); // Using color for emphasis on ID
         idView.setTextSize(14);
         idView.setTypeface(null, Typeface.BOLD);
 
@@ -267,13 +271,14 @@ public class HomeFragment extends Fragment {
         innerLayout.addView(descriptionView);
         innerLayout.addView(idView);
 
-        cardView.addView(innerLayout);
+        cardView.addView(innerLayout); // Adding inner layout to CardView
+        parent.addView(cardView); // Adding CardView to the parent layout
 
-        parent.addView(cardView);
-
+        // Setting up click listener for each CardView
         cardView.setOnClickListener(v -> {
-            //Toast.makeText(context, "Clicked on: " + title + " (ID: " + ID + ")", Toast.LENGTH_SHORT).show();
-            updateRecentlyUsedStation(ID); // Update the recently used station count using ID
+            // Update recently used station count by station ID
+            updateRecentlyUsedStation(ID);
+
             NavController navController = Navigation.findNavController(v);
 
             if (title != null && !title.isEmpty()) {
@@ -287,7 +292,7 @@ public class HomeFragment extends Fragment {
                                     String stationNodeName = stationSnapshot.getKey();
                                     Bundle bundle = new Bundle();
                                     bundle.putString("stationNodeName", stationNodeName);
-                                    navController.navigate(R.id.equipmentListFragment, bundle);
+                                    navController.navigate(R.id.equipmentListFragment, bundle); // Navigate to equipment list
                                     return;
                                 }
                             }

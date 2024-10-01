@@ -57,7 +57,6 @@ public class NewEquipmentFragment extends Fragment {
     Spinner spinnerType, spinnerUnit;
     private String selectedType, selectedUnit;
     private View view;
-    final String[] whatStation = {""};
     private Button btnsubmit, btnUploadImage;
     private ImageButton infoCode, infoStock,infoIntegerLimit;
     private EditText editcode, editname, editamount, editcrit, editmin, editmax, editdescr, editizcode;
@@ -285,55 +284,66 @@ public class NewEquipmentFragment extends Fragment {
 
                             //Realtime database
                             DatabaseReference databaseRef = FirebaseDatabase.getInstance().getReference();
-                            DatabaseReference equipsRef = databaseRef.child("equipment").child(kods);
-                            DatabaseReference stationRef = databaseRef.child("stations").child(whatStat(stacija)).child("Equipment").child(kods);
+                                whatStat(stacija, stationName -> {
+                                    if (!stationName.isEmpty()) {
+                                        // Use stationName here once it's fetched from Firebase
+                                        Log.d("MainActivity", "Station: " + stationName);
 
-                            Log.d("MainActivity", whatStat(stacija));
+                                        DatabaseReference equipsRef = databaseRef.child("equipment").child(kods);
+                                        DatabaseReference stationRef = FirebaseDatabase.getInstance().getReference()
+                                                .child("stations").child(stationName).child("Equipment").child(kods);
 
-                            // Construct the reference to the image in Firebase Storage
-                            String imagePath = "gs://aaaaa-3cb94.appspot.com/Equipment_Icons/" + kods + ".png";
-                            // Get a reference to the Firebase Storage instance
-                            StorageReference storageRef = FirebaseStorage.getInstance().getReferenceFromUrl(imagePath);
-                            // Get the download URL for the image
-                            storageRef.getDownloadUrl().addOnSuccessListener(uri -> {
-                                // Once we have the download URL, we can store it along with other equipment details in the Realtime Database
-                                String imageUrl = uri.toString();
-                                // Store other equipment details in the Realtime Database
-                                Stockequips.put("Telpa", telpa);
-                                Stockequips.put("Stacija", stacija);
-                                Stockequips.put("Tips", selectedType);
-                                Stockequips.put("Kods", kods);
-                                Stockequips.put("Nosaukums", name);
-                                Stockequips.put("Mērvienība", selectedUnit);
-                                Stockequips.put("Skaits", skaits);
-                                Stockequips.put("Max Stock", maxValue);
-                                Stockequips.put("Min Stock", minValue);
-                                Stockequips.put("Critical Stock", critValue);
-                                Stockequips.put("Description", desc);
-                                Stockequips.put("IzgKods", izg_code);
-                                Stockequips.put("Attēls", imageUrl);
+                                        // Construct the reference to the image in Firebase Storage
+                                        String imagePath = "gs://aaaaa-3cb94.appspot.com/Equipment_Icons/" + kods + ".png";
+                                        // Get a reference to the Firebase Storage instance
+                                        StorageReference storageRef = FirebaseStorage.getInstance().getReferenceFromUrl(imagePath);
+                                        // Get the download URL for the image
+                                        storageRef.getDownloadUrl().addOnSuccessListener(uri -> {
+                                            // Once we have the download URL, we can store it along with other equipment details in the Realtime Database
+                                            String imageUrl = uri.toString();
+                                            // Store other equipment details in the Realtime Database
+                                            Stockequips.put("Telpa", telpa);
+                                            Stockequips.put("Stacija", stacija);
+                                            Stockequips.put("Tips", selectedType);
+                                            Stockequips.put("Kods", kods);
+                                            Stockequips.put("Nosaukums", name);
+                                            Stockequips.put("Mērvienība", selectedUnit);
+                                            Stockequips.put("Skaits", skaits);
+                                            Stockequips.put("Max Stock", maxValue);
+                                            Stockequips.put("Min Stock", minValue);
+                                            Stockequips.put("Critical Stock", critValue);
+                                            Stockequips.put("Description", desc);
+                                            Stockequips.put("IzgKods", izg_code);
+                                            Stockequips.put("Attēls", imageUrl);
 
-                                equipsRef.setValue(Stockequips);     //sends to the stock equipment
+                                            equipsRef.setValue(Stockequips);     //sends to the stock equipment
 
-                                //--------------------------------------------------//
-                                equips.put("Telpa", telpa);
-                                equips.put("Stacija", stacija);
-                                equips.put("Tips", selectedType);
-                                equips.put("Kods", kods);
-                                equips.put("Nosaukums", name);
-                                equips.put("Mērvienība", selectedUnit);
-                                equips.put("Skaits", skaits);
-                                equips.put("Description", desc);
-                                equips.put("IzgKods", izg_code);
-                                equips.put("Attēls", imageUrl);
+                                            //--------------------------------------------------//
+                                            equips.put("Telpa", telpa);
+                                            equips.put("Stacija", stacija);
+                                            equips.put("Tips", selectedType);
+                                            equips.put("Kods", kods);
+                                            equips.put("Nosaukums", name);
+                                            equips.put("Mērvienība", selectedUnit);
+                                            equips.put("Skaits", skaits);
+                                            equips.put("Description", desc);
+                                            equips.put("IzgKods", izg_code);
+                                            equips.put("Attēls", imageUrl);
 
-                                stationRef.setValue(equips);    //sends to the station equipment to display
-                                //--------------------------------------------------//
+                                            stationRef.setValue(equips);    //sends to the station equipment to display
+                                            //--------------------------------------------------//
 
-                                startActivity(new Intent(getContext(), MainActivity.class));
-                                getActivity().finish();
-                                Log.d("MainActivity", "Added a new equipment");
-                            });
+                                            startActivity(new Intent(getContext(), MainActivity.class));
+                                            getActivity().finish();
+                                            Log.d("MainActivity", "Added a new equipment");
+                                        });
+                                    } else {
+                                        Log.d("MainActivity", "Station not found");
+                                        deleteCurrentImage();
+                                    }
+                                });
+
+
                             }
                         }
                     }else{
@@ -353,6 +363,45 @@ public class NewEquipmentFragment extends Fragment {
         });
         return view;
     }
+    private void whatStat(String stacija, StationCallback callback) {
+        int check;
+        try {
+            check = Integer.parseInt(stacija);  // Convert station ID from String to Integer
+        } catch (NumberFormatException e) {
+            Log.e("help", "Invalid station ID format");
+            callback.onStationFound("");  // Return empty string via callback if parsing fails
+            return;
+        }
+
+        DatabaseReference databaseRef = FirebaseDatabase.getInstance().getReference().child("stations");
+
+        // Query the database to find the station by ID
+        databaseRef.orderByChild("ID").equalTo(check).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot datasnapshot) {
+                if (datasnapshot.exists()) {
+                    for (DataSnapshot snapshot : datasnapshot.getChildren()) {
+                        // Get the station node key (station name)
+                        String statname = snapshot.getKey();
+                        Log.d("helpP", "Found station: " + statname);
+                        callback.onStationFound(statname);  // Pass station name via callback
+                        return;
+                    }
+                }
+                callback.onStationFound("");  // If not found, return empty string
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.e("help", "Error fetching station data: " + error.getMessage());
+                callback.onStationFound("");  // Return empty string on error
+            }
+        });
+    }
+    public interface StationCallback {
+        void onStationFound(String stationName);
+    }
+
     private void showInfoDialog(String infoType) {
         // Create and show the dialog based on the infoType
         DialogFragment dialog = InfoDialogFragment.newInstance(infoType);
@@ -412,6 +461,7 @@ public class NewEquipmentFragment extends Fragment {
         }
         return matches;
     }
+
     private void takePicture() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if (takePictureIntent.resolveActivity(requireActivity().getPackageManager()) != null) {
@@ -484,44 +534,6 @@ public class NewEquipmentFragment extends Fragment {
                     // Delete the currently stored image if the upload fails
                     deleteCurrentImage();
                 });
-    }
-    private String whatStat(String stacija) {
-        // Parse the station ID
-        int check;
-        try {
-            check = Integer.parseInt(stacija);  // Convert station ID from String to Integer
-        } catch (NumberFormatException e) {
-            Log.e("help", "Invalid station ID format");
-            return whatStation[0];  // Return an empty string if parsing fails
-        }
-
-        // Reference to the stations node in Firebase
-        DatabaseReference databaseRef = FirebaseDatabase.getInstance().getReference().child("stations");
-
-        // Query the database to find the station by ID
-        databaseRef.orderByChild("ID").equalTo(check).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot datasnapshot) {
-                if (datasnapshot.exists()) {
-                    for (DataSnapshot snapshot : datasnapshot.getChildren()) {
-                        // Get the station node key (station name)
-                        String statname = snapshot.getKey();
-                        Log.d("helpP", "Found station: " + statname);
-
-                        whatStation[0] = statname;  // Set the station name
-                        Log.d("helpP", "Found station[0]: " + whatStation[0]);
-                        break;
-                    }
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                Log.e("help", "Error fetching station data: " + error.getMessage());
-            }
-        });
-        Log.d("help3", whatStation[0]);
-        return whatStation[0];  // Return the station name (empty if not found)
     }
 
 

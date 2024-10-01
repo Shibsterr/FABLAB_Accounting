@@ -27,7 +27,7 @@
     - [x] Upon going below minimum sends the user to gmail and makes them send an email to request new stock
 - [x] Make the buttons auto adjust depending on screen size
 - [x] Add a forgot password button to login screen
-- [ ] Add certain screens if somethings missing (~~No Internet connection~~, ~~No Equipment to show~~)
+- [x] Add certain screens if somethings missing (~~No Internet connection~~, ~~No Equipment to show~~)
     - [x] Make it also check ur mobile data. 
     - [x] Screens that say if there are no tasks also add a loading screen when you open the app to hide the loading data
 - [x] Ability to add/plan events inside a calendar as an user / or assign tasks as a worker to another worker
@@ -35,12 +35,12 @@
 - [x] Add settings (~~theme changer~~, ~~password changer/reset~~)
   - [x] Multi language support (Will take the longest as you must add everything inside the strings.xml file so that you can translate it properly)
 - [x] Add a sidebar navigation which is only seen by the admin where you can see all the logs displayed.
-- [ ] Make sure the layouts are fit to be on many different screen sizes
+- [x] Make sure the layouts are fit to be on many different screen sizes
 - [x] Permissions for newer phones may be removed (External storage write is an example) ?
-- [ ] Visually make it look nicer (Better colors and such)
+- [x] Visually make it look nicer (Better colors and such)
 - [ ] Update the splashscreen if needed
 - [x] Calendar viewing for normal users to see which days are unavailable and allow them to assing one (Could just store it inside the database)
-- [ ] Change whatStat method inside NewEquipmentFragment its not dynamic currently and wont work.
+- [x] Change whatStat method inside NewEquipmentFragment its not dynamic currently and wont work.
 
 
 ## Improvements:
@@ -67,8 +67,8 @@
 - [x] Fix for different phone sizes
 - - [x] ID's not showing
 - - [x] stock button being moved away
-- [ ] Make whatstat method dynamic
-- [ ] redo task assign/task show
+- [x] Make whatstat method dynamic
+- [x] redo task assign/task show
 - [x] dropdown logs
 
 ## What do you need for Firebase:

@@ -1,31 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:tools="http://schemas.android.com/tools"
     android:padding="16dp"
     android:background="@android:color/white">
 
+    <!-- Task Description -->
     <TextView
         android:id="@+id/textViewTaskDescription"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="@string/tas_desc"
-        android:textSize="16sp"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:textColor="@android:color/black"
         app:layout_constraintEnd_toStartOf="@+id/buttonComplete"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintHorizontal_bias="0"
         tools:text="Buy groceries from the supermarket" />
 
+    <!-- Complete Button -->
     <Button
         android:id="@+id/buttonComplete"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/complete_btn"
+        android:textColor="@android:color/white"
+        android:backgroundTint="?attr/colorAccent"
+        android:elevation="2dp"
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="8dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/divider" />
 
+    <!-- Task Deadline -->
     <TextView
         android:id="@+id/textViewTaskDeadline"
         android:layout_width="wrap_content"
@@ -38,6 +50,7 @@
         app:layout_constraintTop_toBottomOf="@id/textViewTaskDescription"
         tools:text="Deadline: 31/12/2022" />
 
+    <!-- Task Status -->
     <TextView
         android:id="@+id/textViewTaskStatus"
         android:layout_width="wrap_content"
@@ -50,6 +63,7 @@
         app:layout_constraintTop_toBottomOf="@id/textViewTaskDeadline"
         tools:text="Status: Incomplete" />
 
+    <!-- Assigned By -->
     <TextView
         android:id="@+id/textViewAssignedBy"
         android:layout_width="wrap_content"
@@ -62,12 +76,13 @@
         app:layout_constraintTop_toBottomOf="@id/textViewTaskStatus"
         tools:text="Assigned by: John Doe" />
 
+    <!-- Important Tag -->
     <TextView
         android:id="@+id/textViewImportant"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/important"
-        android:textColor="@android:color/darker_gray"
+        android:textColor="?attr/colorAccent"
         android:textSize="14sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/divider"
@@ -76,6 +91,7 @@
         app:layout_constraintTop_toBottomOf="@+id/textViewAssignedBy"
         app:layout_constraintVertical_bias="0.625" />
 
+    <!-- Divider -->
     <View
         android:id="@+id/divider"
         android:layout_width="match_parent"
