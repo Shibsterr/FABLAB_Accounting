@@ -170,7 +170,7 @@ public class ReportFragment extends Fragment {
                 "\nPriekšmetu nosaukums: " + equipmentName +
                 "\nProblēma: \n" + description;
 
-        emailSender.sendEmail(emails, "Problem Report", emailBody);
-        Toast.makeText(getContext(), "Email sent in background.", Toast.LENGTH_SHORT).show();
+        emailSender.sendEmail(emails, "Problēmas ziņojums", emailBody);
+        Toast.makeText(getContext(), "E-pasts nosūtīts fonā.", Toast.LENGTH_SHORT).show();
     }
 }

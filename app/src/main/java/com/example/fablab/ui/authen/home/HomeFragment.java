@@ -61,7 +61,7 @@ public class HomeFragment extends Fragment {
     private DatabaseReference eventsDatabaseRef;
     private final Map<String, List<Event>> eventsMap = new HashMap<>();
     private String userStatus;
-    private String currentUserUid; // Store the current user UID
+    private String currentUserUid;
     private Set<Integer> addedCardViewIds = new HashSet<>();
 
     @Override

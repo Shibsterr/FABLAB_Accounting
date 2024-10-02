@@ -194,6 +194,8 @@
     <br><b>Max Stock:</b> The maximum quantity of the equipment you want to keep in stock. This helps prevent overstocking.</br>
         ]]>
 </string>
+    <string name="urgentt">Urgent</string>
+    <string name="not_urgentt">Not Urgent</string>
 
     <string name="info_code">
         <![CDATA[

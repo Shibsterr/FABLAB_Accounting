@@ -223,5 +223,6 @@
     <string name="cancel">Atcelt</string>
     <string name="important">"Svārīguma status: "</string>
 
-
+    <string name="urgentt">Steidzams</string>
+    <string name="not_urgentt">Nav steidzams</string>
 </resources>

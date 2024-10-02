@@ -8,9 +8,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.preference.PreferenceManager;
@@ -20,8 +18,6 @@ import java.util.Locale;
 public class Splashscreen extends AppCompatActivity {
 
     ImageView imageView;
-    private Button refreshbtn;
-    private ProgressBar progbar;
     Animation imanim;
 
     @Override

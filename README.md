@@ -63,7 +63,7 @@
 - [x] Update the home fragment
 - - [x] Update the station showing animation
 
-## 30.09.2024 - 1.10.2024
+## 30.09.2024 - 4.10.2024
 - [x] Fix for different phone sizes
 - - [x] ID's not showing
 - - [x] stock button being moved away

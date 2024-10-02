@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -11,97 +12,103 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
+        <!-- Room Number Input -->
         <EditText
             android:id="@+id/telpanr"
             android:layout_width="0dp"
             android:layout_height="48dp"
-            android:layout_marginStart="8dp"
             android:layout_marginTop="16dp"
-            android:layout_marginEnd="8dp"
             android:hint="@string/room_nr"
             android:inputType="number"
-            android:textSize="14sp"
-            android:padding="5dp"
+            android:textSize="16sp"
+            android:padding="10dp"
             android:background="@drawable/edit_text_background"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintWidth_percent="0.9"
             app:layout_constraintTop_toTopOf="parent" />
 
+        <!-- Station Spinner -->
         <Spinner
             android:id="@+id/stacijasnr_spinner"
             android:layout_width="0dp"
             android:layout_height="48dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
+            android:layout_marginTop="16dp"
             android:hint="@string/station_nr"
-            android:textSize="14sp"
-            android:padding="5dp"
+            android:textSize="16sp"
+            android:padding="10dp"
             android:background="@drawable/spinner_background"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/telpanr"
-            app:layout_constraintEnd_toEndOf="parent" />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintWidth_percent="0.9"
+            app:layout_constraintTop_toBottomOf="@id/telpanr" />
 
+        <!-- Equipment Spinner -->
         <Spinner
             android:id="@+id/equipment_spinner"
             android:layout_width="0dp"
             android:layout_height="48dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
+            android:layout_marginTop="16dp"
             android:hint="@string/item_name"
-            android:textSize="14sp"
-            android:padding="5dp"
+            android:textSize="16sp"
+            android:padding="10dp"
             android:background="@drawable/spinner_background"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/stacijasnr_spinner" />
+            app:layout_constraintWidth_percent="0.9"
+            app:layout_constraintTop_toBottomOf="@id/stacijasnr_spinner" />
+
+        <!-- Problem Description Label -->
+
+        <!-- Problem Description Input -->
+
         <TextView
             android:id="@+id/textView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="16dp"
-            android:text="@string/describe_problem"
-            android:textSize="14sp"
+            android:layout_marginTop="24dp"
             android:padding="5dp"
+            android:text="@string/describe_problem"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.322"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/equipment_spinner" />
+            app:layout_constraintTop_toBottomOf="@id/equipment_spinner" />
 
         <EditText
             android:id="@+id/Description"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            android:gravity="top|start"
             android:hint="@string/apraksti_probl"
             android:inputType="textMultiLine"
+            android:gravity="top|start"
             android:lines="8"
             android:maxLines="10"
             android:scrollbars="vertical"
-            android:textSize="14sp"
-            android:padding="5dp"
+            android:textSize="16sp"
+            android:padding="10dp"
             android:background="@drawable/edit_text_background"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView" />
+            app:layout_constraintWidth_percent="0.9"
+            app:layout_constraintTop_toBottomOf="@id/textView" />
 
+        <!-- Submit Button -->
         <Button
             android:id="@+id/send_it"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp"
+            android:layout_marginTop="24dp"
             android:text="@string/nosutit"
             android:textSize="16sp"
             android:textColor="@android:color/white"
             android:background="@drawable/button_background"
-            app:layout_constraintTop_toBottomOf="@+id/Description"
+            android:padding="12dp"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+            app:layout_constraintWidth_percent="0.9"
+            app:layout_constraintTop_toBottomOf="@id/Description" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>
