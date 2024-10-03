@@ -95,7 +95,7 @@ public class SpecificEquipmentFragment extends Fragment {
         equipimg = view.findViewById(R.id.equip_image);
         instbtn = view.findViewById(R.id.instructions);
         stockbtn = view.findViewById(R.id.stock);
-        roomNumberText = (TextView) view.findViewById(R.id.room_number);
+        roomNumberText = view.findViewById(R.id.room_number);
         instbtn.setText(getString(R.string.Instruction_stock));
         stockbtn.setText(getString(R.string.stock_st));
 

@@ -225,4 +225,5 @@
 
     <string name="urgentt">Steidzams</string>
     <string name="not_urgentt">Nav steidzams</string>
+    <string name="loading_data">Notiek datu ielāde...</string>
 </resources>

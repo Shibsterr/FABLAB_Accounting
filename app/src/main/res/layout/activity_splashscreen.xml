@@ -1,30 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Splashscreen"
-    android:background="#888888">
+    tools:context=".Splashscreen">
 
-    <ImageView
-        android:id="@+id/fablablogo"
-        android:layout_width="380dp"
-        android:layout_height="200dp"
-        android:layout_centerInParent="true"
-        android:scaleType="fitXY"
-        android:src="@drawable/fablablogo_white" />
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/splash_gradient_background">
 
+        <ImageView
+            android:id="@+id/fablablogo"
+            android:layout_width="match_parent"
+            android:layout_height="286dp"
+            android:padding="24dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/fablablogo_white"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-
-    <!--Progress Bar-->
-
-<!--    <ProgressBar-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_marginTop="100dp"-->
-<!--        android:indeterminateTint="@color/white"-->
-<!--        android:layout_centerInParent="true"-->
-<!--        />-->
-
-
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </RelativeLayout>

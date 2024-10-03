@@ -14,6 +14,6 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal|bottom"
         android:layout_marginBottom="20dp"
-        android:text="Loading data..."
+        android:text="@string/loading_data"
         android:textSize="18sp" />
 </FrameLayout>
