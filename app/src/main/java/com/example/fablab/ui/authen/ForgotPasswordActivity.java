@@ -1,6 +1,9 @@
 package com.example.fablab.ui.authen;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Patterns;
@@ -11,9 +14,12 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.preference.PreferenceManager;
 
 import com.example.fablab.R;
 import com.google.firebase.auth.FirebaseAuth;
+
+import java.util.Locale;
 
 public class ForgotPasswordActivity extends AppCompatActivity {
 
@@ -24,6 +30,24 @@ public class ForgotPasswordActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        // Apply theme and language before setting content view
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        String selectedTheme = sharedPreferences.getString("theme_preference", "Theme.FABLAB");
+        int themeResourceId = getResources().getIdentifier(selectedTheme, "style", getPackageName());
+        setTheme(themeResourceId);
+
+        // Set locale based on saved language preference
+        String languageCode = sharedPreferences.getString("language_preference", "en");
+        Locale locale = new Locale(languageCode);
+        Locale.setDefault(locale);
+
+        Resources resources = getResources();
+        Configuration configuration = new Configuration(resources.getConfiguration());
+        configuration.setLocale(locale);
+
+        // Update the configuration and display metrics
+        resources.updateConfiguration(configuration, resources.getDisplayMetrics());
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_forgot_password);
         authProfile = FirebaseAuth.getInstance();
