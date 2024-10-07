@@ -150,6 +150,12 @@ public class TaskFragment extends Fragment {
             textViewUrgency.setText(getString(R.string.important) + getString(R.string.not_urgent)); // default if not provided
         }
 
+        if(status.equals("incomplete")){
+            textViewStatus.setText(getString(R.string.status_item) + getString(R.string.incomplete));
+        }else{
+            textViewStatus.setText(getString(R.string.status_item) + getString(R.string.complete));
+        }
+
         // Set click listener for Complete button
         buttonComplete.setOnClickListener(v -> {
             DatabaseReference taskRef = mDatabase.child("tasks").child(currentUsername).child(taskKey).child("status");

@@ -230,4 +230,6 @@
     <string name="please_enter_your_registered_email_to_receive_password_reset_link">Lūdzu, ievadiet savu reģistrēto e-pastu, lai saņemtu paroles atiestatīšanas saiti</string>
     <string name="ievadiet_savu_epastu">Ievadiet savu epastu</string>
     <string name="reset_password">Atiestatīt paroli</string>
+    <string name="incomplete">nepabeigts</string>
+    <string name="complete">pabeigt</string>
 </resources>

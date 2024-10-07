@@ -230,5 +230,7 @@
     <string name="please_enter_your_registered_email_to_receive_password_reset_link">Please enter your registered email to receive password reset link</string>
     <string name="ievadiet_savu_epastu">Enter your email</string>
     <string name="reset_password">Reset Password</string>
+    <string name="incomplete">incomplete</string>
+    <string name="complete">complete</string>
 
 </resources>
