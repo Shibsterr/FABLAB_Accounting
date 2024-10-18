@@ -85,4 +85,3 @@ public class AllEquipmentAdapter extends RecyclerView.Adapter<AllEquipmentAdapte
         }
     }
 }
-//nice

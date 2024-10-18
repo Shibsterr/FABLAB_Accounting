@@ -117,25 +117,25 @@ public class LogsFragment extends Fragment {
                 // Sort by name
                 Collections.sort(logList, Comparator.comparing(LogItem::getUserName));
 //                sortTextView.setText(R.string.currently_sorted_by_name);
-                Toast.makeText(getContext(), "Sorted by name", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getContext(), "Sorted by name", Toast.LENGTH_SHORT).show();
                 break;
             case 1:
                 // Sort by most recent log (date descending)
                 Collections.sort(logList, Comparator.comparing(LogItem::getDateTime).reversed());
 //                sortTextView.setText(R.string.currently_sorted_by_most_recent_log);
-                Toast.makeText(getContext(), "Sorted by most recent log", Toast.LENGTH_SHORT).show();
+               // Toast.makeText(getContext(), "Sorted by most recent log", Toast.LENGTH_SHORT).show();
                 break;
             case 2:
                 // Sort by oldest log (date ascending)
                 Collections.sort(logList, Comparator.comparing(LogItem::getDateTime));
 //                sortTextView.setText(R.string.currently_sorted_by_oldest_log);
-                Toast.makeText(getContext(), "Sorted by oldest log", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getContext(), "Sorted by oldest log", Toast.LENGTH_SHORT).show();
                 break;
             case 3:
                 // Sort by item name
                 Collections.sort(logList, Comparator.comparing(LogItem::getItemName));
 //                sortTextView.setText(R.string.currently_sorted_by_item_name);
-                Toast.makeText(getContext(), "Sorted by item name", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getContext(), "Sorted by item name", Toast.LENGTH_SHORT).show();
                 break;
         }
 

@@ -26,6 +26,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -54,6 +55,10 @@ public class TaskAssigningFragment extends Fragment {
         mAuth = FirebaseAuth.getInstance();
         mDatabase = FirebaseDatabase.getInstance().getReference();
 
+        // Set the minimum date for the DatePicker to today's date
+        Calendar calendar = Calendar.getInstance();
+        datePicker.setMinDate(calendar.getTimeInMillis());
+
         // Initialize spinner with users
         initSpinner();
 
@@ -79,28 +84,21 @@ public class TaskAssigningFragment extends Fragment {
                 for (DataSnapshot userSnapshot : dataSnapshot.getChildren()) {
                     String status = userSnapshot.child("Statuss").getValue(String.class);
 
-                    if("Admin".equals(currentUserStatus)){
-                        // Check if the user is an admin or worker and filter accordingly
-                        if ("Admin".equals(status) || ("Darbinieks".equals(status))) {
-                            // If user is an admin or worker (and not a worker attempting to assign to an admin),
-                            // fetch their full name and add to the list
+                    if ("Admin".equals(currentUserStatus)) {
+                        if ("Admin".equals(status) || "Darbinieks".equals(status)) {
                             String fullName = userSnapshot.child("Vards un uzvards").getValue(String.class);
                             if (fullName != null) {
                                 userList.add(fullName);
                             }
                         }
-                    }else if("Darbinieks".equals(currentUserStatus)){
-                        // Check if the user is an admin or worker and filter accordingly
-                        if (("Darbinieks".equals(status))) {
-                            // If user is an admin or worker (and not a worker attempting to assign to an admin),
-                            // fetch their full name and add to the list
+                    } else if ("Darbinieks".equals(currentUserStatus)) {
+                        if ("Darbinieks".equals(status)) {
                             String fullName = userSnapshot.child("Vards un uzvards").getValue(String.class);
                             if (fullName != null) {
                                 userList.add(fullName);
                             }
                         }
                     }
-
                 }
 
                 // Populate the spinner with the user list
@@ -111,12 +109,10 @@ public class TaskAssigningFragment extends Fragment {
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                // Handle errors
                 Toast.makeText(getContext(), "Failed to load users: " + databaseError.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }
-
 
     private void assignTask() {
         String selectedUser = spinnerUsers.getSelectedItem().toString();
@@ -129,6 +125,12 @@ public class TaskAssigningFragment extends Fragment {
         String urgency = radioButton.getText().toString();
 
         String description = editTextDescription.getText().toString();
+
+        // Check if the description is empty
+        if (description.trim().isEmpty()) {
+            Toast.makeText(getContext(), "Description cannot be empty", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
         // Get current user's UID
         String currentUserId = mAuth.getCurrentUser().getUid();
@@ -169,7 +171,4 @@ public class TaskAssigningFragment extends Fragment {
             }
         });
     }
-
-
-
 }
