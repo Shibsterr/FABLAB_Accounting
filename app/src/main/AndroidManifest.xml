@@ -19,7 +19,6 @@
         android:required="true"
         android:maxSdkVersion="29"
         tools:ignore="ScopedStorage"/>
-    <!-- Without this folders will be inaccessible in Android-11 and above devices -->
     <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" />
 
     <application

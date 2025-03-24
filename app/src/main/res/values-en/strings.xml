@@ -232,5 +232,24 @@
     <string name="reset_password">Reset Password</string>
     <string name="incomplete">incomplete</string>
     <string name="complete">complete</string>
+    <string name="errorMsg">Registration failed! Please check your information.</string>
+    <string name="DatabaseError">Failed to save user to database!</string>
+    <string name="emailError">Failed to verify email validity!</string>
+    <string name="emailExists">This email is already registered! Try logging in.</string>
+    <string name="menu_update">Change user statuss</string>
+    <string name="update_user">Change user statuss</string>
+    <string name="delete">Delete user</string>
 
+
+    <string name="error_name_required">First and last name are required!</string>
+    <string name="error_email_required">Email not entered!</string>
+    <string name="error_invalid_email">Please enter a valid email!</string>
+    <string name="error_invalid_email_domain">Email domain not supported! Use e.g. Gmail, Yahoo, Outlook, etc.</string>
+    <string name="error_dob_required">Please select a date of birth!</string>
+    <string name="error_password_required">Password not entered!</string>
+    <string name="error_password_mismatch">Passwords do not match!</string>
+    <string name="error_invalid_password">Password must be at least 8 characters long, with uppercase letters, lowercase letters, numbers and special characters.</string>
+    <string name="error_email_exists">This email is already registered. Please choose a different email.</string>
+    <string name="error_database_error">Error saving data, please try again later.</string>
+    <string name="error_generic">An error occurred. Please try again.</string>
 </resources>

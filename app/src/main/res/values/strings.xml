@@ -161,10 +161,10 @@
     <string name="accept">Accept</string>
     <string name="decline">Decline</string>
     <string name="finish">Finish</string>
-    <string name="ok_button" >Ok</string>
-    <string name="events_title" >Events</string>
-    <string name="start_time" >Start Time: %1$s</string>
-    <string name="end_time" >End Time: %1$s</string>
+    <string name="ok_button">Ok</string>
+    <string name="events_title">Events</string>
+    <string name="start_time">Start Time: %1$s</string>
+    <string name="end_time">End Time: %1$s</string>
     <string name="titleE">Title: %1$s</string>
     <string name="descriptionE">Description: %1$s</string>
     <string name="status_event">Status:</string>
@@ -181,7 +181,7 @@
     <string name="stock_new">Stock</string>
     <string name="izg_code">Izglītības pārvaldes kods</string>
     <string name="enter_value_max_8_digits">Enter value</string>
-    <string name="desc_text" >Description</string>
+    <string name="desc_text">Description</string>
     <string name="info_izg_code">
         <![CDATA[
     <b>Enter a numeric limit for the equipment</b>, which can be up to 8 digits long. This limit is used for tracking purposes and should be within the expected range for the equipment.
@@ -215,8 +215,8 @@
     <string name="info_default">No information available.</string>
     <string name="room">Room: %1$s</string>
     <string name="edit">Edit</string>
-    <string name="max_change" >Enter the new maximum stock value:</string>
-    <string name="max_changetitle" >Edit Maximum Stock</string>
+    <string name="max_change">Enter the new maximum stock value:</string>
+    <string name="max_changetitle">Edit Maximum Stock</string>
     <string name="add_to_the_stock">Add to the stock</string>
     <string name="subtract_from_the_stock">Subtract from the stock</string>
     <string name="confirm">Confirm</string>
@@ -229,4 +229,24 @@
     <string name="reset_password">Reset Password</string>
     <string name="incomplete">incomplete</string>
     <string name="complete">complete</string>
+    <string name="errorMsg">Reģistrācija neizdevās! Pārbaudiet savu informāciju.</string>
+    <string name="DatabaseError">Neizdevās saglabāt lietotāju datubāzē!</string>
+    <string name="emailError">Neizdevās pārbaudīt e-pasta derīgumu!</string>
+    <string name="emailExists">Šis e-pasts jau ir reģistrēts! Mēģiniet pieteikties.</string>
+    <string name="menu_update">Mainīt lietotāja statusu</string>
+    <string name="update_user">Nomainīt lietotāja statusu</string>
+    <string name="delete">Izdzēst lietotāju</string>
+
+
+    <string name="error_name_required">Vārds un uzvārds ir vajadzīgs!</string>
+    <string name="error_email_required">E-pasts nav ievadīts!</string>
+    <string name="error_invalid_email">Lūdzu ievadiet pareizu e-pastu!</string>
+    <string name="error_invalid_email_domain">E-pasta domēns nav atbalstīts! Izmantojiet piemēram, Gmail, Yahoo, Outlook utt.</string>
+    <string name="error_dob_required">Lūdzu izvēlieties dzimšanas datumu!</string>
+    <string name="error_password_required">Nav ievadīta parole!</string>
+    <string name="error_password_mismatch">Paroles nesakrīt!</string>
+    <string name="error_invalid_password">Parolei jābūt vismaz 8 rakstzīmēm, ar lielajiem burtiem, mazajiem burtiem, cipariem un speciālām rakstzīmēm.</string>
+    <string name="error_email_exists">Šis e-pasts jau ir reģistrēts. Lūdzu, izvēlieties citu e-pastu.</string>
+    <string name="error_database_error">Kļūda, saglabājot datus, mēģiniet vēlreiz vēlāk.</string>
+    <string name="error_generic">Radās kļūda. Lūdzu, mēģiniet vēlreiz.</string>
 </resources>

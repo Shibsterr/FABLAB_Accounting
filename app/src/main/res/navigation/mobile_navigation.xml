@@ -94,5 +94,11 @@
         android:label="fragment_task_assigning"
         tools:layout="@layout/fragment_task_assigning" />
 
+    <fragment
+        android:id="@+id/nav_updateuser"
+        android:name="com.example.fablab.ui.updateuser.UpdateUserFragment"
+        android:label="fragment_update_user"
+        tools:layout="@layout/fragment_update_user" />
+
 
 </navigation>

@@ -249,16 +249,19 @@ public class MainActivity extends AppCompatActivity {
             navMenu.findItem(R.id.nav_task).setVisible(false);
             navMenu.findItem(R.id.nav_logs).setVisible(false);
             navMenu.findItem(R.id.nav_assign).setVisible(false);
+            navMenu.findItem(R.id.nav_updateuser).setVisible(false);
         } else if ("Darbinieks".equals(statuss)) {
             navMenu.findItem(R.id.new_equip).setVisible(true);
             navMenu.findItem(R.id.nav_task).setVisible(true);
             navMenu.findItem(R.id.nav_logs).setVisible(false);
             navMenu.findItem(R.id.nav_assign).setVisible(true);
+            navMenu.findItem(R.id.nav_updateuser).setVisible(false);
         } else if ("Admin".equals(statuss)) {
             navMenu.findItem(R.id.new_equip).setVisible(true);
             navMenu.findItem(R.id.nav_task).setVisible(true);
             navMenu.findItem(R.id.nav_logs).setVisible(true);
             navMenu.findItem(R.id.nav_assign).setVisible(true);
+            navMenu.findItem(R.id.nav_updateuser).setVisible(true);
         }
 
         // Hide the loading screen after content is ready

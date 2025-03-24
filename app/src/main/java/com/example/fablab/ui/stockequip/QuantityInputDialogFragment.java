@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -50,7 +51,11 @@ public class QuantityInputDialogFragment extends DialogFragment {
 
         builder.setView(view)
                 .setPositiveButton(getString(R.string.confirm), (dialog, which) -> {
-                    String quantityStr = quantityEditText.getText().toString();
+                    String quantityStr = quantityEditText.getText().toString().trim();
+                    if (quantityStr.isEmpty()) {
+                        Toast.makeText(getContext(), "Please enter a valid number", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
                     int quantity = Integer.parseInt(quantityStr);
                     listener.onQuantityInput(quantity);
                 })

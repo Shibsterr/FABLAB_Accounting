@@ -232,4 +232,23 @@
     <string name="reset_password">Atiestatīt paroli</string>
     <string name="incomplete">nepabeigts</string>
     <string name="complete">pabeigt</string>
+    <string name="errorMsg">Reģistrācija neizdevās! Pārbaudiet savu informāciju.</string>
+    <string name="DatabaseError">Neizdevās saglabāt lietotāju datubāzē!</string>
+    <string name="emailError">Neizdevās pārbaudīt e-pasta derīgumu!</string>
+    <string name="emailExists">Šis e-pasts jau ir reģistrēts! Mēģiniet pieteikties.</string>
+    <string name="menu_update">Mainīt lietotāja statusu</string>
+    <string name="update_user">Nomainīt lietotāja statusu</string>
+    <string name="delete">Izdzēst lietotāju</string>
+
+    <string name="error_name_required">Vārds un uzvārds ir vajadzīgs!</string>
+    <string name="error_email_required">E-pasts nav ievadīts!</string>
+    <string name="error_invalid_email">Lūdzu ievadiet pareizu e-pastu!</string>
+    <string name="error_invalid_email_domain">E-pasta domēns nav atbalstīts! Izmantojiet piemēram, Gmail, Yahoo, Outlook utt.</string>
+    <string name="error_dob_required">Lūdzu izvēlieties dzimšanas datumu!</string>
+    <string name="error_password_required">Nav ievadīta parole!</string>
+    <string name="error_password_mismatch">Paroles nesakrīt!</string>
+    <string name="error_invalid_password">Parolei jābūt vismaz 8 rakstzīmēm, ar lielajiem burtiem, mazajiem burtiem, cipariem un speciālām rakstzīmēm.</string>
+    <string name="error_email_exists">Šis e-pasts jau ir reģistrēts. Lūdzu, izvēlieties citu e-pastu.</string>
+    <string name="error_database_error">Kļūda, saglabājot datus, mēģiniet vēlreiz vēlāk.</string>
+    <string name="error_generic">Radās kļūda. Lūdzu, mēģiniet vēlreiz.</string>
 </resources>

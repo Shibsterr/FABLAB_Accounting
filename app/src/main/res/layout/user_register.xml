@@ -9,127 +9,121 @@
 
     <ImageView
         android:id="@+id/imageView2"
-        android:layout_width="300dp"
+        android:layout_width="wrap_content"
         android:layout_height="150dp"
         android:layout_marginTop="16dp"
+        android:adjustViewBounds="true"
+        android:scaleType="fitCenter"
         android:src="@drawable/fablablogo"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.468"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
         android:id="@+id/name_surname"
-        android:layout_width="300dp"
-        android:layout_height="75dp"
-        android:layout_marginTop="176dp"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
         android:hint="@string/name"
+        android:digits="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ "
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.466"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@id/imageView2" />
 
     <TextView
         android:id="@+id/date_of_birth"
-        android:layout_width="243dp"
-        android:layout_height="54dp"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
         android:gravity="center_vertical"
         android:hint="@string/birthday"
         android:padding="15dp"
         android:textColor="@android:color/black"
         android:textSize="16sp"
-        android:src="@drawable/edit_text_background"
-        app:layout_constraintEnd_toStartOf="@+id/date_picker_button"
-        app:layout_constraintHorizontal_bias="0.825"
+        app:layout_constraintEnd_toStartOf="@id/date_picker_button"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/name_surname" />
+        app:layout_constraintTop_toBottomOf="@id/name_surname" />
 
     <ImageButton
         android:id="@+id/date_picker_button"
-        android:layout_width="50dp"
-        android:layout_height="49dp"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="8dp"
         android:layout_marginTop="12dp"
-        android:layout_marginEnd="56dp"
         android:background="?android:attr/selectableItemBackground"
-        android:contentDescription="test"
         android:src="@android:drawable/ic_menu_my_calendar"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/name_surname" />
+        app:layout_constraintStart_toEndOf="@id/date_of_birth"
+        app:layout_constraintTop_toBottomOf="@id/name_surname" />
 
     <EditText
         android:id="@+id/email"
-        android:layout_width="300dp"
-        android:layout_height="75dp"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:hint="@string/email"
         android:inputType="textEmailAddress"
+        android:digits="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ@."
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.468"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/date_of_birth" />
-
-    <EditText
-        android:id="@+id/password_repeat"
-        android:layout_width="300dp"
-        android:layout_height="75dp"
-        android:layout_marginTop="8dp"
-        android:hint="@string/repeat_password"
-        android:inputType="textPassword"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.468"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/password" />
+        app:layout_constraintTop_toBottomOf="@id/date_of_birth" />
 
     <EditText
         android:id="@+id/password"
-        android:layout_width="300dp"
-        android:layout_height="75dp"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:hint="@string/password"
         android:inputType="textPassword"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.468"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/email" />
+        app:layout_constraintTop_toBottomOf="@id/email" />
+
+    <EditText
+        android:id="@+id/password_repeat"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:hint="@string/repeat_password"
+        android:inputType="textPassword"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/password" />
 
     <Button
         android:id="@+id/register_button"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="24dp"
         android:background="@drawable/station_rounded_button"
         android:text="@string/register_user"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/password_repeat" />
-
-    <Button
-        android:id="@+id/register"
-        android:layout_width="133dp"
-        android:layout_height="48dp"
-        android:layout_marginTop="7dp"
-        android:layout_marginEnd="16dp"
-        android:textAllCaps="false"
-        style="?android:attr/borderlessButtonStyle"
-        android:backgroundTint="@color/white"
-        android:textColor="@color/black"
-        android:text="@string/konts_ir"
-        android:textAlignment="center"
-        android:textSize="15sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/register_button" />
+        app:layout_constraintTop_toBottomOf="@id/password_repeat" />
 
     <ProgressBar
         android:id="@+id/progress_register"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="16dp"
+        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/password_repeat"
-        android:visibility="gone" />
+        app:layout_constraintTop_toBottomOf="@id/register_button" />
+
+    <Button
+        android:id="@+id/register"
+        style="?android:attr/borderlessButtonStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="7dp"
+        android:backgroundTint="@color/white"
+        android:text="@string/konts_ir"
+        android:textAllCaps="false"
+        android:textColor="@color/black"
+        android:textSize="15sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/progress_register" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

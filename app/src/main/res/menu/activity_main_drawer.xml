@@ -22,6 +22,10 @@
             android:icon="@drawable/assign_tasks"
             android:title="@string/menu_assign"/>
         <item
+            android:id="@+id/nav_updateuser"
+            android:icon="@drawable/updateusers"
+            android:title="@string/menu_update"/>
+        <item
             android:id="@+id/nav_logs"
             android:icon="@drawable/data_log"
             android:title="@string/menu_logs" />

@@ -6,7 +6,7 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.os.Bundle;
-import android.util.Log;
+import android.text.InputFilter;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
@@ -59,8 +59,6 @@ public class RegisterUser extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.user_register);
 
-
-
         login = findViewById(R.id.register);
         login.setOnClickListener(this);
 
@@ -76,6 +74,10 @@ public class RegisterUser extends AppCompatActivity implements View.OnClickListe
         progressBar = findViewById(R.id.progress_register);
 
         mAuth = FirebaseAuth.getInstance();
+
+        // Apply the ASCII input filter to the name_surname and email fields
+        name_surname.setFilters(new InputFilter[]{new ASCIIInputFilter()});
+        email.setFilters(new InputFilter[]{new ASCIIInputFilter()});
 
         datePickerButton.setOnClickListener(view -> showDatePickerDialog());
     }
@@ -100,7 +102,6 @@ public class RegisterUser extends AppCompatActivity implements View.OnClickListe
         DatePickerDialog datePickerDialog = new DatePickerDialog(
                 RegisterUser.this,
                 (view, selectedYear, selectedMonth, selectedDay) -> {
-                    // Check if the selected date is valid
                     if (isValidDate(selectedYear, selectedMonth, selectedDay)) {
                         String dateString = selectedDay + "/" + (selectedMonth + 1) + "/" + selectedYear;
                         date_of_birth.setText(dateString);
@@ -110,12 +111,10 @@ public class RegisterUser extends AppCompatActivity implements View.OnClickListe
                 },
                 year, month, day);
 
-        // Set the maximum date to the current date
         datePickerDialog.getDatePicker().setMaxDate(calendar.getTimeInMillis());
         datePickerDialog.show();
     }
 
-    // Helper method to check if the selected date is valid
     private boolean isValidDate(int year, int month, int day) {
         Calendar selectedDate = Calendar.getInstance();
         selectedDate.set(year, month, day);
@@ -125,62 +124,58 @@ public class RegisterUser extends AppCompatActivity implements View.OnClickListe
         return !selectedDate.after(currentDate);
     }
 
-
-
     private void userRegister() {
-        String names = name_surname.getText().toString();
-        String mail = email.getText().toString();
+        String names = name_surname.getText().toString().trim();
+        String mail = email.getText().toString().trim();
         String pass = password.getText().toString();
         String reppass = rep_password.getText().toString();
         String dob = date_of_birth.getText().toString();
         String statuss = "Lietotājs";
 
-        Map<String, Object> user = new HashMap<>();
-
         if (names.isEmpty()) {
-            name_surname.setError("Vārds un uzvārds ir vajadzīgs!");
+            name_surname.setError(getString(R.string.error_name_required));
             name_surname.requestFocus();
             return;
         }
 
         if (mail.isEmpty()) {
-            email.setError("E-pasts nav ievadīts!");
+            email.setError(getString(R.string.error_email_required));
             email.requestFocus();
             return;
         }
 
         if (!Patterns.EMAIL_ADDRESS.matcher(mail).matches()) {
-            email.setError("Lūdzu ievadiet pareizu e-pastu!");
+            email.setError(getString(R.string.error_invalid_email));
             email.requestFocus();
             return;
         }
 
         if (!isValidEmailDomain(mail)) {
-            email.setError("E-pasta domēns nav atbalstīts! Izmantojiet piemēram, Gmail, Yahoo, Outlook utt.");
+            email.setError(getString(R.string.error_invalid_email_domain));
             email.requestFocus();
             return;
         }
 
         if (dob.isEmpty()) {
-            date_of_birth.setError("Lūdzu izvēlieties dzimšanas datumu!");
+            date_of_birth.setError(getString(R.string.error_dob_required));
             date_of_birth.requestFocus();
             return;
         }
 
         if (pass.isEmpty()) {
-            password.setError("Nav ievadīta parole!");
+            password.setError(getString(R.string.error_password_required));
             password.requestFocus();
             return;
         }
 
         if (!pass.equals(reppass)) {
-            rep_password.setError("Paroles nesakrīt!");
+            rep_password.setError(getString(R.string.error_password_mismatch));
             rep_password.requestFocus();
             return;
         }
 
         if (!isValidPassword(pass)) {
-            password.setError("Parolei jābūt vismaz 8 rakstzīmēm, ar lielajiem burtiem, mazajiem burtiem, cipariem un speciālām rakstzīmēm.");
+            password.setError(getString(R.string.error_invalid_password));
             password.requestFocus();
             return;
         }
@@ -188,24 +183,57 @@ public class RegisterUser extends AppCompatActivity implements View.OnClickListe
         register.setVisibility(View.GONE);
         progressBar.setVisibility(View.VISIBLE);
 
-        mAuth.createUserWithEmailAndPassword(mail, pass).addOnCompleteListener(task -> {
+        mAuth.fetchSignInMethodsForEmail(mail).addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                boolean emailExists = task.getResult().getSignInMethods() != null && !task.getResult().getSignInMethods().isEmpty();
+                if (emailExists) {
+                    email.setError(getString(R.string.error_email_exists));
+                    email.requestFocus();
+                    register.setVisibility(View.VISIBLE);
+                    progressBar.setVisibility(View.GONE);
+                } else {
+                    createNewUser(mail, pass, names, dob, statuss);
+                }
+            } else {
+                Toast.makeText(RegisterUser.this, getString(R.string.error_generic), Toast.LENGTH_SHORT).show();
+                register.setVisibility(View.VISIBLE);
+                progressBar.setVisibility(View.GONE);
+            }
+        });
+    }
+
+    private void createNewUser(String email, String password, String name, String dob, String status) {
+        mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 DatabaseReference databaseRef = FirebaseDatabase.getInstance().getReference();
                 DatabaseReference userRef = databaseRef.child("users").child(mAuth.getUid());
 
-                user.put("Statuss", statuss);
-                user.put("Vards un uzvards", names);
-                user.put("epasts", mail);
-                user.put("Dzimšanas datums", dob);  // Save the date of birth in the database
+                Map<String, Object> user = new HashMap<>();
+                user.put("Statuss", status);
+                user.put("Vards un uzvards", name);
+                user.put("epasts", email);
+                user.put("Dzimšanas datums", dob);
 
-                userRef.setValue(user);
-                Intent intent = new Intent(RegisterUser.this, MainActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(intent);
-                finish();
-                Log.d("MainActivity", "Registering account...");
+                userRef.setValue(user).addOnCompleteListener(dbTask -> {
+                    if (dbTask.isSuccessful()) {
+                        Intent intent = new Intent(RegisterUser.this, MainActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        startActivity(intent);
+                        finish();
+                    } else {
+                        Toast.makeText(RegisterUser.this, getString(R.string.error_database_error), Toast.LENGTH_LONG).show();
+                        register.setVisibility(View.VISIBLE);
+                        progressBar.setVisibility(View.GONE);
+                    }
+                });
             } else {
-                Toast.makeText(RegisterUser.this, "Notikusi kļūda!", Toast.LENGTH_LONG).show();
+                String errorMsg = getString(R.string.error_generic);
+                try {
+                    throw task.getException();
+                } catch (Exception e) {
+                    errorMsg = getString(R.string.error_generic);
+                }
+                Toast.makeText(RegisterUser.this, errorMsg, Toast.LENGTH_LONG).show();
                 register.setVisibility(View.VISIBLE);
                 progressBar.setVisibility(View.GONE);
             }
@@ -224,10 +252,20 @@ public class RegisterUser extends AppCompatActivity implements View.OnClickListe
     }
 
     private boolean isValidPassword(String password) {
-        return password.length() >= 8 && password.matches(".*[A-Z].*")
-                && password.matches(".*[a-z].*")
-                && password.matches(".*\\d.*")
-                && password.matches(".*[!@#\\$%^&*].*");
+        String regex = "^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)(?=.*[!@#\\$%^&*])[A-Za-z\\d!@#\\$%^&*]{8,}$";
+        return password.matches(regex);
+    }
+
+    // ASCII input filter to restrict special characters
+    private static class ASCIIInputFilter implements android.text.InputFilter {
+
+        @Override
+        public CharSequence filter(CharSequence source, int start, int end, android.text.Spanned dest, int dstart, int dend) {
+            if (source != null && !source.toString().matches("[A-Za-z0-9@._-]*")) {
+                // Reject any special characters (e.g. ā)
+                return "";
+            }
+            return null; // Allow the character
+        }
     }
 }
-
