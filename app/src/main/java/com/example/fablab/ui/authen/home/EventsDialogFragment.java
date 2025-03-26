@@ -54,7 +54,7 @@ public class EventsDialogFragment extends DialogFragment {
         events = (List<Event>) getArguments().getSerializable(ARG_EVENTS);
 
         if (events == null || events.isEmpty()) {
-            Toast.makeText(getContext(), "No events available", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), getString(R.string.no_events_availabe), Toast.LENGTH_SHORT).show();
             return builder.create();
         }
 

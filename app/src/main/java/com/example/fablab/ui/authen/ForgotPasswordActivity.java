@@ -59,10 +59,10 @@ public class ForgotPasswordActivity extends AppCompatActivity {
         buttonPwdReset.setOnClickListener(v -> {
             String email = editTextPwdResetEmail.getText().toString();
             if(TextUtils.isEmpty(email)){
-                editTextPwdResetEmail.setError("Lūdzu ievadiet savu epastu!");
+                editTextPwdResetEmail.setError(getString(R.string.email_missing));
                 editTextPwdResetEmail.requestFocus();
             }else if(!Patterns.EMAIL_ADDRESS.matcher(email).matches()){
-                editTextPwdResetEmail.setError("Lūdzu ievadiet pariezu epastu!");
+                editTextPwdResetEmail.setError(getString(R.string.email_incorrect));
                 editTextPwdResetEmail.requestFocus();
             }else{
                 progressBar.setVisibility(View.VISIBLE);
@@ -74,7 +74,7 @@ public class ForgotPasswordActivity extends AppCompatActivity {
     private void resetPasswrod(String email) {
         authProfile.sendPasswordResetEmail(email).addOnCompleteListener(task -> {
             if(task.isSuccessful()){
-                Toast.makeText(ForgotPasswordActivity.this, "Lūdzu apstieties savā epastā lai turpinātu tālāk!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(ForgotPasswordActivity.this, getString(R.string.checkemail), Toast.LENGTH_SHORT).show();
 
                 Intent intent = new Intent(ForgotPasswordActivity.this, LoginUser.class);
                 getIntent().setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);

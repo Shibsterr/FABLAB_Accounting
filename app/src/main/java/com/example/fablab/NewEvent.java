@@ -81,7 +81,7 @@ public class NewEvent extends AppCompatActivity {
         FirebaseUser currentUser = mAuth.getCurrentUser();
 
         if (currentUser == null) {
-            Toast.makeText(NewEvent.this, "Please log in first", Toast.LENGTH_SHORT).show();
+            Toast.makeText(NewEvent.this, getString(R.string.login_error), Toast.LENGTH_SHORT).show();
             finish();
             return;
         }
@@ -106,7 +106,7 @@ public class NewEvent extends AppCompatActivity {
 
             // Validation
             if (title.isEmpty() || description.isEmpty() || eventDate.isEmpty() || startTime.isEmpty() || endTime.isEmpty() || numberOfPeople.isEmpty()) {
-                Toast.makeText(NewEvent.this, "Please fill in all fields", Toast.LENGTH_SHORT).show();
+                Toast.makeText(NewEvent.this, getString(R.string.empty_fields_error), Toast.LENGTH_SHORT).show();
                 return;
             }
 
@@ -126,11 +126,11 @@ public class NewEvent extends AppCompatActivity {
             // Save event under events/date/userId/eventId
             eventsRef.child(eventDate).child(currentUser.getUid()).child(eventId).setValue(eventMap)
                     .addOnSuccessListener(aVoid -> {
-                        Toast.makeText(NewEvent.this, "Event added successfully", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(NewEvent.this, getString(R.string.eventadded_good), Toast.LENGTH_SHORT).show();
                         sendEmailToAdmins(title, description, numberOfPeople, eventDate, startTime, endTime);
                         finish(); // Close activity after successful submission
                     })
-                    .addOnFailureListener(e -> Toast.makeText(NewEvent.this, "Failed to add event", Toast.LENGTH_SHORT).show());
+                    .addOnFailureListener(e -> Toast.makeText(NewEvent.this, getString(R.string.eventadded_Bad), Toast.LENGTH_SHORT).show());
         });
     }
 
@@ -169,7 +169,7 @@ public class NewEvent extends AppCompatActivity {
             } else {
                 // Check if end time is before start time
                 if (isEndTimeBeforeStartTime(time)) {
-                    Toast.makeText(NewEvent.this, "End time must be after start time", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(NewEvent.this, getString(R.string.endtime_starttime_error), Toast.LENGTH_SHORT).show();
                     return;
                 }
                 endTime = time;

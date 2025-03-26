@@ -19,15 +19,17 @@ import androidx.preference.PreferenceManager;
 import com.example.fablab.MainActivity;
 import com.example.fablab.R;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.Locale;
 
-public class LoginUser extends AppCompatActivity implements View.OnClickListener{
-    private EditText email,password;
-    private Button loginbtn,forgorbtn,login;
+public class LoginUser extends AppCompatActivity implements View.OnClickListener {
+    private EditText email, password;
+    private Button loginbtn, forgorbtn, login;
     private ProgressBar progressBar;
     private FirebaseAuth mAuth;
-
+    private DatabaseReference mDatabase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,39 +41,41 @@ public class LoginUser extends AppCompatActivity implements View.OnClickListener
         Resources resources = getResources();
         Configuration configuration = new Configuration(resources.getConfiguration());
         configuration.setLocale(locale);
-
         resources.updateConfiguration(configuration, resources.getDisplayMetrics());
 
         String selectedTheme = sharedPreferences.getString("theme_preference", "Theme.FABLAB");
         int themeResourceId = getResources().getIdentifier(selectedTheme, "style", getPackageName());
         setTheme(themeResourceId);
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.user_login);
 
-        login = (Button) findViewById(R.id.register_swap);
-        email = (EditText) findViewById(R.id.email);
-        password = (EditText) findViewById(R.id.password);
-        loginbtn = (Button) findViewById(R.id.login_Button);
-        forgorbtn = (Button) findViewById(R.id.forgot_pass);
-        progressBar = (ProgressBar) findViewById(R.id.progress_login);
+        login = findViewById(R.id.register_swap);
+        email = findViewById(R.id.email);
+        password = findViewById(R.id.password);
+        loginbtn = findViewById(R.id.login_Button);
+        forgorbtn = findViewById(R.id.forgot_pass);
+        progressBar = findViewById(R.id.progress_login);
+
         mAuth = FirebaseAuth.getInstance();
+        mDatabase = FirebaseDatabase.getInstance().getReference(); // Firebase database reference
 
         loginbtn.setVisibility(View.VISIBLE);
 
-        loginbtn.setOnClickListener((View.OnClickListener) this);
-        forgorbtn.setOnClickListener((View.OnClickListener) this);
-        login.setOnClickListener((View.OnClickListener) this);
+        loginbtn.setOnClickListener(this);
+        forgorbtn.setOnClickListener(this);
+        login.setOnClickListener(this);
     }
 
     @Override
     public void onClick(View v) {
-        if(v.getId() == R.id.login_Button){ //log the user in
+        if (v.getId() == R.id.login_Button) { // Log the user in
             userLogin();
-        }else if(v.getId() == R.id.register_swap){  //swap to registration
+        } else if (v.getId() == R.id.register_swap) {  // Swap to registration
             Intent intentreg = new Intent(LoginUser.this, RegisterUser.class);
             intentreg.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(intentreg);
-        }else if(v.getId() == R.id.forgot_pass){    //password reset
+        } else if (v.getId() == R.id.forgot_pass) {    // Password reset
             Log.d("LoginUser", "Clicked message to reset password");
             Intent intent = new Intent(LoginUser.this, ForgotPasswordActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -84,19 +88,19 @@ public class LoginUser extends AppCompatActivity implements View.OnClickListener
         String pass = password.getText().toString();
 
         if (!Patterns.EMAIL_ADDRESS.matcher(mail).matches()) {
-            email.setError("Lūdzu ievadiet pareizu e-pastu!");
+            email.setError(getString(R.string.email_incorrect));
             email.requestFocus();
             return;
         }
 
         if (mail.isEmpty()) {
-            email.setError("E-pasts nav ievadīts!");
+            email.setError(getString(R.string.email_missing));
             email.requestFocus();
             return;
         }
 
         if (pass.isEmpty()) {
-            password.setError("Nav ievadīta parole!");
+            password.setError(getString(R.string.password_missing));
             password.requestFocus();
             return;
         }
@@ -106,20 +110,40 @@ public class LoginUser extends AppCompatActivity implements View.OnClickListener
 
         mAuth.signInWithEmailAndPassword(mail, pass).addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
-                Intent intent = new Intent(LoginUser.this, MainActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(intent);
-                Log.d("MainActivity", "Logging in...");
+                String userId = mAuth.getCurrentUser().getUid();
+                checkUserStatus(userId);
             } else {
-                // Check if the error is due to an incorrect password
                 if (task.getException() != null && task.getException().getMessage() != null && task.getException().getMessage().contains("wrong password")) {
-                    Toast.makeText(LoginUser.this, "Nepareiza parole!", Toast.LENGTH_LONG).show();
+                    Toast.makeText(LoginUser.this, getString(R.string.incorrect_pass), Toast.LENGTH_LONG).show();
                 } else {
-                    Toast.makeText(LoginUser.this, "Notikusi kļūda!", Toast.LENGTH_LONG).show();
+                    Toast.makeText(LoginUser.this, getString(R.string.error), Toast.LENGTH_LONG).show();
                 }
+                loginbtn.setVisibility(View.VISIBLE);
+                progressBar.setVisibility(View.GONE);
             }
-            loginbtn.setVisibility(View.VISIBLE);
-            progressBar.setVisibility(View.GONE);
+        });
+    }
+
+    private void checkUserStatus(String userId) {
+        mDatabase.child("users").child(userId).child("Statuss").get().addOnCompleteListener(task -> {
+            if (task.isSuccessful() && task.getResult().exists()) {
+                String status = task.getResult().getValue(String.class);
+                if ("deleted".equalsIgnoreCase(status)) {
+                    mAuth.signOut();
+                    Toast.makeText(LoginUser.this, getString(R.string.deleted_account), Toast.LENGTH_LONG).show();
+                    loginbtn.setVisibility(View.VISIBLE);
+                    progressBar.setVisibility(View.GONE);
+                } else {
+                    Intent intent = new Intent(LoginUser.this, MainActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    startActivity(intent);
+                    Log.d("MainActivity", "Logging in...");
+                }
+            } else {
+                Toast.makeText(LoginUser.this, getString(R.string.error_account_status), Toast.LENGTH_LONG).show();
+                loginbtn.setVisibility(View.VISIBLE);
+                progressBar.setVisibility(View.GONE);
+            }
         });
     }
 }

@@ -148,13 +148,13 @@ public class ReportFragment extends Fragment {
                 if (!emails.isEmpty()) {
                     sendEmailToAdmin(emails);
                 } else {
-                    Toast.makeText(getContext(), "No admins or workers found!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), getString(R.string.no_account_found), Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                Toast.makeText(getContext(), "Failed to retrieve user data.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), getString(R.string.failed_retrieve_info), Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -171,6 +171,6 @@ public class ReportFragment extends Fragment {
                 "\nProblēma: \n" + description;
 
         emailSender.sendEmail(emails, "Problēmas ziņojums", emailBody);
-        Toast.makeText(getContext(), "E-pasts nosūtīts fonā.", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getContext(), getString(R.string.email_sent), Toast.LENGTH_SHORT).show();
     }
 }

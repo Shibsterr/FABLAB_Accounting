@@ -311,7 +311,7 @@ public class MainActivity extends AppCompatActivity {
     }
     public void scanCode(MenuItem item) {
         ScanOptions options = new ScanOptions();
-        options.setPrompt("Volume up to turn on flash");
+        options.setPrompt(getString(R.string.volume_prompt_qr));
         options.setBeepEnabled(false);
         options.setOrientationLocked(true);
         options.setCaptureActivity(CaptureAct.class);

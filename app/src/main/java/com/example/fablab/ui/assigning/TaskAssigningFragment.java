@@ -109,7 +109,7 @@ public class TaskAssigningFragment extends Fragment {
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                Toast.makeText(getContext(), "Failed to load users: " + databaseError.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), getString(R.string.failed_error_loadUser) + databaseError.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -128,7 +128,7 @@ public class TaskAssigningFragment extends Fragment {
 
         // Check if the description is empty
         if (description.trim().isEmpty()) {
-            Toast.makeText(getContext(), "Description cannot be empty", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), getString(R.string.error_desc_empty), Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -159,15 +159,15 @@ public class TaskAssigningFragment extends Fragment {
                     taskRef.child("description").setValue(description);
                     taskRef.child("status").setValue("incomplete"); // Initial status is incomplete
                     taskRef.child("assignedBy").setValue(currentUserName); // Include the name of the user who assigned the task
-                    Toast.makeText(getContext(), "Task assigned successfully", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), getString(R.string.task_assign_good), Toast.LENGTH_SHORT).show();
                 } else {
-                    Toast.makeText(getContext(), "Failed to retrieve user information", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), getString(R.string.failed_retrieve_info), Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                Toast.makeText(getContext(), "Failed to retrieve user information", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), getString(R.string.failed_retrieve_info), Toast.LENGTH_SHORT).show();
             }
         });
     }

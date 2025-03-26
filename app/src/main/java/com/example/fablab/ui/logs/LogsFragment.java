@@ -106,7 +106,7 @@ public class LogsFragment extends Fragment {
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                Toast.makeText(getContext(), "Failed to retrieve log data", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), getString(R.string.failed_log_Data), Toast.LENGTH_SHORT).show();
             }
         });
     }

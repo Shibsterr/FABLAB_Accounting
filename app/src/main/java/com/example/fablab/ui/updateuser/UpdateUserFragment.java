@@ -17,8 +17,6 @@ import androidx.fragment.app.Fragment;
 
 import com.example.fablab.R;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseAuthRecentLoginRequiredException;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -82,6 +80,8 @@ public class UpdateUserFragment extends Fragment {
 
     private void initUserSpinner() {
         DatabaseReference usersRef = mDatabase.child("users");
+        String currentUserId = mAuth.getCurrentUser().getUid(); // Get the current logged-in user's ID
+
         usersRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -90,8 +90,14 @@ public class UpdateUserFragment extends Fragment {
 
                 for (DataSnapshot userSnapshot : dataSnapshot.getChildren()) {
                     String userId = userSnapshot.getKey();
+                    if (userId.equals(currentUserId)) {
+                        continue; // Skip the currently logged-in user
+                    }
+
                     String fullName = userSnapshot.child("Vards un uzvards").getValue(String.class);
-                    if (fullName != null) {
+                    String notDeleted = userSnapshot.child("Statuss").getValue(String.class);
+
+                    if (fullName != null && notDeleted != null && !notDeleted.equals("deleted")) {
                         userList.add(fullName);
                         userIdMap.put(fullName, userId);
                     }
@@ -104,7 +110,7 @@ public class UpdateUserFragment extends Fragment {
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                Toast.makeText(getContext(), "Failed to load users: " + databaseError.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), getString(R.string.failed_error_loadUser) + databaseError.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -140,7 +146,7 @@ public class UpdateUserFragment extends Fragment {
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                Toast.makeText(getContext(), "Failed to load user status", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), getString(R.string.error_user_status), Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -150,50 +156,51 @@ public class UpdateUserFragment extends Fragment {
         String userId = userIdMap.get(selectedUser);
         Log.d("UPDATE USER", userId);
         if (userId == null) {
-            Toast.makeText(getContext(), "Invalid user selected", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), getString(R.string.invalid_user_selected), Toast.LENGTH_SHORT).show();
             return;
         }
 
         new AlertDialog.Builder(getContext())
-                .setTitle("Delete User")
-                .setMessage("Are you sure you want to delete " + selectedUser + "? This action cannot be undone.")
-                .setPositiveButton("Delete", (dialog, which) -> deleteUser(userId))
-                .setNegativeButton("Cancel", null)
+                .setTitle(getString(R.string.deletetitle))
+                .setMessage(getString(R.string.deletetext1) + selectedUser + getString(R.string.deletetext2))
+                .setPositiveButton(getString(R.string.delete), (dialog, which) -> deleteUser(userId))
+                .setNegativeButton(getString(R.string.cancel), null)
                 .show();
     }
 
     private void deleteUser(String userId) {
-        // Delete user from Firebase Realtime Database
-        mDatabase.child("users").child(userId).removeValue().addOnCompleteListener(task -> {
+        Map<String, Object> updates = new HashMap<>();
+        updates.put("Statuss", "deleted");
+
+        mDatabase.child("users").child(userId).updateChildren(updates).addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
-                deleteFromAuth(userId);
+                Toast.makeText(getContext(), getString(R.string.userdeleted), Toast.LENGTH_SHORT).show();
+                initUserSpinner(); // Refresh the user list
             } else {
-                Toast.makeText(getContext(), "Failed to delete user from database", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), getString(R.string.userstatuserror), Toast.LENGTH_SHORT).show();
             }
         });
     }
 
-    private void deleteFromAuth(String userId) {
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-
-        if (user != null && user.getUid().equals(userId)) {
-            user.delete().addOnCompleteListener(task -> {
-                if (task.isSuccessful()) {
-                    Toast.makeText(getContext(), "User deleted successfully", Toast.LENGTH_SHORT).show();
-                } else {
-                    if (task.getException() instanceof FirebaseAuthRecentLoginRequiredException) {
-                        Toast.makeText(getContext(), "Re-authentication required to delete user", Toast.LENGTH_LONG).show();
-                    } else {
-                        Toast.makeText(getContext(), "Failed to delete user from authentication", Toast.LENGTH_SHORT).show();
-                    }
-                }
-            });
-        } else {
-            Toast.makeText(getContext(), "Cannot delete: Authentication issue", Toast.LENGTH_SHORT).show();
-        }
-    }
-
     private void UpdateUser() {
-        // Your existing update user method
+        String selectedUser = spinnerUsers.getSelectedItem().toString();
+        String newStatus = spinnerStatuss.getSelectedItem().toString();
+        String userId = userIdMap.get(selectedUser);
+
+        if (userId == null) {
+            Toast.makeText(getContext(), getString(R.string.invalid_user_id), Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        DatabaseReference userRef = mDatabase.child("users").child(userId);
+        userRef.child("Statuss").setValue(newStatus).addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                Toast.makeText(getContext(), getString(R.string.toastUpdateMsg), Toast.LENGTH_SHORT).show();
+                initUserSpinner(); // Refresh the user list
+            } else {
+                Toast.makeText(getContext(), getString(R.string.toastUpdateMsgError), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
+
 }

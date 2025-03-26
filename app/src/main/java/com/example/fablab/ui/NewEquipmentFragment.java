@@ -183,48 +183,48 @@ public class NewEquipmentFragment extends Fragment {
             if (TextUtils.isEmpty(code) || TextUtils.isEmpty(name) || TextUtils.isEmpty(selectedType) ||
                     TextUtils.isEmpty(selectedUnit) || TextUtils.isEmpty(skaits) || TextUtils.isEmpty(desc) ||
                     TextUtils.isEmpty(crit) || TextUtils.isEmpty(min) || TextUtils.isEmpty(max) || TextUtils.isEmpty(izg_code)) {
-                Toast.makeText(getContext(), "Please fill in all fields", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), getString(R.string.empty_fields_error), Toast.LENGTH_SHORT).show();
                 Log.d("MainActivity", "One or more fields are empty");
 
                 if(TextUtils.isEmpty(code)){
-                    editcode.setError("Ievadi kodu!");
+                    editcode.setError(getString(R.string.missing_code));
                     deleteCurrentImage();
                 }
 
                 if (TextUtils.isEmpty(name)){
-                    editname.setError("Ievadi nosaukumu!");
+                    editname.setError(getString(R.string.missing_name));
                     deleteCurrentImage();
                 }
 
                 if (TextUtils.isEmpty(skaits)){
-                    editamount.setError("Ievadi skaitu!");
+                    editamount.setError(getString(R.string.missing_amount));
                     deleteCurrentImage();
                 }
 
                 if(TextUtils.isEmpty(desc)){
-                    editdescr.setError("Ievadi aprakastu!");
+                    editdescr.setError(getString(R.string.missing_desc));
                 }
 
                 if (TextUtils.isEmpty(crit)){
-                    editcrit.setError("Aizpildi ar skaitli!");
+                    editcrit.setError(getString(R.string.missing_crit));
                 }
 
                 if (TextUtils.isEmpty(min)){
-                    editmin.setError("Aizpildi ar skaitli!");
+                    editmin.setError(getString(R.string.missing_min));
                 }
 
                 if (TextUtils.isEmpty(max)){
-                    editmax.setError("Aizpildi ar skaitli!");
+                    editmax.setError(getString(R.string.missing_max));
                 }
 
                 if(TextUtils.isEmpty(izg_code)){
-                    editizcode.setError("Netika ievadīts izglītības inventāra kods!");
+                    editizcode.setError(getString(R.string.missing_izgcode));
                 }
 
             }else{
                 //Checks for negative numbers
                 if (skaits.contains("-")) {
-                    editamount.setError("Skaits nedrīkst būt negatīvs!");
+                    editamount.setError(getString(R.string.error_negativenr));
                     editamount.requestFocus();
                 } else {
                     String telpa, stacija;
@@ -250,35 +250,35 @@ public class NewEquipmentFragment extends Fragment {
                         Log.d("NewEquipmentFragment", Type);
                         // check the stocks
                         if (critValue > minValue) {
-                            editcrit.setError("Crit must be lower than Min");
+                            editcrit.setError(getString(R.string.crit_lower_min));
                             editcrit.requestFocus();
                         }
 
                         if (minValue > maxValue) {
-                            editmin.setError("Min must be lower than Max");
+                            editmin.setError(getString(R.string.min_lower_max));
                             editmin.requestFocus();
                         }
 
                         //--------------------------checks the list with the code--------------------------------------
                         if (Type.equals("1") && selectedType.equals("Consumables")) {
-                            editcode.setError("Nepareizi ievadīts kods kļūda ir ar (koda tipu)!");
+                            editcode.setError(getString(R.string.invalid_code_type));
                             editcode.requestFocus();
                             // Delete the currently stored picture
                             deleteCurrentImage();
                         } else if (Type.equals("2") && selectedType.equals("Asset")) {
-                            editcode.setError("Nepareizi ievadīts kods kļūda ir ar (koda tipu)!");
+                            editcode.setError(getString(R.string.invalid_code_type));
                             editcode.requestFocus();
                             // Delete the currently stored picture
                             deleteCurrentImage();
                         } else {
 
                             if(izg_code.length() != 8) {
-                                editizcode.setError("Kods netika ievadīts līdz galam!");
+                                editizcode.setError(getString(R.string.unfinished_code));
                                 editizcode.requestFocus();
                             }else{
                                 // Check if an image has been captured
                                 if (!isImageCaptured) {
-                                    Toast.makeText(getContext(), "Please capture an image first", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(getContext(), getString(R.string.capture_image), Toast.LENGTH_SHORT).show();
                                     return; // Exit the method if no image is captured
                                 }
 
@@ -416,7 +416,7 @@ public class NewEquipmentFragment extends Fragment {
                 takePicture();
             } else {
                 // CAMERA permission is denied, show a message or take appropriate action
-                Toast.makeText(requireContext(), "Camera permission is required for taking pictures", Toast.LENGTH_SHORT).show();
+                Toast.makeText(requireContext(), getString(R.string.lack_permission_camera), Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -453,7 +453,7 @@ public class NewEquipmentFragment extends Fragment {
             matches = true;
             Log.d("MainActivity", "Matched the fourth pattern");
         } else {
-            editcode.setError("Nepareizi ievadīts kods!");
+            editcode.setError(getString(R.string.invalid_Code_pattern));
             editcode.requestFocus();
             Log.d("MainActivity", "No pattern matched");
             // Delete the currently stored picture
@@ -490,11 +490,11 @@ public class NewEquipmentFragment extends Fragment {
 
         // Delete the picture from Firebase Storage
         storageRef.delete().addOnSuccessListener(aVoid -> {
-            Toast.makeText(getContext(), "Current image deleted successfully", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), getString(R.string.image_deleted_good), Toast.LENGTH_SHORT).show();
             TextView textViewFileName = view.findViewById(R.id.textViewFileName);
-            textViewFileName.setText("No file selected"); // Set the file name in the TextView
+            textViewFileName.setText(getString(R.string.no_file_selected)); // Set the file name in the TextView
         }).addOnFailureListener(exception -> {
-            Toast.makeText(getContext(), "Failed to delete current image: " + exception.getMessage(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), getString(R.string.image_deleted_bad) + exception.getMessage(), Toast.LENGTH_SHORT).show();
         });
     }
     private Uri getImageUri(Context context, Bitmap bitmap) {
@@ -510,7 +510,7 @@ public class NewEquipmentFragment extends Fragment {
             bitmap = MediaStore.Images.Media.getBitmap(requireContext().getContentResolver(), uri);
         } catch (IOException e) {
             e.printStackTrace();
-            Toast.makeText(getContext(), "Failed to convert image to PNG format", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), getString(R.string.failed_convert_picture), Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -525,12 +525,12 @@ public class NewEquipmentFragment extends Fragment {
         // Upload the PNG image to Firebase Storage
         storageRef.putBytes(data)
                 .addOnSuccessListener(taskSnapshot -> {
-                    Toast.makeText(getContext(), "Image uploaded successfully", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), getString(R.string.image_upload_good), Toast.LENGTH_SHORT).show();
                     TextView textViewFileName = view.findViewById(R.id.textViewFileName);
                     textViewFileName.setText(imageName); // Set the file name in the TextView
                 })
                 .addOnFailureListener(e -> {
-                    Toast.makeText(getContext(), "Image upload failed: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), getString(R.string.image_upload_failed) + e.getMessage(), Toast.LENGTH_SHORT).show();
                     // Delete the currently stored image if the upload fails
                     deleteCurrentImage();
                 });
