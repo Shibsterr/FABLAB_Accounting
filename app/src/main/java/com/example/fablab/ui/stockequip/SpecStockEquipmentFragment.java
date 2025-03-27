@@ -341,10 +341,10 @@ public class SpecStockEquipmentFragment extends Fragment {
                             int newMaxStock = Integer.parseInt(inputText);
                             updateMaxStock(newMaxStock); // Update the maxStock in the UI and Firebase
                         } catch (NumberFormatException e) {
-                            Toast.makeText(getContext(), "Invalid input", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getContext(), getString(R.string.invalid_input), Toast.LENGTH_SHORT).show();
                         }
                     } else {
-                        Toast.makeText(getContext(), "Please enter a valid number", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), getString(R.string.invalid_number), Toast.LENGTH_SHORT).show();
                     }
                 })
                 .setNegativeButton(getString(R.string.cancel), (dialog, which) -> dialog.cancel())
@@ -369,15 +369,15 @@ public class SpecStockEquipmentFragment extends Fragment {
                         // Update the "Max Stock" value in the database
                         snapshot.getRef().child("Max Stock").setValue(newMaxStock)
                                 .addOnSuccessListener(aVoid -> {
-                                    Toast.makeText(getContext(), "Max stock updated", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(getContext(), getString(R.string.max_stock_good), Toast.LENGTH_SHORT).show();
 
                                 })
                                 .addOnFailureListener(e -> {
-                                    Toast.makeText(getContext(), "Failed to update max stock", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(getContext(), getString(R.string.max_stock_bad), Toast.LENGTH_SHORT).show();
                                 });
                     }
                 } else {
-                    Toast.makeText(getContext(), "Equipment not found", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), getString(R.string.equip_notfound), Toast.LENGTH_SHORT).show();
                 }
             }
 

@@ -304,4 +304,10 @@
     <string name="failed_convert_picture">Neizdevās pārvērst attēlu PNG formātā</string>
     <string name="image_upload_good">Attēls ir veiksmīgi augšupielādēts</string>
     <string name="image_upload_failed">Attēla augšupielāde neizdevās:</string>
+    <string name="invalid_input">Nederīga ievade</string>
+    <string name="invalid_number">Lūdzu, ievadiet derīgu numuru</string>
+    <string name="equip_notfound">Aprīkojums nav atrasts</string>
+    <string name="max_stock_good">Maksimālais krājums ir atjaunināts</string>
+    <string name="max_stock_bad">Neizdevās atjaunināt maksimālo krājumu</string>
+    <string name="validname_error">Nederīgs nosaukums. Ir atļauti tikai latviešu burti un atstarpes.</string>
 </resources>

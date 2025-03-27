@@ -305,4 +305,10 @@
     <string name="failed_convert_picture">Failed to convert image to PNG format</string>
     <string name="image_upload_good">Image uploaded successfully</string>
     <string name="image_upload_failed">"Image upload failed: "</string>
+    <string name="invalid_input">Invalid input</string>
+    <string name="invalid_number">Please enter a valid number</string>
+    <string name="equip_notfound">Equipment not found</string>
+    <string name="max_stock_good">Max stock updated</string>
+    <string name="max_stock_bad">Failed to update max stock</string>
+    <string name="validname_error">Invalid name. Only Latvian letters and spaces are allowed.</string>
 </resources>

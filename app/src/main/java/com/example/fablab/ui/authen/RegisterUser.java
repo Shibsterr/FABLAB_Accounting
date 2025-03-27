@@ -7,6 +7,7 @@ import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.text.InputFilter;
+import android.text.Spanned;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
@@ -76,8 +77,9 @@ public class RegisterUser extends AppCompatActivity implements View.OnClickListe
         mAuth = FirebaseAuth.getInstance();
 
         // Apply the ASCII input filter to the name_surname and email fields
-        name_surname.setFilters(new InputFilter[]{new ASCIIInputFilter()});
-        email.setFilters(new InputFilter[]{new ASCIIInputFilter()});
+        name_surname.setFilters(new InputFilter[]{new NameInputFilter()});
+        email.setFilters(new InputFilter[]{new EmailInputFilter()});
+
 
         datePickerButton.setOnClickListener(view -> showDatePickerDialog());
     }
@@ -180,6 +182,13 @@ public class RegisterUser extends AppCompatActivity implements View.OnClickListe
             return;
         }
 
+        if (!isValidName(names)) {
+            name_surname.setError(getString(R.string.validname_error));
+            name_surname.requestFocus();
+            return;
+        }
+
+
         register.setVisibility(View.GONE);
         progressBar.setVisibility(View.VISIBLE);
 
@@ -256,16 +265,31 @@ public class RegisterUser extends AppCompatActivity implements View.OnClickListe
         return password.matches(regex);
     }
 
-    // ASCII input filter to restrict special characters
-    private static class ASCIIInputFilter implements android.text.InputFilter {
+    private boolean isValidName(String name) {
+        String regex = "^[A-Za-zĀČĒĢĪĶĻŅŠŪŽāčēģīķļņšūž ]+$";
+        return name.matches(regex);
+    }
 
+    //*********************************************************************
+    // input filter to restrict special characters
+    private static class NameInputFilter implements InputFilter {
         @Override
-        public CharSequence filter(CharSequence source, int start, int end, android.text.Spanned dest, int dstart, int dend) {
-            if (source != null && !source.toString().matches("[A-Za-z0-9@._-]*")) {
-                // Reject any special characters (e.g. ā)
+        public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
+            if (source != null && !source.toString().matches("^[A-Za-zĀČĒĢĪĶĻŅŠŪŽāčēģīķļņšūž ]*$")) {
                 return "";
             }
-            return null; // Allow the character
+            return null;
         }
     }
+
+    private static class EmailInputFilter implements InputFilter {
+        @Override
+        public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
+            if (source != null && !source.toString().matches("^[A-Za-z0-9@._-]*$")) {
+                return "";
+            }
+            return null;
+        }
+    }
+
 }
