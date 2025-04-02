@@ -21,7 +21,7 @@
                 android:layout_width="70pt"
                 android:layout_height="29pt"
                 android:layout_gravity="center"
-                android:src="@drawable/fablablogo"
+                android:src="@drawable/fablablogo_white"
                 android:contentDescription="@string/logo" />
         </androidx.appcompat.widget.Toolbar>
 
