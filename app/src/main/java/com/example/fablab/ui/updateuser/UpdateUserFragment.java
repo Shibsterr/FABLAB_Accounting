@@ -57,6 +57,8 @@ public class UpdateUserFragment extends Fragment {
         mDatabase = FirebaseDatabase.getInstance().getReference();
         userIdMap = new HashMap<>();
 
+        deleteUserButton.setEnabled(false); // Disable delete button initially
+
         initUserSpinner();
         initStatusSpinner();
 
@@ -80,7 +82,7 @@ public class UpdateUserFragment extends Fragment {
 
     private void initUserSpinner() {
         DatabaseReference usersRef = mDatabase.child("users");
-        String currentUserId = mAuth.getCurrentUser().getUid(); // Get the current logged-in user's ID
+        String currentUserId = mAuth.getCurrentUser().getUid();
 
         usersRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -90,9 +92,7 @@ public class UpdateUserFragment extends Fragment {
 
                 for (DataSnapshot userSnapshot : dataSnapshot.getChildren()) {
                     String userId = userSnapshot.getKey();
-                    if (userId.equals(currentUserId)) {
-                        continue; // Skip the currently logged-in user
-                    }
+                    if (userId.equals(currentUserId)) continue;
 
                     String fullName = userSnapshot.child("Vards un uzvards").getValue(String.class);
                     String notDeleted = userSnapshot.child("Statuss").getValue(String.class);
@@ -103,9 +103,12 @@ public class UpdateUserFragment extends Fragment {
                     }
                 }
 
-                ArrayAdapter<String> adapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_spinner_item, userList);
-                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                spinnerUsers.setAdapter(adapter);
+                if (getContext() != null) {
+                    ArrayAdapter<String> adapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_spinner_item, userList);
+                    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                    spinnerUsers.setAdapter(adapter);
+                    deleteUserButton.setEnabled(!userList.isEmpty()); // Enable delete button if users exist
+                }
             }
 
             @Override
@@ -121,9 +124,11 @@ public class UpdateUserFragment extends Fragment {
         statuses.add("Lietotājs");
         statuses.add("Admin");
 
-        ArrayAdapter<String> statusAdapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_spinner_item, statuses);
-        statusAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerStatuss.setAdapter(statusAdapter);
+        if (getContext() != null) {
+            ArrayAdapter<String> statusAdapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_spinner_item, statuses);
+            statusAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            spinnerStatuss.setAdapter(statusAdapter);
+        }
     }
 
     private void loadUserStatus(String userName) {
@@ -152,17 +157,24 @@ public class UpdateUserFragment extends Fragment {
     }
 
     private void confirmDeleteUser() {
+        if (spinnerUsers.getSelectedItem() == null) {
+            Toast.makeText(getContext(), getString(R.string.invalid_user_selected), Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         String selectedUser = spinnerUsers.getSelectedItem().toString();
         String userId = userIdMap.get(selectedUser);
-        Log.d("UPDATE USER", userId);
+
         if (userId == null) {
             Toast.makeText(getContext(), getString(R.string.invalid_user_selected), Toast.LENGTH_SHORT).show();
             return;
         }
 
+        Log.d("UPDATE USER", "Selected user ID: " + userId);
+
         new AlertDialog.Builder(getContext())
                 .setTitle(getString(R.string.deletetitle))
-                .setMessage(getString(R.string.deletetext1) + selectedUser + getString(R.string.deletetext2))
+                .setMessage(getString(R.string.deletetext1) + " " + selectedUser + " " + getString(R.string.deletetext2))
                 .setPositiveButton(getString(R.string.delete), (dialog, which) -> deleteUser(userId))
                 .setNegativeButton(getString(R.string.cancel), null)
                 .show();
@@ -183,6 +195,11 @@ public class UpdateUserFragment extends Fragment {
     }
 
     private void UpdateUser() {
+        if (spinnerUsers.getSelectedItem() == null || spinnerStatuss.getSelectedItem() == null) {
+            Toast.makeText(getContext(), getString(R.string.invalid_user_id), Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         String selectedUser = spinnerUsers.getSelectedItem().toString();
         String newStatus = spinnerStatuss.getSelectedItem().toString();
         String userId = userIdMap.get(selectedUser);
@@ -202,5 +219,4 @@ public class UpdateUserFragment extends Fragment {
             }
         });
     }
-
 }

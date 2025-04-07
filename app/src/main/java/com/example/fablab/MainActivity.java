@@ -49,6 +49,8 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.regex.Pattern;
 
 public class MainActivity extends AppCompatActivity {
@@ -59,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
     private ProgressBar progbar;
     private View loadingScreen;
     private NetworkChangeReceiver networkChangeReceiver;
-
+    private final ExecutorService executorService = Executors.newSingleThreadExecutor();
     private static final String PATTERN_STRING = "^[1-9][0-9]?_[1-9]_[1-2]?_[a-zA-Z0-9\\s]+$";
     private static final String PATTERN_LONGER = "^[1-9][0-9]?_[1-9][0-9]?_[1-2]_[a-zA-Z0-9\\s]+$";
     private static final String PATTERN = "^[1-9]_[1-9][0-9]?_[1-2]_[a-zA-Z0-9\\s]+$";
@@ -181,24 +183,28 @@ public class MainActivity extends AppCompatActivity {
                 userRef.keepSynced(true);
 
                 // Fetch the user's profile information
-                userRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        if (dataSnapshot.exists()) {
-                            // Set up the main activity content after data is successfully loaded
-                            setupMainContent(dataSnapshot);
-                        } else {
-                            Toast.makeText(MainActivity.this, "User data not found", Toast.LENGTH_SHORT).show();
-                            loadingScreen.setVisibility(View.GONE);
+                executorService.execute(() -> {
+                    userRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            if (dataSnapshot.exists()) {
+                                runOnUiThread(() -> setupMainContent(dataSnapshot));
+                            } else {
+                                runOnUiThread(() -> {
+                                    Toast.makeText(MainActivity.this, "User data not found", Toast.LENGTH_SHORT).show();
+                                    loadingScreen.setVisibility(View.GONE);
+                                });
+                            }
                         }
-                    }
 
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-                        Log.d("MainActivity", "ERROR WITH USER");
-                        loadingScreen.setVisibility(View.GONE); // Hide the loading screen if there's an error
-                    }
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+                            runOnUiThread(() -> loadingScreen.setVisibility(View.GONE));
+                        }
+                    });
                 });
+
+
             }
         } else {
             Toast.makeText(MainActivity.this, "No network connection", Toast.LENGTH_SHORT).show();
@@ -298,12 +304,14 @@ public class MainActivity extends AppCompatActivity {
     }
     @Override
     protected void onDestroy() {
-        if (isReceiverRegistered) {  // Make sure it's only unregistered if registered
+        if (isReceiverRegistered) {
             unregisterReceiver(networkChangeReceiver);
             isReceiverRegistered = false;
         }
+        executorService.shutdown(); // Shutdown threading
         super.onDestroy();
     }
+
     public boolean isNetworkAvailable() {
         ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetworkInfo = connectivityManager != null ? connectivityManager.getActiveNetworkInfo() : null;
@@ -319,40 +327,44 @@ public class MainActivity extends AppCompatActivity {
     }
     private void addLogEntry(String data) {
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
-        String uid = currentUser.getUid();
+        if (currentUser == null) return;
 
-        DatabaseReference userRef = FirebaseDatabase.getInstance().getReference().child("users").child(uid);
+        executorService.execute(() -> {
+            String uid = currentUser.getUid();
+            DatabaseReference userRef = FirebaseDatabase.getInstance().getReference().child("users").child(uid);
 
-        userRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if (dataSnapshot.exists()) {
-                    String fullName = dataSnapshot.child("Vards un uzvards").getValue(String.class);
-                    String apraksts = "Noskanēja objektu";
-                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
-                    String dateTime = sdf.format(new Date());
+            userRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    if (dataSnapshot.exists()) {
+                        String fullName = dataSnapshot.child("Vards un uzvards").getValue(String.class);
+                        String apraksts = "Noskanēja objektu";
+                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+                        String dateTime = sdf.format(new Date());
 
-                    DatabaseReference logsRef = FirebaseDatabase.getInstance().getReference().child("Logs").child(dateTime);
+                        DatabaseReference logsRef = FirebaseDatabase.getInstance().getReference().child("Logs").child(dateTime);
 
-                    Map<String, Object> logEntry = new HashMap<>();
-                    logEntry.put("Priekšmeta kods", data);
-                    logEntry.put("Vārds uzvārds", fullName);
-                    logEntry.put("Epasts", currentUser.getEmail());
-                    logEntry.put("Laiks", dateTime);
-                    logEntry.put("Apraksts", apraksts);
+                        Map<String, Object> logEntry = new HashMap<>();
+                        logEntry.put("Priekšmeta kods", data);
+                        logEntry.put("Vārds uzvārds", fullName);
+                        logEntry.put("Epasts", currentUser.getEmail());
+                        logEntry.put("Laiks", dateTime);
+                        logEntry.put("Apraksts", apraksts);
 
-                    logsRef.setValue(logEntry)
-                            .addOnSuccessListener(aVoid -> Log.d("AddLogEntry", "Log entry added successfully"))
-                            .addOnFailureListener(e -> Log.e("AddLogEntry", "Error adding log entry", e));
-                } else {
-                    Log.e("AddLogEntry", "User data not found in Realtime Database");
+                        logsRef.setValue(logEntry)
+                                .addOnSuccessListener(aVoid -> Log.d("AddLogEntry", "Log entry added successfully"))
+                                .addOnFailureListener(e -> Log.e("AddLogEntry", "Error adding log entry", e));
+                    } else {
+                        Log.e("AddLogEntry", "User data not found in Realtime Database");
+                    }
                 }
-            }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                Log.e("AddLogEntry", "Database error: " + databaseError.getMessage());
-            }
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                    Log.e("AddLogEntry", "Database error: " + databaseError.getMessage());
+                }
+            });
         });
     }
+
 }
