@@ -17,15 +17,19 @@ import androidx.fragment.app.Fragment;
 
 import com.example.fablab.R;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 public class UpdateUserFragment extends Fragment {
@@ -188,6 +192,8 @@ public class UpdateUserFragment extends Fragment {
             if (task.isSuccessful()) {
                 Toast.makeText(getContext(), getString(R.string.userdeleted), Toast.LENGTH_SHORT).show();
                 initUserSpinner(); // Refresh the user list
+                addLogEntry(spinnerUsers.getSelectedItem().toString(), "deleted", true);
+
             } else {
                 Toast.makeText(getContext(), getString(R.string.userstatuserror), Toast.LENGTH_SHORT).show();
             }
@@ -214,9 +220,66 @@ public class UpdateUserFragment extends Fragment {
             if (task.isSuccessful()) {
                 Toast.makeText(getContext(), getString(R.string.toastUpdateMsg), Toast.LENGTH_SHORT).show();
                 initUserSpinner(); // Refresh the user list
+                addLogEntry(selectedUser, newStatus, false);
+
             } else {
                 Toast.makeText(getContext(), getString(R.string.toastUpdateMsgError), Toast.LENGTH_SHORT).show();
             }
         });
     }
+
+    private void addLogEntry(String targetUserName, String newStatus, boolean isDeletion) {
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (currentUser == null) return;
+
+        String uid = currentUser.getUid();
+        String email = currentUser.getEmail();
+
+        DatabaseReference userRef = FirebaseDatabase.getInstance().getReference().child("users").child(uid);
+
+        userRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (!dataSnapshot.exists()) {
+                    Log.e("AddLogEntry", "User data not found.");
+                    return;
+                }
+
+                String fullName = dataSnapshot.child("Vards un uzvards").getValue(String.class);
+
+                // Format current date and time
+                SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.getDefault());
+                String dateTime = sdf.format(new Date());
+
+                String action = isDeletion ? "izdzēsa" : "mainīja statusu";
+                String title = isDeletion
+                        ? "Lietotāja dzēšana " + dateTime
+                        : "Lietotāja statusa maiņa " + dateTime;
+
+                String summary = isDeletion
+                        ? fullName + " izdzēsa lietotāju: " + targetUserName + "."
+                        : fullName + " mainīja lietotāja " + targetUserName + " statusu uz: " + newStatus + ".";
+
+                DatabaseReference logRef = FirebaseDatabase.getInstance().getReference()
+                        .child("Logs").child(dateTime);
+
+                Map<String, Object> logEntry = new HashMap<>();
+                logEntry.put("user", fullName);
+                logEntry.put("email", email);
+                logEntry.put("title", title);
+                logEntry.put("summary", summary);
+
+                logRef.setValue(logEntry)
+                        .addOnSuccessListener(aVoid -> Log.d("AddLogEntry", "Log entry added successfully"))
+                        .addOnFailureListener(e -> Log.e("AddLogEntry", "Error adding log entry", e));
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.e("AddLogEntry", "Database error: " + databaseError.getMessage());
+            }
+        });
+    }
+
+
 }

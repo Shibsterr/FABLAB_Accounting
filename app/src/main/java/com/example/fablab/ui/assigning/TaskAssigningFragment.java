@@ -144,7 +144,7 @@ public class TaskAssigningFragment extends Fragment {
                     String currentUserName = dataSnapshot.child("Vards un uzvards").getValue(String.class);
 
                     // Get current date and time
-                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+                    SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.getDefault());
                     String dateTime = sdf.format(new Date());
 
                     // Assign task to user in the database

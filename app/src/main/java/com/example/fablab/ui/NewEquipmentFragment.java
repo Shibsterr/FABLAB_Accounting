@@ -33,6 +33,8 @@ import androidx.fragment.app.Fragment;
 
 import com.example.fablab.MainActivity;
 import com.example.fablab.R;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -43,7 +45,10 @@ import com.google.firebase.storage.StorageReference;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -335,6 +340,9 @@ public class NewEquipmentFragment extends Fragment {
 
                                             startActivity(new Intent(getContext(), MainActivity.class));
                                             getActivity().finish();
+
+                                            addLogEntry(name, kods);
+
                                             Log.d("MainActivity", "Added a new equipment");
                                         });
                                     } else {
@@ -536,5 +544,51 @@ public class NewEquipmentFragment extends Fragment {
                 });
     }
 
+    private void addLogEntry(String name, String code) {
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (currentUser == null) return;
 
+        String uid = currentUser.getUid();
+        String email = currentUser.getEmail();
+
+        DatabaseReference userRef = FirebaseDatabase.getInstance().getReference().child("users").child(uid);
+
+        userRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (!dataSnapshot.exists()) {
+                    Log.e("AddLogEntry", "User data not found.");
+                    return;
+                }
+
+                String fullName = dataSnapshot.child("Vards un uzvards").getValue(String.class);
+
+                // Format current date and time
+                SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.getDefault());
+                String dateTime = sdf.format(new Date());
+
+                String title = "Izveidojis jaunu iekārti " + dateTime;
+
+                String summary = fullName +" izveidoja jaunu iekārti ar nosakumu '"+name+"' kuram piešķir šāds kodus '"+code+"'.";
+
+                DatabaseReference logRef = FirebaseDatabase.getInstance().getReference()
+                        .child("Logs").child(dateTime);
+
+                Map<String, Object> logEntry = new HashMap<>();
+                logEntry.put("user", fullName);
+                logEntry.put("email", email);
+                logEntry.put("title", title);
+                logEntry.put("summary", summary);
+
+                logRef.setValue(logEntry)
+                        .addOnSuccessListener(aVoid -> Log.d("AddLogEntry", "Log entry added successfully"))
+                        .addOnFailureListener(e -> Log.e("AddLogEntry", "Error adding log entry", e));
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.e("AddLogEntry", "Database error: " + databaseError.getMessage());
+            }
+        });
+    }
 }

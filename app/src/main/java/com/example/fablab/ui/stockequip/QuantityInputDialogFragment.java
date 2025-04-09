@@ -56,7 +56,13 @@ public class QuantityInputDialogFragment extends DialogFragment {
                         Toast.makeText(getContext(), "Please enter a valid number", Toast.LENGTH_SHORT).show();
                         return;
                     }
+
                     int quantity = Integer.parseInt(quantityStr);
+                    if (quantity < 0) {
+                        Toast.makeText(getContext(), "Quantity cannot be negative", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
                     listener.onQuantityInput(quantity);
                 })
                 .setNegativeButton(getString(R.string.cancel), (dialog, which) -> dialog.dismiss());

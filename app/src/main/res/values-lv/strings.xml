@@ -113,10 +113,12 @@
     <string name="english">Angļu valoda</string>
     <string name="latvian">latviski</string>
     <string name="sort_logs">Kārtot vēsturi</string>
-    <string name="currently_sorted_by_name">Pašlaik sakārtots pēc: Vārds</string>
+
     <string name="currently_sorted_by_most_recent_log">Pašlaik sakārtots pēc: Jaunākais žurnāls</string>
     <string name="currently_sorted_by_oldest_log">Pašlaik sakārtots pēc: Vecākais žurnāls</string>
-    <string name="currently_sorted_by_item_name">Pašlaik sakārtots pēc: Vienuma nosaukums</string>
+    <string name="currently_sorted_by_name">Pašlaik sakārtots pēc: lietotājvārda</string>
+    <string name="currently_sorted_by_item_name">Pašlaik sakārtots pēc: Virsraksts</string>
+
     <string name="assign_task">Uzdot uzdevumu</string>
     <string name="select_user">"Atlasiet Lietotājs "</string>
     <string name="urgent">Steidzami</string>
@@ -310,4 +312,5 @@
     <string name="max_stock_good">Maksimālais krājums ir atjaunināts</string>
     <string name="max_stock_bad">Neizdevās atjaunināt maksimālo krājumu</string>
     <string name="validname_error">Nederīgs nosaukums. Ir atļauti tikai latviešu burti un atstarpes.</string>
+    <string name="enter_quantity">Enter Quantity:</string>
 </resources>

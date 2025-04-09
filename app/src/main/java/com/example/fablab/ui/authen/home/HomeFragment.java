@@ -169,39 +169,31 @@ public class HomeFragment extends Fragment {
                         addedCardViewIds.clear(); // Clear the set of added CardView IDs
 
                         if (dataSnapshot.exists()) {
-                            executorService.execute(() -> {
-                                List<DataSnapshot> stationSnapshots = new ArrayList<>();
-                                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                                    stationSnapshots.add(snapshot);
-                                }
+                            List<DataSnapshot> stationSnapshots = new ArrayList<>();
+                            for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                                stationSnapshots.add(snapshot);
+                            }
 
-                                // Sort stations by recently used count
-                                stationSnapshots.sort((s1, s2) -> {
-                                    Long id1 = s1.child("ID").getValue(Long.class);
-                                    Long id2 = s2.child("ID").getValue(Long.class);
-                                    Integer count1 = recentlyUsedMap.getOrDefault(id1.toString(), 0);
-                                    Integer count2 = recentlyUsedMap.getOrDefault(id2.toString(), 0);
-                                    return count2.compareTo(count1);
-                                });
-
-                                // Build UI on the main thread
-                                requireActivity().runOnUiThread(() -> {
-                                    properLayout.removeAllViews();
-                                    addedCardViewIds.clear();
-
-                                    for (DataSnapshot snapshot : stationSnapshots) {
-                                        String station = snapshot.child("Name").child(language).getValue(String.class);
-                                        String description = snapshot.child("Description").child(language).getValue(String.class);
-                                        Integer ID = snapshot.child("ID").getValue(Integer.class);
-
-                                        if (station != null && description != null && ID != null && !addedCardViewIds.contains(ID)) {
-                                            createCardView(getContext(), properLayout, station, description, ID);
-                                            addedCardViewIds.add(ID);
-                                        }
-                                    }
-                                });
+                            // Sort stations by recently used count
+                            stationSnapshots.sort((s1, s2) -> {
+                                Long id1 = s1.child("ID").getValue(Long.class); // Fetch as Long
+                                Long id2 = s2.child("ID").getValue(Long.class); // Fetch as Long
+                                Integer count1 = recentlyUsedMap.getOrDefault(id1.toString(), 0); // Convert Long to String for map key
+                                Integer count2 = recentlyUsedMap.getOrDefault(id2.toString(), 0); // Convert Long to String for map key
+                                return count2.compareTo(count1); // Sort by descending usage
                             });
 
+                            // Add stations as CardViews in sorted order
+                            for (DataSnapshot snapshot : stationSnapshots) {
+                                String station = snapshot.child("Name").child(language).getValue(String.class);
+                                String description = snapshot.child("Description").child(language).getValue(String.class);
+                                Integer ID = snapshot.child("ID").getValue(Integer.class);
+
+                                if (station != null && description != null && ID != null && !addedCardViewIds.contains(ID)) {
+                                    createCardView(getContext(), properLayout, station, description, ID);
+                                    addedCardViewIds.add(ID); // Add the ID to the set of added CardView IDs
+                                }
+                            }
                         }
                     }
 
@@ -432,42 +424,41 @@ public class HomeFragment extends Fragment {
         eventsDatabaseRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                executorService.execute(() -> {
-                    Map<String, List<Event>> tempMap = new HashMap<>();
+                eventsMap.clear(); // Clear existing events before loading new ones
 
-                    for (DataSnapshot dateSnapshot : snapshot.getChildren()) {
-                        String date = dateSnapshot.getKey();
+                // Iterate through each date node
+                for (DataSnapshot dateSnapshot : snapshot.getChildren()) {
+                    String date = dateSnapshot.getKey(); // Date node key
 
-                        for (DataSnapshot userSnapshot : dateSnapshot.getChildren()) {
-                            String userId = userSnapshot.getKey();
+                    // Iterate through each user UID node under the date node
+                    for (DataSnapshot userSnapshot : dateSnapshot.getChildren()) {
+                        String userId = userSnapshot.getKey(); // User UID
 
-                            for (DataSnapshot eventSnapshot : userSnapshot.getChildren()) {
-                                String eventId = eventSnapshot.getKey();
-                                String title = eventSnapshot.child("title").getValue(String.class);
-                                String description = eventSnapshot.child("description").getValue(String.class);
-                                String startTime = eventSnapshot.child("startTime").getValue(String.class);
-                                String endTime = eventSnapshot.child("endTime").getValue(String.class);
-                                String numberOfPeople = eventSnapshot.child("numberOfPeople").getValue(String.class);
-                                String status = eventSnapshot.child("status").getValue(String.class);
+                        // Iterate through each event under the user UID node
+                        for (DataSnapshot eventSnapshot : userSnapshot.getChildren()) {
+                            String eventId = eventSnapshot.getKey(); // Event ID
+                            String title = eventSnapshot.child("title").getValue(String.class);
+                            String description = eventSnapshot.child("description").getValue(String.class);
+                            String startTime = eventSnapshot.child("startTime").getValue(String.class);
+                            String endTime = eventSnapshot.child("endTime").getValue(String.class);
+                            String numberOfPeople = eventSnapshot.child("numberOfPeople").getValue(String.class);
+                            String status = eventSnapshot.child("status").getValue(String.class);
 
-                                if (title != null && description != null && date != null && startTime != null &&
-                                        endTime != null && numberOfPeople != null && status != null && userId != null) {
+                            if (title != null && description != null && date != null && startTime != null && endTime != null && numberOfPeople != null && status != null && userId != null) {
+                                // Create the Event object with the new structure
+                                Event event = new Event(eventId, title, description, date, startTime, endTime, numberOfPeople, status, userId);
 
-                                    Event event = new Event(eventId, title, description, date, startTime, endTime, numberOfPeople, status, userId);
-
-                                    tempMap.computeIfAbsent(date, k -> new ArrayList<>()).add(event);
+                                // Add the event to the list of events for this date
+                                if (!eventsMap.containsKey(date)) {
+                                    eventsMap.put(date, new ArrayList<>());
                                 }
+                                eventsMap.get(date).add(event);
                             }
                         }
                     }
+                }
 
-                    // Once processing is complete, update the UI on the main thread
-                    requireActivity().runOnUiThread(() -> {
-                        eventsMap.clear();
-                        eventsMap.putAll(tempMap);
-                        markEventsOnCalendar(); // safe to call on UI thread
-                    });
-                });
+                markEventsOnCalendar(); // Mark the events on the calendar
             }
 
             @Override
@@ -476,7 +467,6 @@ public class HomeFragment extends Fragment {
             }
         });
     }
-
     private void markEventsOnCalendar() {
         calendarView.removeDecorators(); // Clear old decorators
 
@@ -508,18 +498,10 @@ public class HomeFragment extends Fragment {
         }
     }
     private List<Event> getEventsForDay(CalendarDay date) {
-        // Format date as "yyyy-MM-dd" with leading zeros
-        String dateKey = String.format("%04d-%02d-%02d", date.getYear(), date.getMonth() + 1, date.getDay());
+        // Format date as "yyyy-MM-dd"
+        String dateKey = date.getYear() + "-" + (date.getMonth() + 1) + "-" + date.getDay();
 
         // Return the list of events for the selected day, or an empty list if none
         return eventsMap.getOrDefault(dateKey, new ArrayList<>());
     }
-
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        executorService.shutdownNow();
-    }
-
 }

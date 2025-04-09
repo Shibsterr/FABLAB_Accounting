@@ -110,10 +110,12 @@
     <string name="english">English</string>
     <string name="latvian">Latvian</string>
     <string name="sort_logs">Sort Logs</string>
-    <string name="currently_sorted_by_name">Currently sorted by: Name</string>
+
     <string name="currently_sorted_by_most_recent_log">Currently sorted by: Most Recent Log</string>
     <string name="currently_sorted_by_oldest_log">Currently sorted by: Oldest Log</string>
-    <string name="currently_sorted_by_item_name">Currently sorted by: Item Name</string>
+    <string name="currently_sorted_by_name">Currently sorted by: Name</string>
+    <string name="currently_sorted_by_item_name">Currently sorted by: Title</string>
+
     <string name="assign_task">Assign Task</string>
     <string name="select_user">Select User</string>
     <string name="urgent">Urgent</string>
@@ -311,4 +313,5 @@
     <string name="max_stock_good">Max stock updated</string>
     <string name="max_stock_bad">Failed to update max stock</string>
     <string name="validname_error">Invalid name. Only Latvian letters and spaces are allowed.</string>
+    <string name="enter_quantity">Enter Quantity:</string>
 </resources>

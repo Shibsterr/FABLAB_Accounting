@@ -1,5 +1,9 @@
 package com.example.fablab.ui.logs;
 
+import android.graphics.Typeface;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.style.StyleSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,7 +24,6 @@ public class LogAdapter extends RecyclerView.Adapter<LogAdapter.LogViewHolder> {
     public LogAdapter(List<LogItem> logList) {
         this.logList = logList;
     }
-
 
     @NonNull
     @Override
@@ -46,47 +49,51 @@ public class LogAdapter extends RecyclerView.Adapter<LogAdapter.LogViewHolder> {
         private TextView textDateTime;
         private TextView textUserName;
         private TextView textEmail;
-        private TextView textItemName;
-        private TextView textQuantity;
-        private TextView textAddition;
+        private TextView textSummary;
 
         public LogViewHolder(@NonNull View itemView) {
             super(itemView);
             buttonExpand = itemView.findViewById(R.id.button_expand);
             layoutDetails = itemView.findViewById(R.id.layout_details);
-            textDateTime = itemView.findViewById(R.id.text_view_summary);
             textUserName = itemView.findViewById(R.id.text_view_username);
             textEmail = itemView.findViewById(R.id.text_view_email);
+            textSummary = itemView.findViewById(R.id.text_view_summary);
 
-            textItemName = itemView.findViewById(R.id.text_view_item_name);
-
-            textQuantity = itemView.findViewById(R.id.text_view_quantity);
-            textAddition = itemView.findViewById(R.id.text_view_addition);
-
-            // Set OnClickListener for the button
             buttonExpand.setOnClickListener(v -> toggleDetails());
         }
 
         public void bind(LogItem logItem) {
-            // Populate detailed information
-            textDateTime.setText("Datums un laiks: " + logItem.getDateTime());
-            textUserName.setText("Vārds uzvārds: " + logItem.getUserName());
-            textEmail.setText("Email: " + logItem.getEmail());
+            // Set the button label to the log's title
+            buttonExpand.setText(logItem.getTitle() != null ? logItem.getTitle() : "Žurnāla ieraksts");
 
-            if(logItem.getQuantity() == null) {     // Checks for the quantity if its null then the log is for users who scanned a QR code
-                buttonExpand.setText("Noskanēts objekts");
-                textItemName.setText("Priekšmeta kods: " + logItem.getItemName());
-                textQuantity.setText("Apraksts: " + logItem.getDesc());
-                textAddition.setVisibility(View.GONE);
-            }else{
-                buttonExpand.setText("Inventāra izmaiņas");
-                textItemName.setText("Priekšmeta nosaukums: " + logItem.getItemName());
-                textQuantity.setText("Daudzums: " + logItem.getQuantity());
-                textAddition.setText("Pieskaitīšana?: " + (logItem.isAddition() ? "Jā" : "Nē"));
-            }
-            }
+            // Bold "Vārds uzvārds:"
+            String nameLabel = "Vārds uzvārds: ";
+            String name = logItem.getUser();
+            SpannableString spannableName = new SpannableString(nameLabel + name);
+            spannableName.setSpan(new StyleSpan(Typeface.BOLD), 0, nameLabel.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            textUserName.setText(spannableName);
 
-        // Method to toggle visibility of details
+            // Bold "E-pasts:"
+            String emailLabel = "E-pasts: ";
+            String email = logItem.getEmail();
+            SpannableString spannableEmail = new SpannableString(emailLabel + email);
+            spannableEmail.setSpan(new StyleSpan(Typeface.BOLD), 0, emailLabel.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            textEmail.setText(spannableEmail);
+
+            // Bold "Kopsavilkums:"
+            if (logItem.getSummary() != null && !logItem.getSummary().isEmpty()) {
+                String summaryLabel = "Kopsavilkums: ";
+                String summary = logItem.getSummary();
+                SpannableString spannableSummary = new SpannableString(summaryLabel + summary);
+                spannableSummary.setSpan(new StyleSpan(Typeface.BOLD), 0, summaryLabel.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                textSummary.setText(spannableSummary);
+                textSummary.setVisibility(View.VISIBLE);
+            } else {
+                textSummary.setText("");
+                textSummary.setVisibility(View.GONE);
+            }
+        }
+
         private void toggleDetails() {
             if (layoutDetails.getVisibility() == View.VISIBLE) {
                 layoutDetails.setVisibility(View.GONE);

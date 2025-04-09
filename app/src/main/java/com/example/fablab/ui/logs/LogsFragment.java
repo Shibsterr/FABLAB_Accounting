@@ -78,28 +78,18 @@ public class LogsFragment extends Fragment {
         logsRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                logList.clear();
+
                 for (DataSnapshot logSnapshot : dataSnapshot.getChildren()) {
                     String dateTime = logSnapshot.getKey();
-                    if (logSnapshot.child("Pievienošana?").getValue(Boolean.class) == null) {
-                        String desc = logSnapshot.child("Apraksts").getValue(String.class);
-                        String fullName = logSnapshot.child("Vārds uzvārds").getValue(String.class);
-                        String email = logSnapshot.child("Epasts").getValue(String.class);
-                        String code = logSnapshot.child("Priekšmeta kods").getValue(String.class);
+                    String user = logSnapshot.child("user").getValue(String.class);
+                    String email = logSnapshot.child("email").getValue(String.class);
+                    String title = logSnapshot.child("title").getValue(String.class);
+                    String summary = logSnapshot.child("summary").getValue(String.class);
 
-                        logList.add(new LogItem(dateTime, fullName, email, code, desc));
-
-                    } else {
-                        String itemName = logSnapshot.child("Priekšmeta nosaukums").getValue(String.class);
-                        String quantity = logSnapshot.child("Daudzums").getValue(String.class);
-                        boolean isAddition = logSnapshot.child("Pievienošana?").getValue(Boolean.class);
-                        String fullName = logSnapshot.child("Vārds uzvārds").getValue(String.class);
-                        String email = logSnapshot.child("Epasts").getValue(String.class);
-
-                        logList.add(new LogItem(dateTime, fullName, email, itemName, quantity, isAddition));
-                    }
+                    logList.add(new LogItem(dateTime, user, email, title, summary));
                 }
 
-                // Sort by default (e.g., date descending)
                 Collections.sort(logList, Comparator.comparing(LogItem::getDateTime).reversed());
                 adapter.notifyDataSetChanged();
             }
@@ -113,33 +103,21 @@ public class LogsFragment extends Fragment {
 
     private void sortLogs(int position) {
         switch (position) {
-            case 0:
-                // Sort by name
-                Collections.sort(logList, Comparator.comparing(LogItem::getUserName));
-//                sortTextView.setText(R.string.currently_sorted_by_name);
-                //Toast.makeText(getContext(), "Sorted by name", Toast.LENGTH_SHORT).show();
-                break;
-            case 1:
-                // Sort by most recent log (date descending)
+            case 0: // Most Recent
                 Collections.sort(logList, Comparator.comparing(LogItem::getDateTime).reversed());
-//                sortTextView.setText(R.string.currently_sorted_by_most_recent_log);
-               // Toast.makeText(getContext(), "Sorted by most recent log", Toast.LENGTH_SHORT).show();
                 break;
-            case 2:
-                // Sort by oldest log (date ascending)
+            case 1: // Oldest
                 Collections.sort(logList, Comparator.comparing(LogItem::getDateTime));
-//                sortTextView.setText(R.string.currently_sorted_by_oldest_log);
-                //Toast.makeText(getContext(), "Sorted by oldest log", Toast.LENGTH_SHORT).show();
                 break;
-            case 3:
-                // Sort by item name
-                Collections.sort(logList, Comparator.comparing(LogItem::getItemName));
-//                sortTextView.setText(R.string.currently_sorted_by_item_name);
-                //Toast.makeText(getContext(), "Sorted by item name", Toast.LENGTH_SHORT).show();
+            case 2: // User Name
+                Collections.sort(logList, Comparator.comparing(LogItem::getUser, String.CASE_INSENSITIVE_ORDER));
+                break;
+            case 3: // Title
+                Collections.sort(logList, Comparator.comparing(LogItem::getTitle, String.CASE_INSENSITIVE_ORDER));
                 break;
         }
 
-        // Notify the adapter to refresh the list
         adapter.notifyDataSetChanged();
     }
+
 }

@@ -325,45 +325,52 @@ public class MainActivity extends AppCompatActivity {
         options.setCaptureActivity(CaptureAct.class);
         barLauncher.launch(options);
     }
+
     private void addLogEntry(String data) {
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentUser == null) return;
 
-        executorService.execute(() -> {
-            String uid = currentUser.getUid();
-            DatabaseReference userRef = FirebaseDatabase.getInstance().getReference().child("users").child(uid);
+        String uid = currentUser.getUid();
+        String email = currentUser.getEmail();
 
-            userRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    if (dataSnapshot.exists()) {
-                        String fullName = dataSnapshot.child("Vards un uzvards").getValue(String.class);
-                        String apraksts = "Noskanēja objektu";
-                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
-                        String dateTime = sdf.format(new Date());
+        DatabaseReference userRef = FirebaseDatabase.getInstance().getReference().child("users").child(uid);
 
-                        DatabaseReference logsRef = FirebaseDatabase.getInstance().getReference().child("Logs").child(dateTime);
-
-                        Map<String, Object> logEntry = new HashMap<>();
-                        logEntry.put("Priekšmeta kods", data);
-                        logEntry.put("Vārds uzvārds", fullName);
-                        logEntry.put("Epasts", currentUser.getEmail());
-                        logEntry.put("Laiks", dateTime);
-                        logEntry.put("Apraksts", apraksts);
-
-                        logsRef.setValue(logEntry)
-                                .addOnSuccessListener(aVoid -> Log.d("AddLogEntry", "Log entry added successfully"))
-                                .addOnFailureListener(e -> Log.e("AddLogEntry", "Error adding log entry", e));
-                    } else {
-                        Log.e("AddLogEntry", "User data not found in Realtime Database");
-                    }
+        userRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (!dataSnapshot.exists()) {
+                    Log.e("AddLogEntry", "User data not found.");
+                    return;
                 }
 
-                @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
-                    Log.e("AddLogEntry", "Database error: " + databaseError.getMessage());
-                }
-            });
+                String fullName = dataSnapshot.child("Vards un uzvards").getValue(String.class);
+
+                // Format current date and time
+                SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.getDefault());
+                String dateTime = sdf.format(new Date());
+
+                String title = "Noskanēts kods " + dateTime;
+
+                String summary = fullName +" noskanēja objektu ar kodu '"+data+"'.";
+
+                DatabaseReference logRef = FirebaseDatabase.getInstance().getReference()
+                        .child("Logs").child(dateTime);
+
+                Map<String, Object> logEntry = new HashMap<>();
+                logEntry.put("user", fullName);
+                logEntry.put("email", email);
+                logEntry.put("title", title);
+                logEntry.put("summary", summary);
+
+                logRef.setValue(logEntry)
+                        .addOnSuccessListener(aVoid -> Log.d("AddLogEntry", "Log entry added successfully"))
+                        .addOnFailureListener(e -> Log.e("AddLogEntry", "Error adding log entry", e));
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.e("AddLogEntry", "Database error: " + databaseError.getMessage());
+            }
         });
     }
 

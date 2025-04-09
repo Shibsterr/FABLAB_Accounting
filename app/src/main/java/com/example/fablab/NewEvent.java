@@ -6,11 +6,13 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.preference.PreferenceManager;
 
@@ -22,8 +24,10 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -128,6 +132,7 @@ public class NewEvent extends AppCompatActivity {
                     .addOnSuccessListener(aVoid -> {
                         Toast.makeText(NewEvent.this, getString(R.string.eventadded_good), Toast.LENGTH_SHORT).show();
                         sendEmailToAdmins(title, description, numberOfPeople, eventDate, startTime, endTime);
+                        addLogEntry(title, eventDate);
                         finish(); // Close activity after successful submission
                     })
                     .addOnFailureListener(e -> Toast.makeText(NewEvent.this, getString(R.string.eventadded_Bad), Toast.LENGTH_SHORT).show());
@@ -239,4 +244,53 @@ public class NewEvent extends AppCompatActivity {
             }
         });
     }
+
+    private void addLogEntry(String name, String time) {
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (currentUser == null) return;
+
+        String uid = currentUser.getUid();
+        String email = currentUser.getEmail();
+
+        DatabaseReference userRef = FirebaseDatabase.getInstance().getReference().child("users").child(uid);
+
+        userRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (!dataSnapshot.exists()) {
+                    Log.e("AddLogEntry", "User data not found.");
+                    return;
+                }
+
+                String fullName = dataSnapshot.child("Vards un uzvards").getValue(String.class);
+
+                // Format current date and time
+                SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.getDefault());
+                String dateTime = sdf.format(new Date());
+
+                String title = "Izveidots jauns notikums " + dateTime;
+
+                String summary = fullName +" izveidoja jaunu notikumu '"+name+"' kurš notiek '"+time+"' datumā.";
+
+                DatabaseReference logRef = FirebaseDatabase.getInstance().getReference()
+                        .child("Logs").child(dateTime);
+
+                Map<String, Object> logEntry = new HashMap<>();
+                logEntry.put("user", fullName);
+                logEntry.put("email", email);
+                logEntry.put("title", title);
+                logEntry.put("summary", summary);
+
+                logRef.setValue(logEntry)
+                        .addOnSuccessListener(aVoid -> Log.d("AddLogEntry", "Log entry added successfully"))
+                        .addOnFailureListener(e -> Log.e("AddLogEntry", "Error adding log entry", e));
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.e("AddLogEntry", "Database error: " + databaseError.getMessage());
+            }
+        });
+    }
+
 }

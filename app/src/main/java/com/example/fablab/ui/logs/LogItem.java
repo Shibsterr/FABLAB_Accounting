@@ -2,75 +2,22 @@ package com.example.fablab.ui.logs;
 
 public class LogItem {
     private String dateTime;
-    private String userName;
+    private String user;
     private String email;
-    private String itemName;
-    private String desc;
-    private String quantity;
-    private boolean isAddition; // true for addition, false for subtraction
+    private String title;
+    private String summary;
 
-    public LogItem(String dateTime, String userName, String email, String itemName, String quantity, boolean isAddition) {
+    public LogItem(String dateTime, String user, String email, String title, String summary) {
         this.dateTime = dateTime;
-        this.userName = userName;
+        this.user = user;
         this.email = email;
-        this.itemName = itemName;
-        this.quantity = quantity;
-        this.isAddition = isAddition;
-    }
-    public LogItem(String dateTime, String fullname, String email, String code, String desc){
-        this.dateTime = dateTime;
-        this.userName = fullname;
-        this.email = email;
-        this.itemName = code;
-        this.desc = desc;
+        this.title = title;
+        this.summary = summary;
     }
 
-    public String getDesc(){return desc;}
-    public String getDateTime() {
-        return dateTime;
-    }
-
-    public void setDateTime(String dateTime) {
-        this.dateTime = dateTime;
-    }
-
-    public String getUserName() {
-        return userName;
-    }
-
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getItemName() {
-        return itemName;
-    }
-
-    public void setItemName(String itemName) {
-        this.itemName = itemName;
-    }
-
-    public String getQuantity() {
-        return quantity;
-    }
-
-    public void setQuantity(String quantity) {
-        this.quantity = quantity;
-    }
-
-    public boolean isAddition() {
-        return isAddition;
-    }
-
-    public void setAddition(boolean addition) {
-        isAddition = addition;
-    }
+    public String getDateTime() { return dateTime; }
+    public String getUser() { return user; }
+    public String getEmail() { return email; }
+    public String getTitle() { return title; }
+    public String getSummary() { return summary; }
 }

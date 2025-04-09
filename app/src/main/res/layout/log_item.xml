@@ -1,11 +1,9 @@
-<!-- log_item.xml -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:padding="16dp">
 
-    <!-- Button to expand/collapse -->
     <Button
         android:id="@+id/button_expand"
         android:layout_width="match_parent"
@@ -14,15 +12,6 @@
         android:textAlignment="center"
         android:visibility="visible" />
 
-    <TextView
-        android:id="@+id/text_view_summary"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Date and Time"
-        android:textSize="18sp"
-        android:textStyle="bold" />
-
-    <!-- Detailed information (hidden by default) -->
     <LinearLayout
         android:id="@+id/layout_details"
         android:layout_width="match_parent"
@@ -35,31 +24,23 @@
             android:id="@+id/text_view_username"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="User Name" />
+            android:textSize="8pt"
+            android:text="Vārds uzvārds" />
 
         <TextView
             android:id="@+id/text_view_email"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Email" />
+            android:textSize="8pt"
+            android:text="E-pasts" />
 
         <TextView
-            android:id="@+id/text_view_item_name"
+            android:id="@+id/text_view_summary"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Item Name" />
+            android:textSize="8pt"
+            android:text="Kopsavilkums" />
 
-        <TextView
-            android:id="@+id/text_view_quantity"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Quantity" />
-
-        <TextView
-            android:id="@+id/text_view_addition"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Addition" />
 
     </LinearLayout>
 

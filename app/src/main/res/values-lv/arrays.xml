@@ -33,9 +33,9 @@
         </string-array>
 
     <string-array name="sort_options">
-        <item>Kārtot pēc nosaukuma</item>
         <item>Kārtot pēc jaunākā žurnāla</item>
         <item>Kārtot pēc vecākā žurnāla</item>
-        <item>Kārtot pēc vienuma nosaukuma</item>
+        <item>Kārtot pēc lietotājvārda</item>
+        <item>Kārtot pēc virsraksts</item>
     </string-array>
 </resources>

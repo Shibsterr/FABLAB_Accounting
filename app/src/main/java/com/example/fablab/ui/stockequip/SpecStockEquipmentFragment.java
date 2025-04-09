@@ -212,7 +212,6 @@ public class SpecStockEquipmentFragment extends Fragment {
                             // Update the stock value in the database
                             snapshot.getRef().child("Skaits").setValue(String.valueOf(updatedStock));
 
-                            // Add a log entry to Realtimedatabase
                             addLogEntry(equipmentName, quantity, isAddOperation);
                             updateBtn();
                         }
@@ -271,44 +270,48 @@ public class SpecStockEquipmentFragment extends Fragment {
         }
     }
     private void addLogEntry(String equipmentName, int quantity, boolean isAddOperation) {
-        // Get the current user's UID
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
-        String uid = currentUser.getUid();
+        if (currentUser == null) return;
 
-        // Get a reference to the user's node in the Realtime Database
+        String uid = currentUser.getUid();
+        String email = currentUser.getEmail();
+
         DatabaseReference userRef = FirebaseDatabase.getInstance().getReference().child("users").child(uid);
 
-        // Fetch the user's full name from the Realtime Database
         userRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if (dataSnapshot.exists()) {
-                    // Get the user's full name
-                    String fullName = dataSnapshot.child("Vards un uzvards").getValue(String.class);
-
-                    // Get current date and time
-                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
-                    String dateTime = sdf.format(new Date());
-
-                    // Create a new log entry with the current date and time as the node name
-                    DatabaseReference logsRef = FirebaseDatabase.getInstance().getReference().child("Logs").child(dateTime);
-
-                    // Create a map with the log entry data
-                    Map<String, Object> logEntry = new HashMap<>();
-                    String quan = String.valueOf(quantity);
-                    logEntry.put("Priekšmeta nosaukums", equipmentName);
-                    logEntry.put("Daudzums", quan);
-                    logEntry.put("Pievienošana?", isAddOperation);      //if false then its subtraction else its addition
-                    logEntry.put("Vārds uzvārds", fullName); // Use the user's full name
-                    logEntry.put("Epasts", currentUser.getEmail());
-
-                    // Add the log entry to the Realtime Database
-                    logsRef.setValue(logEntry)
-                            .addOnSuccessListener(aVoid -> Log.d("AddLogEntry", "Log entry added successfully"))
-                            .addOnFailureListener(e -> Log.e("AddLogEntry", "Error adding log entry", e));
-                } else {
-                    Log.e("AddLogEntry", "User data not found in Realtime Database");
+                if (!dataSnapshot.exists()) {
+                    Log.e("AddLogEntry", "User data not found.");
+                    return;
                 }
+
+                String fullName = dataSnapshot.child("Vards un uzvards").getValue(String.class);
+
+                // Format current date and time
+                SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.getDefault());
+                String dateTime = sdf.format(new Date());
+
+                // Summary based on action
+                String summary = isAddOperation
+                        ? fullName + " pievienoja " + quantity + " vienības priekšmetam '" + equipmentName + "'."
+                        : fullName + " noņēma " + quantity + " vienības no priekšmeta '" + equipmentName + "'.";
+
+                String title = isAddOperation
+                        ? "Iekārtes vienību pievienošana " + dateTime
+                        : "Iekārtes vienību noņemšana " + dateTime;
+                DatabaseReference logRef = FirebaseDatabase.getInstance().getReference()
+                        .child("Logs").child(dateTime);
+
+                Map<String, Object> logEntry = new HashMap<>();
+                logEntry.put("user", fullName);
+                logEntry.put("email", email);
+                logEntry.put("title", title);
+                logEntry.put("summary", summary);
+
+                logRef.setValue(logEntry)
+                        .addOnSuccessListener(aVoid -> Log.d("AddLogEntry", "Log entry added successfully"))
+                        .addOnFailureListener(e -> Log.e("AddLogEntry", "Error adding log entry", e));
             }
 
             @Override
@@ -317,6 +320,7 @@ public class SpecStockEquipmentFragment extends Fragment {
             }
         });
     }
+
     private void onAddButtonClicked() {
         showQuantityInputDialog(true);
     }
