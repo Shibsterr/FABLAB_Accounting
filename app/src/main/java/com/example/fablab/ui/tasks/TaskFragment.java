@@ -34,7 +34,7 @@ public class TaskFragment extends Fragment {
     private LinearLayout tasksLayout;
     private FirebaseAuth mAuth;
     private DatabaseReference mDatabase;
-    private Button refreshButton; // Add a reference for the refresh button
+    private Button refreshButton;
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_gallery, container, false);

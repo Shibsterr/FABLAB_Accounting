@@ -2,19 +2,14 @@ package com.example.fablab;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
-import android.content.res.Resources;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -29,7 +24,6 @@ import androidx.navigation.ui.NavigationUI;
 import androidx.preference.PreferenceManager;
 
 import com.example.fablab.databinding.ActivityMainBinding;
-import com.example.fablab.ui.SpecificEquipmentFragment;
 import com.example.fablab.ui.authen.RegisterUser;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
@@ -39,7 +33,6 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.google.zxing.client.android.Intents;
 import com.journeyapps.barcodescanner.ScanContract;
 import com.journeyapps.barcodescanner.ScanOptions;
 
@@ -48,172 +41,97 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.regex.Pattern;
 
 public class MainActivity extends AppCompatActivity {
 
     private AppBarConfiguration mAppBarConfiguration;
     private TextView fullname, email;
-    private Button refreshbtn;
-    private ProgressBar progbar;
     private View loadingScreen;
-    private NetworkChangeReceiver networkChangeReceiver;
+    private DatabaseReference userRef;
+    private ValueEventListener userListener;
+    private FirebaseUser currentUser;
+    private ActivityMainBinding binding;
     private final ExecutorService executorService = Executors.newSingleThreadExecutor();
-    private static final String PATTERN_STRING = "^[1-9][0-9]?_[1-9]_[1-2]?_[a-zA-Z0-9\\s]+$";
-    private static final String PATTERN_LONGER = "^[1-9][0-9]?_[1-9][0-9]?_[1-2]_[a-zA-Z0-9\\s]+$";
-    private static final String PATTERN = "^[1-9]_[1-9][0-9]?_[1-2]_[a-zA-Z0-9\\s]+$";
-    private static final String SMALL_PATTERN = "^[1-9]_[1-9]_[1-2]_[a-zA-Z0-9\\s]+$";
-    private boolean isReceiverRegistered = false; // Flag to track receiver registration
+
     private final ActivityResultLauncher<ScanOptions> barLauncher = registerForActivityResult(new ScanContract(),
             result -> {
                 if (result.getContents() == null) {
-                    Intent originalIntent = result.getOriginalIntent();
-                    if (originalIntent == null) {
-                        Log.d("MainActivity", "Cancelled scan");
-                        Toast.makeText(MainActivity.this, "Cancelled", Toast.LENGTH_LONG).show();
-                    } else if (originalIntent.hasExtra(Intents.Scan.MISSING_CAMERA_PERMISSION)) {
-                        Log.d("MainActivity", "Cancelled scan due to missing camera permission");
-                        Toast.makeText(MainActivity.this, "Cancelled due to missing camera permission", Toast.LENGTH_LONG).show();
-                    }
+                    Toast.makeText(this, "Cancelled", Toast.LENGTH_LONG).show();
                 } else {
                     String scannedCode = result.getContents();
-                    Log.d("MainActivity", "Scanned data: " + scannedCode);
-
                     if (isValidScan(scannedCode)) {
                         searchEquipmentInFirebase(scannedCode);
                     } else {
-                        Toast.makeText(MainActivity.this, "Invalid scan. Please try again.", Toast.LENGTH_LONG).show();
-                        scanCode(null); // Restart scanning
+                        Toast.makeText(this, "Invalid scan. Please try again.", Toast.LENGTH_LONG).show();
+                        scanCode(null);
                     }
                 }
             });
 
-    private boolean isValidScan(String data) {
-        return data.length() == 8 || Pattern.matches(PATTERN_STRING, data) ||
-                Pattern.matches(PATTERN_LONGER, data) ||
-                Pattern.matches(PATTERN, data) ||
-                Pattern.matches(SMALL_PATTERN, data);
-    }
-    private void searchEquipmentInFirebase(String scannedCode) {
-        DatabaseReference equipmentRef = FirebaseDatabase.getInstance().getReference("equipment");
-        equipmentRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                boolean found = false;
-
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    String kods = snapshot.child("Kods").getValue(String.class);
-                    String izgKods = snapshot.child("IzgKods").getValue(String.class);
-
-                    if (scannedCode.equals(kods) || scannedCode.equals(izgKods)) {
-                        String equipmentId = snapshot.getKey(); // Get the key of the equipment item
-                        openSpecificEquipmentFragment(equipmentId);
-                        found = true;
-                        break;
-                    }
-                }
-
-                if (!found) {
-                    Toast.makeText(MainActivity.this, "Item not found, please try again.", Toast.LENGTH_LONG).show();
-                    scanCode(null); // Restart scanning
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                Log.w("MainActivity", "Failed to read value.", databaseError.toException());
-            }
-        });
-    }
-    private void openSpecificEquipmentFragment(String equipmentId) {
-        Bundle bundle = new Bundle();
-        bundle.putString("code", equipmentId);
-
-        SpecificEquipmentFragment specificEquipmentFragment = new SpecificEquipmentFragment();
-        specificEquipmentFragment.setArguments(bundle);
-
-        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
-        navController.navigate(R.id.specificEquipmentFragment, bundle);
-
-        Toast.makeText(MainActivity.this, "Scanned: " + equipmentId, Toast.LENGTH_LONG).show();
-        addLogEntry(equipmentId);
-    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Apply theme and language before setting content view
+        // Apply language and theme
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         String selectedTheme = sharedPreferences.getString("theme_preference", "Theme.FABLAB");
         int themeResourceId = getResources().getIdentifier(selectedTheme, "style", getPackageName());
         setTheme(themeResourceId);
 
-        // Set locale based on saved language preference
         String languageCode = sharedPreferences.getString("language_preference", "en");
         Locale locale = new Locale(languageCode);
         Locale.setDefault(locale);
-
-        Resources resources = getResources();
-        Configuration configuration = new Configuration(resources.getConfiguration());
+        Configuration configuration = getResources().getConfiguration();
         configuration.setLocale(locale);
+        getResources().updateConfiguration(configuration, getResources().getDisplayMetrics());
 
-        // Update the configuration and display metrics
-        resources.updateConfiguration(configuration, resources.getDisplayMetrics());
-
-        Log.d("MainActivity", "Language Code: " + languageCode);
-
-        // Set the content view to the loading screen first
         setContentView(R.layout.activity_loading);
         loadingScreen = findViewById(R.id.progressBar);
 
-        // Load the main content after a delay to simulate loading
-        if (isNetworkAvailable()) {
-            FirebaseAuth mAuth = FirebaseAuth.getInstance();
-            FirebaseUser currentUser = mAuth.getCurrentUser();
+        if (!isNetworkAvailable()) {
+            Toast.makeText(this, "No network connection", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
-            if (currentUser == null) {
-                startActivity(new Intent(MainActivity.this, RegisterUser.class));
-                finish(); // Close the current activity
-            } else {
-                // Fetch Firebase data and show the main content after loading
-                DatabaseReference userRef = FirebaseDatabase.getInstance().getReference().child("users").child(Objects.requireNonNull(currentUser.getUid()));
-                userRef.keepSynced(true);
+        currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (currentUser == null) {
+            startActivity(new Intent(MainActivity.this, RegisterUser.class));
+            finish();
+        } else {
+            userRef = FirebaseDatabase.getInstance().getReference("users").child(currentUser.getUid());
+            userRef.keepSynced(true);
 
-                // Fetch the user's profile information
-                executorService.execute(() -> {
-                    userRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                            if (dataSnapshot.exists()) {
-                                runOnUiThread(() -> setupMainContent(dataSnapshot));
-                            } else {
-                                runOnUiThread(() -> {
-                                    Toast.makeText(MainActivity.this, "User data not found", Toast.LENGTH_SHORT).show();
-                                    loadingScreen.setVisibility(View.GONE);
-                                });
-                            }
-                        }
+            // Realtime listener for syncing UI updates
+            userListener = new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    if (!snapshot.exists()) {
+                        Toast.makeText(MainActivity.this, "User data not found", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
 
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError databaseError) {
-                            runOnUiThread(() -> loadingScreen.setVisibility(View.GONE));
+                    runOnUiThread(() -> {
+                        if (binding == null) {
+                            setupMainContent(snapshot);
+                        } else {
+                            updateSidebarUI(snapshot);
                         }
                     });
-                });
+                }
 
-
-            }
-        } else {
-            Toast.makeText(MainActivity.this, "No network connection", Toast.LENGTH_SHORT).show();
-            loadingScreen.setVisibility(View.GONE);
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+                    Toast.makeText(MainActivity.this, "Database error", Toast.LENGTH_SHORT).show();
+                }
+            };
+            userRef.addValueEventListener(userListener);
         }
     }
 
     private void setupMainContent(DataSnapshot dataSnapshot) {
-        ActivityMainBinding binding = ActivityMainBinding.inflate(getLayoutInflater());
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
         setSupportActionBar(binding.appBarMain.toolbar);
@@ -221,8 +139,10 @@ public class MainActivity extends AppCompatActivity {
 
         DrawerLayout drawer = binding.drawerLayout;
         NavigationView navigationView = binding.navView;
+
         mAppBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.nav_home, R.id.new_equip, R.id.nav_task, R.id.nav_assign, R.id.nav_logs, R.id.nav_report, R.id.nav_settings)
+                R.id.nav_home, R.id.new_equip, R.id.nav_task, R.id.nav_assign,
+                R.id.nav_logs, R.id.nav_report, R.id.nav_settings)
                 .setOpenableLayout(drawer)
                 .build();
 
@@ -230,103 +150,89 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
 
-        View headerView = navigationView.getHeaderView(0);
+        updateSidebarUI(dataSnapshot);
+    }
+
+    private void updateSidebarUI(DataSnapshot snapshot) {
+        View headerView = binding.navView.getHeaderView(0);
         fullname = headerView.findViewById(R.id.nameSurname);
         email = headerView.findViewById(R.id.epasts);
 
-        // Update UI with user details
-        String name = dataSnapshot.child("Vards un uzvards").getValue(String.class);
-        String userEmail = dataSnapshot.child("epasts").getValue(String.class);
+        String name = snapshot.child("Vards un uzvards").getValue(String.class);
+        String userEmail = snapshot.child("epasts").getValue(String.class);
+        String statuss = snapshot.child("Statuss").getValue(String.class);
 
-        if (name != null && userEmail != null) {
-            fullname.setText(name);
-            email.setText(userEmail);
-        } else {
-            fullname.setText("Not working");
-            email.setText("Not working");
-        }
+        fullname.setText(name != null ? name : "No name");
+        email.setText(userEmail != null ? userEmail : "No email");
 
-        // Handle visibility based on status
-        String statuss = dataSnapshot.child("Statuss").getValue(String.class);
-        Menu navMenu = navigationView.getMenu();
-
-        if ("Lietotājs".equals(statuss)) {
-            navMenu.findItem(R.id.new_equip).setVisible(false);
-            navMenu.findItem(R.id.nav_task).setVisible(false);
-            navMenu.findItem(R.id.nav_logs).setVisible(false);
-            navMenu.findItem(R.id.nav_assign).setVisible(false);
-            navMenu.findItem(R.id.nav_updateuser).setVisible(false);
-        } else if ("Darbinieks".equals(statuss)) {
-            navMenu.findItem(R.id.new_equip).setVisible(true);
-            navMenu.findItem(R.id.nav_task).setVisible(true);
-            navMenu.findItem(R.id.nav_logs).setVisible(false);
-            navMenu.findItem(R.id.nav_assign).setVisible(true);
-            navMenu.findItem(R.id.nav_updateuser).setVisible(false);
-        } else if ("Admin".equals(statuss)) {
-            navMenu.findItem(R.id.new_equip).setVisible(true);
-            navMenu.findItem(R.id.nav_task).setVisible(true);
-            navMenu.findItem(R.id.nav_logs).setVisible(true);
-            navMenu.findItem(R.id.nav_assign).setVisible(true);
-            navMenu.findItem(R.id.nav_updateuser).setVisible(true);
-        }
-
-        // Hide the loading screen after content is ready
-        loadingScreen.setVisibility(View.GONE);
+        Menu navMenu = binding.navView.getMenu();
+        navMenu.findItem(R.id.new_equip).setVisible("Darbinieks".equals(statuss) || "Admin".equals(statuss));
+        navMenu.findItem(R.id.nav_task).setVisible("Darbinieks".equals(statuss) || "Admin".equals(statuss));
+        navMenu.findItem(R.id.nav_logs).setVisible("Admin".equals(statuss));
+        navMenu.findItem(R.id.nav_assign).setVisible("Darbinieks".equals(statuss) || "Admin".equals(statuss));
+        navMenu.findItem(R.id.nav_updateuser).setVisible("Admin".equals(statuss));
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        if (!isReceiverRegistered) {
-            IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
-            networkChangeReceiver = new NetworkChangeReceiver();
-            registerReceiver(networkChangeReceiver, filter);
-            isReceiverRegistered = true;
-        }
+    private boolean isNetworkAvailable() {
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        return activeNetwork != null && activeNetwork.isConnected();
     }
-    @Override
-    protected void onStop() {
-        super.onStop();
-        if (isReceiverRegistered) {
-            unregisterReceiver(networkChangeReceiver);
-            isReceiverRegistered = false;
-        }
+
+    private boolean isValidScan(String data) {
+        return data.length() == 8 || data.matches("^[1-9][0-9]?_[1-9]_[1-2]?_[a-zA-Z0-9\\s]+$")
+                || data.matches("^[1-9][0-9]?_[1-9][0-9]?_[1-2]_[a-zA-Z0-9\\s]+$")
+                || data.matches("^[1-9]_[1-9][0-9]?_[1-2]_[a-zA-Z0-9\\s]+$")
+                || data.matches("^[1-9]_[1-9]_[1-2]_[a-zA-Z0-9\\s]+$");
     }
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.main, menu);
-        return true;
+
+    private void searchEquipmentInFirebase(String scannedCode) {
+        FirebaseDatabase.getInstance().getReference("equipment").addListenerForSingleValueEvent(
+                new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        boolean found = false;
+                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                            String kods = snapshot.child("Kods").getValue(String.class);
+                            String izgKods = snapshot.child("IzgKods").getValue(String.class);
+                            if (scannedCode.equals(kods) || scannedCode.equals(izgKods)) {
+                                openSpecificEquipmentFragment(snapshot.getKey());
+                                found = true;
+                                break;
+                            }
+                        }
+                        if (!found) {
+                            Toast.makeText(MainActivity.this, "Item not found, please try again.", Toast.LENGTH_LONG).show();
+                            scanCode(null);
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        Log.w("MainActivity", "Firebase error", error.toException());
+                    }
+                });
     }
-    @Override
-    public boolean onSupportNavigateUp() {
+
+    private void openSpecificEquipmentFragment(String equipmentId) {
+        Bundle bundle = new Bundle();
+        bundle.putString("code", equipmentId);
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
-        return NavigationUI.navigateUp(navController, mAppBarConfiguration) || super.onSupportNavigateUp();
-    }
-    @Override
-    protected void onDestroy() {
-        if (isReceiverRegistered) {
-            unregisterReceiver(networkChangeReceiver);
-            isReceiverRegistered = false;
-        }
-        executorService.shutdown(); // Shutdown threading
-        super.onDestroy();
+        navController.navigate(R.id.specificEquipmentFragment, bundle);
+        Toast.makeText(this, "Scanned: " + equipmentId, Toast.LENGTH_LONG).show();
+        addLogEntry(equipmentId);
     }
 
-    public boolean isNetworkAvailable() {
-        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetworkInfo = connectivityManager != null ? connectivityManager.getActiveNetworkInfo() : null;
-        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
-    }
-    public void scanCode(MenuItem item) {
+    private void scanCode(View view) {
         ScanOptions options = new ScanOptions();
-        options.setPrompt(getString(R.string.volume_prompt_qr));
+        options.setPrompt("Scan QR code");
         options.setBeepEnabled(false);
         options.setOrientationLocked(true);
         options.setCaptureActivity(CaptureAct.class);
         barLauncher.launch(options);
     }
 
-    private void addLogEntry(String data) {
+    private void addLogEntry(String code) {
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentUser == null) return;
 
@@ -349,9 +255,9 @@ public class MainActivity extends AppCompatActivity {
                 SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.getDefault());
                 String dateTime = sdf.format(new Date());
 
-                String title = "Noskanēts kods " + dateTime;
+                String title = "Noskanēja kodu " + dateTime;
 
-                String summary = fullName +" noskanēja objektu ar kodu '"+data+"'.";
+                String summary = fullName + " noskanēja kodu '"+code+"'.";
 
                 DatabaseReference logRef = FirebaseDatabase.getInstance().getReference()
                         .child("Logs").child(dateTime);
@@ -374,4 +280,18 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (userRef != null && userListener != null) {
+            userRef.removeEventListener(userListener);
+        }
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
+        return NavigationUI.navigateUp(navController, mAppBarConfiguration)
+                || super.onSupportNavigateUp();
+    }
 }

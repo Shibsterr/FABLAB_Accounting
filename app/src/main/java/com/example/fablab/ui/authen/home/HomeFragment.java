@@ -114,9 +114,9 @@ public class HomeFragment extends Fragment {
                 eventsDialogFragment.show(getChildFragmentManager(), "eventsDialog");
             }
         });
-
         return view;
     }
+
     private void toggleViews() {
         // Toggle properLayout
         if (properLayout.getVisibility() == View.VISIBLE) {
