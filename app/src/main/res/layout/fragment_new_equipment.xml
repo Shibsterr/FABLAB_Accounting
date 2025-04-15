@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
@@ -9,301 +8,301 @@
     tools:context=".ui.NewEquipmentFragment"
     android:orientation="vertical">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp">
+
+        <!-- Text for Spinner Type -->
+        <TextView
+            android:id="@+id/text_type"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="16dp">
+            android:text="@string/izvelies"
+            android:textSize="16sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-                <!-- Text for Spinner Type -->
-                <TextView
-                    android:id="@+id/text_type"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/izvelies"
-                    android:textSize="16sp"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+        <!-- Spinner Type -->
+        <Spinner
+            android:id="@+id/spinner_type"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/spinner_background"
+            android:spinnerMode="dropdown"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/text_type"
+            android:layout_marginTop="8dp" />
 
-                <!-- Spinner Type -->
-                <Spinner
-                    android:id="@+id/spinner_type"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/spinner_background"
-                    android:spinnerMode="dropdown"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/text_type"
-                    android:layout_marginTop="8dp" />
+        <!-- Code TextView -->
+        <TextView
+            android:id="@+id/kods_nr"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/kods"
+            android:textSize="16sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/spinner_type"
+            android:layout_marginTop="16dp" />
 
-                <!-- Code TextView -->
-                <TextView
-                    android:id="@+id/kods_nr"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/kods"
-                    android:textSize="16sp"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/spinner_type"
-                    android:layout_marginTop="16dp" />
+        <!-- Code EditText -->
+        <EditText
+            android:id="@+id/edit_code"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:hint="@string/kods_hints"
+            android:inputType="text"
+            android:padding="12dp"
+            android:background="@drawable/edit_text_background"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/info_code"
+            app:layout_constraintTop_toBottomOf="@id/kods_nr"
+            android:layout_marginTop="8dp" />
 
-                <!-- Code EditText -->
-                <EditText
-                    android:id="@+id/edit_code"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/kods_hints"
-                    android:inputType="text"
-                    android:padding="12dp"
-                    android:background="@drawable/edit_text_background"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toStartOf="@id/info_code"
-                    app:layout_constraintTop_toBottomOf="@id/kods_nr"
-                    android:layout_marginTop="8dp" />
+        <!-- Info Button for Code -->
+        <ImageButton
+            android:id="@+id/info_code"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="?attr/selectableItemBackground"
+            android:contentDescription="@string/info_code"
+            android:src="@drawable/ic_info"
+            app:layout_constraintBottom_toBottomOf="@+id/kods_nr"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/kods_nr" />
 
-                <!-- Info Button for Code -->
-                <ImageButton
-                    android:id="@+id/info_code"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="?attr/selectableItemBackground"
-                    android:contentDescription="@string/info_code"
-                    android:src="@drawable/ic_info"
-                    app:layout_constraintBottom_toBottomOf="@+id/kods_nr"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="@+id/kods_nr" />
+        <!-- Name TextView -->
+        <TextView
+            android:id="@+id/name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/nosaukums"
+            android:textSize="16sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/edit_code"
+            android:layout_marginTop="16dp" />
 
-                <!-- Name TextView -->
-                <TextView
-                    android:id="@+id/name"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/nosaukums"
-                    android:textSize="16sp"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/edit_code"
-                    android:layout_marginTop="16dp" />
+        <!-- Name EditText -->
+        <EditText
+            android:id="@+id/edit_name"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:hint="@string/name_hints"
+            android:inputType="text"
+            android:padding="12dp"
+            android:background="@drawable/edit_text_background"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/name"
+            android:layout_marginTop="8dp" />
 
-                <!-- Name EditText -->
-                <EditText
-                    android:id="@+id/edit_name"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/name_hints"
-                    android:inputType="text"
-                    android:padding="12dp"
-                    android:background="@drawable/edit_text_background"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/name"
-                    android:layout_marginTop="8dp" />
+        <!-- Unit TextView -->
+        <TextView
+            android:id="@+id/unit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/units"
+            android:textSize="16sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/edit_name"
+            android:layout_marginTop="16dp" />
 
-                <!-- Unit TextView -->
-                <TextView
-                    android:id="@+id/unit"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/units"
-                    android:textSize="16sp"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/edit_name"
-                    android:layout_marginTop="16dp" />
+        <!-- Unit Spinner -->
+        <Spinner
+            android:id="@+id/spinner_unit"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/spinner_background"
+            android:spinnerMode="dropdown"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/unit"
+            android:layout_marginTop="8dp" />
 
-                <!-- Unit Spinner -->
-                <Spinner
-                    android:id="@+id/spinner_unit"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/spinner_background"
-                    android:spinnerMode="dropdown"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/unit"
-                    android:layout_marginTop="8dp" />
+        <!-- Quantity EditText -->
+        <EditText
+            android:id="@+id/skaits"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:hint="@string/ievadi_skaitli_cik_liels_daudzums"
+            android:inputType="number"
+            android:padding="12dp"
+            android:background="@drawable/edit_text_background"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/spinner_unit"
+            android:layout_marginTop="16dp" />
 
-                <!-- Quantity EditText -->
-                <EditText
-                    android:id="@+id/skaits"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/ievadi_skaitli_cik_liels_daudzums"
-                    android:inputType="number"
-                    android:padding="12dp"
-                    android:background="@drawable/edit_text_background"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/spinner_unit"
-                    android:layout_marginTop="16dp" />
+        <!-- Stock Critical, Min, and Max -->
+        <TextView
+            android:id="@+id/stok"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/stock_new"
+            android:textSize="16sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/skaits"
+            android:layout_marginTop="16dp" />
 
-                <!-- Stock Critical, Min, and Max -->
-                <TextView
-                    android:id="@+id/stok"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/stock_new"
-                    android:textSize="16sp"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/skaits"
-                    android:layout_marginTop="16dp" />
+        <EditText
+            android:id="@+id/crit_stock"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:hint="@string/crit_stock"
+            android:inputType="number"
+            android:padding="12dp"
+            android:background="@drawable/edit_text_background"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/stok"
+            android:layout_marginTop="8dp" />
 
-                <EditText
-                    android:id="@+id/crit_stock"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/crit_stock"
-                    android:inputType="number"
-                    android:padding="12dp"
-                    android:background="@drawable/edit_text_background"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/stok"
-                    android:layout_marginTop="8dp" />
+        <EditText
+            android:id="@+id/min_stock"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:hint="@string/min_stock"
+            android:inputType="number"
+            android:padding="12dp"
+            android:background="@drawable/edit_text_background"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/crit_stock"
+            android:layout_marginTop="8dp" />
 
-                <EditText
-                    android:id="@+id/min_stock"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/min_stock"
-                    android:inputType="number"
-                    android:padding="12dp"
-                    android:background="@drawable/edit_text_background"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/crit_stock"
-                    android:layout_marginTop="8dp" />
+        <EditText
+            android:id="@+id/max_stock"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:hint="@string/max_stock"
+            android:inputType="number"
+            android:padding="12dp"
+            android:background="@drawable/edit_text_background"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/min_stock"
+            android:layout_marginTop="8dp" />
 
-                <EditText
-                    android:id="@+id/max_stock"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/max_stock"
-                    android:inputType="number"
-                    android:padding="12dp"
-                    android:background="@drawable/edit_text_background"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/min_stock"
-                    android:layout_marginTop="8dp" />
+        <!-- Info Button for Stock -->
 
-                <!-- Info Button for Stock -->
+        <!-- Description TextView -->
 
-                <!-- Description TextView -->
+        <ImageButton
+            android:id="@+id/info_stock"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="4dp"
+            android:background="?attr/selectableItemBackground"
+            android:contentDescription="@string/info_stock"
+            android:src="@drawable/ic_info"
+            app:layout_constraintBottom_toBottomOf="@+id/stok"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/stok"
+            app:layout_constraintVertical_bias="1.0" />
 
-                <ImageButton
-                    android:id="@+id/info_stock"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="4dp"
-                    android:background="?attr/selectableItemBackground"
-                    android:contentDescription="@string/info_stock"
-                    android:src="@drawable/ic_info"
-                    app:layout_constraintBottom_toBottomOf="@+id/stok"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="@+id/stok"
-                    app:layout_constraintVertical_bias="1.0" />
+        <TextView
+            android:id="@+id/desc_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/desc_text"
+            android:textSize="16sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/max_stock"
+            android:layout_marginTop="16dp" />
 
-                <TextView
-                    android:id="@+id/desc_text_view"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/desc_text"
-                    android:textSize="16sp"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/max_stock"
-                    android:layout_marginTop="16dp" />
+        <!-- Description EditText -->
+        <EditText
+            android:id="@+id/description"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:padding="12dp"
+            android:background="@drawable/edit_text_background"
+            android:hint="@string/apraksts"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/desc_text_view"
+            android:minLines="3"
+            android:maxLines="5" />
 
-                <!-- Description EditText -->
-                <EditText
-                    android:id="@+id/description"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginBottom="8dp"
-                    android:padding="12dp"
-                    android:background="@drawable/edit_text_background"
-                    android:hint="@string/apraksts"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/desc_text_view"
-                    android:minLines="3"
-                    android:maxLines="5" />
+        <!-- Integer Limit TextView -->
+        <TextView
+            android:id="@+id/izg_code"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/izg_code"
+            android:textSize="16sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/description"
+            android:layout_marginTop="16dp" />
 
-                <!-- Integer Limit TextView -->
-                <TextView
-                    android:id="@+id/izg_code"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/izg_code"
-                    android:textSize="16sp"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/description"
-                    android:layout_marginTop="16dp" />
+        <!-- Integer Limit EditText -->
+        <EditText
+            android:id="@+id/edit_integer_limit"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:padding="12dp"
+            android:background="@drawable/edit_text_background"
+            android:hint="@string/enter_value_max_8_digits"
+            android:inputType="number"
+            android:maxLength="8"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/info_izg_code"
+            app:layout_constraintTop_toBottomOf="@id/izg_code" />
 
-                <!-- Integer Limit EditText -->
-                <EditText
-                    android:id="@+id/edit_integer_limit"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:padding="12dp"
-                    android:background="@drawable/edit_text_background"
-                    android:hint="@string/enter_value_max_8_digits"
-                    android:inputType="number"
-                    android:maxLength="8"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toStartOf="@id/info_izg_code"
-                    app:layout_constraintTop_toBottomOf="@id/izg_code" />
+        <!-- Info Button for Integer Limit -->
 
-                <!-- Info Button for Integer Limit -->
+        <!-- Upload Button -->
+        <ImageButton
+            android:id="@+id/info_izg_code"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="4dp"
+            android:background="?attr/selectableItemBackground"
+            android:contentDescription="@string/info_izg_code"
+            android:src="@drawable/ic_info"
+            app:layout_constraintBottom_toBottomOf="@+id/izg_code"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/izg_code"
+            app:layout_constraintVertical_bias="0.0" />
 
-                <!-- Upload Button -->
-                <ImageButton
-                    android:id="@+id/info_izg_code"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="4dp"
-                    android:background="?attr/selectableItemBackground"
-                    android:contentDescription="@string/info_izg_code"
-                    android:src="@drawable/ic_info"
-                    app:layout_constraintBottom_toBottomOf="@+id/izg_code"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="@+id/izg_code"
-                    app:layout_constraintVertical_bias="0.0" />
+        <Button
+            android:id="@+id/button_upload"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:textColor="@android:color/white"
+            android:text="@string/pievienot_att"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/edit_integer_limit" />
 
-                <Button
-                    android:id="@+id/button_upload"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="24dp"
-                    android:textColor="@android:color/white"
-                    android:text="@string/pievienot_att"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/edit_integer_limit" />
+        <!-- File Name TextView -->
+        <TextView
+            android:id="@+id/textViewFileName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/no_file_selected"
+            android:textSize="12sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/button_upload" />
 
-                <!-- File Name TextView -->
-                <TextView
-                    android:id="@+id/textViewFileName"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:text="@string/no_file_selected"
-                    android:textSize="12sp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/button_upload" />
+        <!-- Submit Button -->
+        <Button
+            android:id="@+id/button_submit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:textColor="@android:color/white"
+            android:text="@string/submit"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/textViewFileName" />
 
-                <!-- Submit Button -->
-                <Button
-                    android:id="@+id/button_submit"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="24dp"
-                    android:textColor="@android:color/white"
-                    android:text="@string/submit"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/textViewFileName" />
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

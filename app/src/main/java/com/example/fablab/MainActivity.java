@@ -9,6 +9,7 @@ import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -103,7 +104,6 @@ public class MainActivity extends AppCompatActivity {
             userRef = FirebaseDatabase.getInstance().getReference("users").child(currentUser.getUid());
             userRef.keepSynced(true);
 
-            // Realtime listener for syncing UI updates
             userListener = new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -223,9 +223,9 @@ public class MainActivity extends AppCompatActivity {
         addLogEntry(equipmentId);
     }
 
-    private void scanCode(View view) {
+    public void scanCode(MenuItem item) {
         ScanOptions options = new ScanOptions();
-        options.setPrompt("Scan QR code");
+        options.setPrompt(getString(R.string.volume_prompt_qr));
         options.setBeepEnabled(false);
         options.setOrientationLocked(true);
         options.setCaptureActivity(CaptureAct.class);
@@ -257,7 +257,7 @@ public class MainActivity extends AppCompatActivity {
 
                 String title = "Noskanēja kodu " + dateTime;
 
-                String summary = fullName + " noskanēja kodu '"+code+"'.";
+                String summary = fullName + " noskanēja kodu '" + code + "'.";
 
                 DatabaseReference logRef = FirebaseDatabase.getInstance().getReference()
                         .child("Logs").child(dateTime);
@@ -288,10 +288,13 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+
+    //adds the qr button at the top bar (REQUIRED)
     @Override
-    public boolean onSupportNavigateUp() {
-        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
-        return NavigationUI.navigateUp(navController, mAppBarConfiguration)
-                || super.onSupportNavigateUp();
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main, menu);
+        return true;
     }
+
+
 }

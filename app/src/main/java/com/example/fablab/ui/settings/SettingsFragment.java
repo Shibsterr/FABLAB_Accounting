@@ -44,7 +44,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
             // Set the summary of the language preference to the current language
             languagePreference.setSummaryProvider(preference -> {
                 String languageValue = sharedPreferences.getString("language_preference", "en");
-                Log.d("LanguagePreference","saved language preference: "+languageValue);
+                Log.d("LanguagePreference", "saved language preference: " + languageValue);
                 return languageValue.equals("en") ? "English" : "Latvian";
             });
 

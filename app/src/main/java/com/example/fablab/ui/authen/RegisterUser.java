@@ -250,7 +250,7 @@ public class RegisterUser extends AppCompatActivity implements View.OnClickListe
     }
 
     private boolean isValidEmailDomain(String email) {
-        String[] validDomains = {"gmail.com", "yahoo.com", "outlook.com", "hotmail.com", "icloud.com","liepaja.edu.lv"};
+        String[] validDomains = {"gmail.com", "yahoo.com", "outlook.com", "hotmail.com", "icloud.com", "liepaja.edu.lv"};
         String domain = email.substring(email.lastIndexOf("@") + 1).toLowerCase();
         for (String validDomain : validDomains) {
             if (domain.equals(validDomain)) {

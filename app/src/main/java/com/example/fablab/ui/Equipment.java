@@ -1,7 +1,7 @@
 package com.example.fablab.ui;
 
 public class Equipment {
-    private  String name;
+    private String name;
     private String description;
     private String imageUrl;
 

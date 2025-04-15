@@ -63,9 +63,10 @@ public class NewEquipmentFragment extends Fragment {
     private String selectedType, selectedUnit;
     private View view;
     private Button btnsubmit, btnUploadImage;
-    private ImageButton infoCode, infoStock,infoIntegerLimit;
+    private ImageButton infoCode, infoStock, infoIntegerLimit;
     private EditText editcode, editname, editamount, editcrit, editmin, editmax, editdescr, editizcode;
     private boolean isImageCaptured = false;
+
     public NewEquipmentFragment() {
         //Empty constructor (REQUIRED)
     }
@@ -143,14 +144,16 @@ public class NewEquipmentFragment extends Fragment {
         infoIntegerLimit.setOnClickListener(v -> showInfoDialog("integer_limit"));
 
         // Set listeners for text changes in EditText fields to enable/disable the upload image button accordingly
-        EditText[] editTexts = {editcode, editname, editamount, editdescr, editcrit, editmax, editmin,editizcode};
+        EditText[] editTexts = {editcode, editname, editamount, editdescr, editcrit, editmax, editmin, editizcode};
         for (EditText editText : editTexts) {
             editText.addTextChangedListener(new TextWatcher() {
                 @Override
-                public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                }
 
                 @Override
-                public void onTextChanged(CharSequence s, int start, int before, int count) {}
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+                }
 
                 @Override
                 public void afterTextChanged(Editable s) {
@@ -191,42 +194,42 @@ public class NewEquipmentFragment extends Fragment {
                 Toast.makeText(getContext(), getString(R.string.empty_fields_error), Toast.LENGTH_SHORT).show();
                 Log.d("MainActivity", "One or more fields are empty");
 
-                if(TextUtils.isEmpty(code)){
+                if (TextUtils.isEmpty(code)) {
                     editcode.setError(getString(R.string.missing_code));
                     deleteCurrentImage();
                 }
 
-                if (TextUtils.isEmpty(name)){
+                if (TextUtils.isEmpty(name)) {
                     editname.setError(getString(R.string.missing_name));
                     deleteCurrentImage();
                 }
 
-                if (TextUtils.isEmpty(skaits)){
+                if (TextUtils.isEmpty(skaits)) {
                     editamount.setError(getString(R.string.missing_amount));
                     deleteCurrentImage();
                 }
 
-                if(TextUtils.isEmpty(desc)){
+                if (TextUtils.isEmpty(desc)) {
                     editdescr.setError(getString(R.string.missing_desc));
                 }
 
-                if (TextUtils.isEmpty(crit)){
+                if (TextUtils.isEmpty(crit)) {
                     editcrit.setError(getString(R.string.missing_crit));
                 }
 
-                if (TextUtils.isEmpty(min)){
+                if (TextUtils.isEmpty(min)) {
                     editmin.setError(getString(R.string.missing_min));
                 }
 
-                if (TextUtils.isEmpty(max)){
+                if (TextUtils.isEmpty(max)) {
                     editmax.setError(getString(R.string.missing_max));
                 }
 
-                if(TextUtils.isEmpty(izg_code)){
+                if (TextUtils.isEmpty(izg_code)) {
                     editizcode.setError(getString(R.string.missing_izgcode));
                 }
 
-            }else{
+            } else {
                 //Checks for negative numbers
                 if (skaits.contains("-")) {
                     editamount.setError(getString(R.string.error_negativenr));
@@ -277,18 +280,18 @@ public class NewEquipmentFragment extends Fragment {
                             deleteCurrentImage();
                         } else {
 
-                            if(izg_code.length() != 8) {
+                            if (izg_code.length() != 8) {
                                 editizcode.setError(getString(R.string.unfinished_code));
                                 editizcode.requestFocus();
-                            }else{
+                            } else {
                                 // Check if an image has been captured
                                 if (!isImageCaptured) {
                                     Toast.makeText(getContext(), getString(R.string.capture_image), Toast.LENGTH_SHORT).show();
                                     return; // Exit the method if no image is captured
                                 }
 
-                            //Realtime database
-                            DatabaseReference databaseRef = FirebaseDatabase.getInstance().getReference();
+                                //Realtime database
+                                DatabaseReference databaseRef = FirebaseDatabase.getInstance().getReference();
                                 whatStat(stacija, stationName -> {
                                     if (!stationName.isEmpty()) {
                                         // Use stationName here once it's fetched from Firebase
@@ -354,9 +357,9 @@ public class NewEquipmentFragment extends Fragment {
 
                             }
                         }
-                    }else{
+                    } else {
                         deleteCurrentImage();
-                        Log.d("NewEquipment","Something went wrong");
+                        Log.d("NewEquipment", "Something went wrong");
                     }
                 }
             }
@@ -371,6 +374,7 @@ public class NewEquipmentFragment extends Fragment {
         });
         return view;
     }
+
     private void whatStat(String stacija, StationCallback callback) {
         int check;
         try {
@@ -406,6 +410,7 @@ public class NewEquipmentFragment extends Fragment {
             }
         });
     }
+
     public interface StationCallback {
         void onStationFound(String stationName);
     }
@@ -415,6 +420,7 @@ public class NewEquipmentFragment extends Fragment {
         DialogFragment dialog = InfoDialogFragment.newInstance(infoType);
         dialog.show(getChildFragmentManager(), "infoDialog");
     }
+
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -428,6 +434,7 @@ public class NewEquipmentFragment extends Fragment {
             }
         }
     }
+
     private boolean checkCode(String kods) {
         //Allows spaces aswell
         String patternString = "^[1-9][0-9]?_[1-9]_[1-2]?_[a-zA-Z0-9\\s]+$"; //10_5_1_test1234
@@ -476,6 +483,7 @@ public class NewEquipmentFragment extends Fragment {
             startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
         }
     }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -491,6 +499,7 @@ public class NewEquipmentFragment extends Fragment {
             isImageCaptured = true;
         }
     }
+
     private void deleteCurrentImage() {
         // Construct the StorageReference for the current picture
         String imageName = editcode.getText().toString().toUpperCase() + ".png";
@@ -505,12 +514,14 @@ public class NewEquipmentFragment extends Fragment {
             Toast.makeText(getContext(), getString(R.string.image_deleted_bad) + exception.getMessage(), Toast.LENGTH_SHORT).show();
         });
     }
+
     private Uri getImageUri(Context context, Bitmap bitmap) {
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.PNG, 100, bytes);
         String path = MediaStore.Images.Media.insertImage(context.getContentResolver(), bitmap, "Title", null);
         return Uri.parse(path);
     }
+
     private void uploadImageToStorage(Uri uri, String imageName) {
         // Convert the image to PNG format
         Bitmap bitmap;
@@ -569,7 +580,7 @@ public class NewEquipmentFragment extends Fragment {
 
                 String title = "Izveidojis jaunu iekārti " + dateTime;
 
-                String summary = fullName +" izveidoja jaunu iekārti ar nosakumu '"+name+"' kuram piešķir šāds kodus '"+code+"'.";
+                String summary = fullName + " izveidoja jaunu iekārti ar nosakumu '" + name + "' kuram piešķir šāds kodus '" + code + "'.";
 
                 DatabaseReference logRef = FirebaseDatabase.getInstance().getReference()
                         .child("Logs").child(dateTime);

@@ -13,7 +13,7 @@ dependencyResolutionManagement {
         google()
         mavenCentral()
         jcenter() // Optional, as it’s being phased out
-        maven (url ="https://jitpack.io")
+        maven(url = "https://jitpack.io")
 
     }
 }

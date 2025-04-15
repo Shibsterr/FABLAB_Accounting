@@ -23,12 +23,13 @@
                 android:layout_gravity="center"
                 android:src="@drawable/fablablogo_white"
                 android:contentDescription="@string/logo" />
-        </androidx.appcompat.widget.Toolbar>
 
+
+        </androidx.appcompat.widget.Toolbar>
     </com.google.android.material.appbar.AppBarLayout>
 
-    <include layout="@layout/content_main" />
 
+    <include layout="@layout/content_main" />
 
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

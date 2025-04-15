@@ -237,7 +237,7 @@ public class EventsDialogFragment extends DialogFragment {
 
                 String title = " " + dateTime;
 
-                String summary = fullName +"  '"+data+"'.";
+                String summary = fullName + "  '" + data + "'.";
 
                 DatabaseReference logRef = FirebaseDatabase.getInstance().getReference()
                         .child("Logs").child(dateTime);

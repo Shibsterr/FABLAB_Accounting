@@ -11,8 +11,7 @@
         <item
             android:id="@+id/new_equip"
             android:icon="@drawable/nav_add"
-            android:title="@string/menu_equip"
-            />
+            android:title="@string/menu_equip" />
         <item
             android:id="@+id/nav_task"
             android:icon="@drawable/nav_task"
@@ -20,11 +19,11 @@
         <item
             android:id="@+id/nav_assign"
             android:icon="@drawable/assign_tasks"
-            android:title="@string/menu_assign"/>
+            android:title="@string/menu_assign" />
         <item
             android:id="@+id/nav_updateuser"
             android:icon="@drawable/updateusers"
-            android:title="@string/menu_update"/>
+            android:title="@string/menu_update" />
         <item
             android:id="@+id/nav_logs"
             android:icon="@drawable/data_log"

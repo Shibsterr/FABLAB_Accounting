@@ -251,7 +251,6 @@ public class UpdateUserFragment extends Fragment {
                 SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.getDefault());
                 String dateTime = sdf.format(new Date());
 
-                String action = isDeletion ? "izdzēsa" : "mainīja statusu";
                 String title = isDeletion
                         ? "Lietotāja dzēšana " + dateTime
                         : "Lietotāja statusa maiņa " + dateTime;

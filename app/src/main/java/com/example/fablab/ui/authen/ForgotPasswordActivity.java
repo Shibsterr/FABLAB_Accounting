@@ -58,13 +58,13 @@ public class ForgotPasswordActivity extends AppCompatActivity {
 
         buttonPwdReset.setOnClickListener(v -> {
             String email = editTextPwdResetEmail.getText().toString();
-            if(TextUtils.isEmpty(email)){
+            if (TextUtils.isEmpty(email)) {
                 editTextPwdResetEmail.setError(getString(R.string.email_missing));
                 editTextPwdResetEmail.requestFocus();
-            }else if(!Patterns.EMAIL_ADDRESS.matcher(email).matches()){
+            } else if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
                 editTextPwdResetEmail.setError(getString(R.string.email_incorrect));
                 editTextPwdResetEmail.requestFocus();
-            }else{
+            } else {
                 progressBar.setVisibility(View.VISIBLE);
                 resetPasswrod(email);
             }
@@ -73,7 +73,7 @@ public class ForgotPasswordActivity extends AppCompatActivity {
 
     private void resetPasswrod(String email) {
         authProfile.sendPasswordResetEmail(email).addOnCompleteListener(task -> {
-            if(task.isSuccessful()){
+            if (task.isSuccessful()) {
                 Toast.makeText(ForgotPasswordActivity.this, getString(R.string.checkemail), Toast.LENGTH_SHORT).show();
 
                 Intent intent = new Intent(ForgotPasswordActivity.this, LoginUser.class);

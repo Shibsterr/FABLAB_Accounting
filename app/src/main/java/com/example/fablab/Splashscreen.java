@@ -49,8 +49,8 @@ public class Splashscreen extends AppCompatActivity {
 
             // Update the configuration and display metrics
             resources.updateConfiguration(configuration, resources.getDisplayMetrics());
-                startActivity(new Intent(Splashscreen.this, MainActivity.class));
-                finish();
-        },2000);
+            startActivity(new Intent(Splashscreen.this, MainActivity.class));
+            finish();
+        }, 2000);
     }
 }

@@ -12,16 +12,16 @@
         android:key="theme_preference"
         android:title="@string/settings_theme"
         android:summary="@string/settings_theme"
-        android:dialogTitle="@string/settings_subtheme"/>
+        android:dialogTitle="@string/settings_subtheme" />
 
     <Preference
         android:key="sign_out"
         android:title="@string/settings_signout"
-        android:summary="@string/settings_subsignout"/>
+        android:summary="@string/settings_subsignout" />
 
     <Preference
         android:key="password_reset"
         android:title="@string/settings_reset"
-        android:summary="@string/settings_subreset"/>
+        android:summary="@string/settings_subreset" />
 
 </PreferenceScreen>

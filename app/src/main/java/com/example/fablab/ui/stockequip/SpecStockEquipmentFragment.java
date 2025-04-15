@@ -44,9 +44,10 @@ public class SpecStockEquipmentFragment extends Fragment {
 
     private DatabaseReference databaseReference;
     private TextView titletext, desctext,
-            maxstc,minstc,critstc,basestock,roomtxt;
+            maxstc, minstc, critstc, basestock, roomtxt;
     private ImageView equipimg;
-    private Button addbtn,subtractbtn, maxStockButton;
+    private Button addbtn, subtractbtn, maxStockButton;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
@@ -66,6 +67,7 @@ public class SpecStockEquipmentFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
     }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_spec_stock_equipment, container, false);
@@ -109,11 +111,11 @@ public class SpecStockEquipmentFragment extends Fragment {
                             int critStock = snapshot.child("Critical Stock").getValue(Integer.class);
                             String stk = snapshot.child("Skaits").getValue(String.class);
 
-                            String min,max,crit,stock;
-                            stock = "Stock: "+stk;
-                            min = "Minimum stock: "+minStock;
-                            max = "Maximum stock: "+maxStock;
-                            crit = "Critical stock: "+critStock;
+                            String min, max, crit, stock;
+                            stock = "Stock: " + stk;
+                            min = "Minimum stock: " + minStock;
+                            max = "Maximum stock: " + maxStock;
+                            crit = "Critical stock: " + critStock;
 
                             // Update UI with the retrieved details
                             equipimg.setClipToOutline(true);
@@ -156,11 +158,11 @@ public class SpecStockEquipmentFragment extends Fragment {
         }
         return view;
     }
+
     private void showQuantityInputDialog(boolean isAddOperation) {
         QuantityInputDialogFragment dialogFragment = new QuantityInputDialogFragment(quantity -> {
             // Add or subtract the quantity based on user input
             // Ensure it cannot go above max and below crit
-            // Update the stock accordingly
             int currentStock = Integer.parseInt(basestock.getText().toString().replace("Stock: ", ""));
             int newStock = isAddOperation ? currentStock + quantity : currentStock - quantity;
 
@@ -217,6 +219,7 @@ public class SpecStockEquipmentFragment extends Fragment {
                         }
                     }
                 }
+
                 @Override
                 public void onCancelled(@NonNull DatabaseError databaseError) {
                     // Handle errors
@@ -226,6 +229,7 @@ public class SpecStockEquipmentFragment extends Fragment {
         }, isAddOperation);
         dialogFragment.show(getParentFragmentManager(), "quantity_input_dialog");
     }
+
     private void sendEmailToAdmin() {
         int maxStock = Integer.parseInt(maxstc.getText().toString().replace("Maximum stock: ", ""));
         int minStock = Integer.parseInt(minstc.getText().toString().replace("Minimum stock: ", ""));
@@ -269,6 +273,7 @@ public class SpecStockEquipmentFragment extends Fragment {
             });
         }
     }
+
     private void addLogEntry(String equipmentName, int quantity, boolean isAddOperation) {
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentUser == null) return;
@@ -324,9 +329,11 @@ public class SpecStockEquipmentFragment extends Fragment {
     private void onAddButtonClicked() {
         showQuantityInputDialog(true);
     }
+
     private void onSubtractButtonClicked() {
         showQuantityInputDialog(false);
     }
+
     private void showEditMaxStockDialog() {
         // Create an EditText view for user input
         final EditText input = new EditText(getContext());
@@ -354,6 +361,7 @@ public class SpecStockEquipmentFragment extends Fragment {
                 .setNegativeButton(getString(R.string.cancel), (dialog, which) -> dialog.cancel())
                 .show();
     }
+
     private void updateMaxStock(int newMaxStock) {
         String equipmentName = titletext.getText().toString();
         // Update the UI
@@ -392,6 +400,7 @@ public class SpecStockEquipmentFragment extends Fragment {
         });
         updateBtn();
     }
+
     private void updateBtn() {
         int currentStock = Integer.parseInt(basestock.getText().toString().replace("Stock: ", ""));
         int minStock = Integer.parseInt(minstc.getText().toString().replace("Minimum stock: ", ""));

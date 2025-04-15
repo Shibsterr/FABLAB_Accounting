@@ -30,7 +30,6 @@ public class NetworkChangeReceiver extends BroadcastReceiver {
             dialog.show();
             dialog.setCancelable(false);
 
-            // Centering the text views programmatically (if needed)
             headingText.setGravity(Gravity.CENTER);
             infoText.setGravity(Gravity.CENTER);
 

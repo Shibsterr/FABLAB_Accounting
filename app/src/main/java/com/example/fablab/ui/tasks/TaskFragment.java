@@ -59,12 +59,7 @@ public class TaskFragment extends Fragment {
         loadTasks();
 
         // Set OnClickListener for the refresh button
-        refreshButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                loadTasks();
-            }
-        });
+        refreshButton.setOnClickListener(v -> loadTasks());
 
         return view;
     }
@@ -124,6 +119,7 @@ public class TaskFragment extends Fragment {
             });
         }
     }
+
     private void addTaskToLayout(String description, String deadline, String status, String assignedBy, String taskKey, String currentUsername, String urgent) {
         View taskView = getLayoutInflater().inflate(R.layout.item_tasks, tasksLayout, false);
         TextView textViewDescription = taskView.findViewById(R.id.textViewTaskDescription);
@@ -150,9 +146,9 @@ public class TaskFragment extends Fragment {
             textViewUrgency.setText(getString(R.string.important) + getString(R.string.not_urgent)); // default if not provided
         }
 
-        if(status.equals("incomplete")){
+        if (status.equals("incomplete")) {
             textViewStatus.setText(getString(R.string.status_item) + getString(R.string.incomplete));
-        }else{
+        } else {
             textViewStatus.setText(getString(R.string.status_item) + getString(R.string.complete));
         }
 

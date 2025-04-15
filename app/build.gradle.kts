@@ -26,7 +26,7 @@ android {
         release {
             isMinifyEnabled = false
 
-            
+
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -57,7 +57,7 @@ dependencies {
     implementation("com.journeyapps:zxing-android-embedded:4.3.0")
     implementation("com.dolatkia:animated-theme-manager:1.1.4")
 
-    implementation ("androidx.preference:preference:1.2.1")
+    implementation("androidx.preference:preference:1.2.1")
 
     implementation(platform("com.google.firebase:firebase-bom:32.7.2"))
     implementation("com.google.firebase:firebase-analytics")
@@ -73,17 +73,18 @@ dependencies {
     implementation("com.google.firebase:firebase-messaging:23.4.1")
     implementation("com.google.firebase:firebase-functions:20.4.0")
     implementation("com.google.firebase:firebase-perf:20.3.0")
+    androidTestImplementation("androidx.test.espresso:espresso-contrib:3.7.0-alpha01")
     annotationProcessor("com.github.bumptech.glide:compiler:4.12.0")
 
-    implementation ("com.sun.mail:android-mail:1.6.7")
-    implementation ("com.sun.mail:android-activation:1.6.7")
-    
-    implementation ("com.github.prolificinteractive:material-calendarview:1.4.3")
-    implementation ("com.google.api-client:google-api-client:2.0.0")
-    implementation ("com.google.oauth-client:google-oauth-client-jetty:1.34.1")
-    implementation ("com.google.apis:google-api-services-calendar:v3-rev20220715-2.0.0")
+    implementation("com.sun.mail:android-mail:1.6.7")
+    implementation("com.sun.mail:android-activation:1.6.7")
+
+    implementation("com.github.prolificinteractive:material-calendarview:1.4.3")
+    implementation("com.google.api-client:google-api-client:2.0.0")
+    implementation("com.google.oauth-client:google-oauth-client-jetty:1.34.1")
+    implementation("com.google.apis:google-api-services-calendar:v3-rev20220715-2.0.0")
 
     testImplementation("junit:junit:4.13.2")
-    androidTestImplementation("androidx.test.ext:junit:1.1.5")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
+    androidTestImplementation("androidx.test.ext:junit:1.3.0-alpha01")
+    androidTestImplementation("androidx.test.espresso:espresso-core:3.7.0-alpha01")
 }

@@ -270,7 +270,7 @@ public class NewEvent extends AppCompatActivity {
 
                 String title = "Izveidots jauns notikums " + dateTime;
 
-                String summary = fullName +" izveidoja jaunu notikumu '"+name+"' kurš notiek '"+time+"' datumā.";
+                String summary = fullName + " izveidoja jaunu notikumu '" + name + "' kurš notiek '" + time + "' datumā.";
 
                 DatabaseReference logRef = FirebaseDatabase.getInstance().getReference()
                         .child("Logs").child(dateTime);

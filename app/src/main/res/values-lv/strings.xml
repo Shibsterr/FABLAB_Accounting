@@ -65,7 +65,7 @@
     <string name="register_user">Reģistrēties</string>
     <string name="name">Pilnais vārds</string>
     <string name="forgot_pass">Aizmirsi paroli?</string>
-        <string name="ielogoties">Piesakieties</string>
+    <string name="ielogoties">Piesakieties</string>
 
     <string name="konts_ir">Piesakieties</string>
     <string name="konts_nav">Reģistrēties</string>
@@ -93,9 +93,9 @@
 
     <!-- settings/iestatijumi -->
     <string name="settings_lang">Izvēlieties valodu</string>
-        <string name="settings_sublang">Izvēlieties lietotnes valodu</string>
+    <string name="settings_sublang">Izvēlieties lietotnes valodu</string>
     <string name="settings_theme">Motīvs</string>
-        <string name="settings_subtheme">Izvēlies Motīvu</string>
+    <string name="settings_subtheme">Izvēlies Motīvu</string>
     <string name="settings_signout">Izrakstīties</string>
     <string name="settings_subsignout">Izrakstieties no sava konta</string>
     <string name="settings_reset">Atiestatīt paroli</string>
@@ -153,7 +153,7 @@
     <string name="check_con">Pārbaudiet interneta savienojumu un mēģiniet vēlreiz</string>
     <string name="try_again">Mēģiniet vēlreiz</string>
     <string name="urgency">Vai tas ir steidzami?</string>
-    <string name="birthday" >Dzimšanas diena</string>
+    <string name="birthday">Dzimšanas diena</string>
     <string name="add_event">Pievienot notikumu</string>
     <string name="title">Stacija</string>
     <string name="description">Apraksts</string>
@@ -165,10 +165,10 @@
     <string name="accept">Pieņemt</string>
     <string name="decline">Noraidīt</string>
     <string name="finish">Pabeigts</string>
-    <string name="ok_button" >Labi</string>
-    <string name="events_title" >Notikumi</string>
-    <string name="start_time" >Sākuma laiks: %1$s</string>
-    <string name="end_time" >Beigu laiks: %1$s</string>
+    <string name="ok_button">Labi</string>
+    <string name="events_title">Notikumi</string>
+    <string name="start_time">Sākuma laiks: %1$s</string>
+    <string name="end_time">Beigu laiks: %1$s</string>
     <string name="titleE">Nosaukums: %1$s</string>
     <string name="descriptionE">Apraksts: %1$s</string>
     <string name="status_event">Statuss: %1$s</string>
@@ -185,7 +185,7 @@
     <string name="stock_new">Inventārs</string>
     <string name="izg_code">Izglītības pārvaldes kods</string>
     <string name="enter_value_max_8_digits">Ievadiet izglītības kodu</string>
-    <string name="desc_text" >Apraksts</string>
+    <string name="desc_text">Apraksts</string>
     <string name="info_izg_code">
         <![CDATA[
     <b>Ievadiet numerisko ierobežojumu aprīkojumam</b>, kuram var būt līdz 8 cipariem. Šis ierobežojums tiek izmantots izsekošanai un jābūt atbilstošam paredzētajam aprīkojuma diapazonam.
@@ -217,8 +217,8 @@
     <string name="info_default">Informācija nav pieejama.</string>
     <string name="room">Telpa: %1$s</string>
     <string name="edit">Rediģēt</string>
-    <string name="max_change" >Ievadiet jauno maksimālo krājuma vērtību:</string>
-    <string name="max_changetitle" >Rediģēt maksimālo krājumu</string>
+    <string name="max_change">Ievadiet jauno maksimālo krājuma vērtību:</string>
+    <string name="max_changetitle">Rediģēt maksimālo krājumu</string>
     <string name="add_to_the_stock">Pievienojiet krājumam</string>
     <string name="subtract_from_the_stock">Atņemiet no krājuma</string>
     <string name="confirm">Apstiprināt</string>

@@ -38,8 +38,8 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
 
         holder.eventDetails.setText(
                 holder.itemView.getContext().getString(R.string.titleE, event.getTitle())
-                + "\n" +
-                holder.itemView.getContext().getString(R.string.descriptionE, event.getDescription()));
+                        + "\n" +
+                        holder.itemView.getContext().getString(R.string.descriptionE, event.getDescription()));
 
         holder.event_status.setText(holder.itemView.getContext().getString(R.string.status_event, event.getStatus()));
         holder.startTime.setText(holder.itemView.getContext().getString(R.string.start_time, event.getStartTime()));
@@ -85,7 +85,9 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
 
     public interface OnEventActionListener {
         void onAccept(Event event);
+
         void onDecline(Event event);
+
         void onFinish(Event event);
     }
 

@@ -15,9 +15,23 @@ public class LogItem {
         this.summary = summary;
     }
 
-    public String getDateTime() { return dateTime; }
-    public String getUser() { return user; }
-    public String getEmail() { return email; }
-    public String getTitle() { return title; }
-    public String getSummary() { return summary; }
+    public String getDateTime() {
+        return dateTime;
+    }
+
+    public String getUser() {
+        return user;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public String getSummary() {
+        return summary;
+    }
 }

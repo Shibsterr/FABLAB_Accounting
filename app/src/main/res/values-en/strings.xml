@@ -150,7 +150,7 @@
     <string name="check_con">Check your Internet Connection and Try Again</string>
     <string name="try_again">Try Again</string>
     <string name="urgency">Is it urgent?</string>
-    <string name="birthday" >Birthday</string>
+    <string name="birthday">Birthday</string>
     <string name="add_event">Add Event</string>
     <string name="title">Title</string>
     <string name="description">Description</string>
@@ -162,10 +162,10 @@
     <string name="accept">Accept</string>
     <string name="decline">Decline</string>
     <string name="finish">Finish</string>
-    <string name="ok_button" >Ok</string>
-    <string name="events_title" >Events</string>
-    <string name="start_time" >Start Time: %1$s</string>
-    <string name="end_time" >End Time: %1$s</string>
+    <string name="ok_button">Ok</string>
+    <string name="events_title">Events</string>
+    <string name="start_time">Start Time: %1$s</string>
+    <string name="end_time">End Time: %1$s</string>
     <string name="titleE">Title: %1$s</string>
     <string name="descriptionE">Description: %1$s</string>
     <string name="status_event">Status: %1$s</string>
@@ -182,7 +182,7 @@
     <string name="stock_new">Stock</string>
     <string name="izg_code">Education administration code</string>
     <string name="enter_value_max_8_digits">Enter value</string>
-    <string name="desc_text" >Description</string>
+    <string name="desc_text">Description</string>
     <string name="info_izg_code">
         <![CDATA[
     <b>Enter a numeric limit for the equipment</b>, which can be up to 8 digits long. This limit is used for tracking purposes and should be within the expected range for the equipment.
@@ -212,16 +212,12 @@
 </string>
 
 
-
-
-
-
     <string name="info_code_title">Information</string>
     <string name="info_default">No information available.</string>
     <string name="room">Room: %1$s</string>
     <string name="edit">Edit</string>
-    <string name="max_change" >Enter the new maximum stock value:</string>
-    <string name="max_changetitle" >Edit Maximum Stock</string>
+    <string name="max_change">Enter the new maximum stock value:</string>
+    <string name="max_changetitle">Edit Maximum Stock</string>
     <string name="add_to_the_stock">Add to the stock</string>
     <string name="subtract_from_the_stock">Subtract from the stock</string>
     <string name="confirm">Confirm</string>

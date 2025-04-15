@@ -126,6 +126,7 @@ public class HomeFragment extends Fragment {
             expandLayout(properLayout);
         }
     }
+
     private void toggleCalView() {
         // Toggle calendarView
         if (calendarView.getVisibility() == View.VISIBLE) {
@@ -138,10 +139,12 @@ public class HomeFragment extends Fragment {
             eventPage.setVisibility(View.VISIBLE);
         }
     }
+
     private void openNewEventActivity() {
         Intent intent = new Intent(getContext(), NewEvent.class);
         startActivity(intent);
     }
+
     private void loadStations() {
         databaseReference = FirebaseDatabase.getInstance().getReference().child("stations");
 
@@ -210,11 +213,13 @@ public class HomeFragment extends Fragment {
             }
         });
     }
+
     private String getCurrentLanguage() {
         // Retrieve from shared preferences or app settings
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getContext());
         return sharedPref.getString("language_preference", "en"); // Default is "en"
     }
+
     private void createCardView(Context context, LinearLayout parent, String title, String description, int ID) {
         CardView cardView = new CardView(context);
 
@@ -316,6 +321,7 @@ public class HomeFragment extends Fragment {
             }
         });
     }
+
     private void updateRecentlyUsedStation(int stationId) {
         userDatabaseReference.child(String.valueOf(stationId)).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -333,6 +339,7 @@ public class HomeFragment extends Fragment {
             }
         });
     }
+
     private void collapseLayout(final View view) {
         final int initialHeight = view.getMeasuredHeight();
         ValueAnimator heightAnimator = ValueAnimator.ofInt(initialHeight, 0);
@@ -352,6 +359,7 @@ public class HomeFragment extends Fragment {
         });
         heightAnimator.start();
     }
+
     private void expandLayout(final View view) {
         view.measure(View.MeasureSpec.makeMeasureSpec(((ViewGroup) view.getParent()).getWidth(), View.MeasureSpec.EXACTLY),
                 View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
@@ -369,6 +377,7 @@ public class HomeFragment extends Fragment {
         });
         heightAnimator.start();
     }
+
     //---------------------------------------------------------------------------------------
     private void checkUserStatus() {
         DatabaseReference userRef = FirebaseDatabase.getInstance().getReference()
@@ -388,6 +397,7 @@ public class HomeFragment extends Fragment {
             }
         });
     }
+
     private void updateButtonVisibility() {
         if (userStatus != null) {
             switch (userStatus) {
@@ -410,6 +420,7 @@ public class HomeFragment extends Fragment {
             }
         }
     }
+
     private void setupCalendar() {
         calendarView.setOnDateChangedListener((widget, date, selected) -> {
             // Display events for the selected date
@@ -419,6 +430,7 @@ public class HomeFragment extends Fragment {
         // Load events and mark calendar
         loadEvents();
     }
+
     private void loadEvents() {
         eventsDatabaseRef = FirebaseDatabase.getInstance().getReference().child("events");
         eventsDatabaseRef.addValueEventListener(new ValueEventListener() {
@@ -467,6 +479,7 @@ public class HomeFragment extends Fragment {
             }
         });
     }
+
     private void markEventsOnCalendar() {
         calendarView.removeDecorators(); // Clear old decorators
 
@@ -485,6 +498,7 @@ public class HomeFragment extends Fragment {
             }
         }
     }
+
     private CalendarDay parseDate(String date) {
         try {
             String[] parts = date.split("-");
@@ -497,6 +511,7 @@ public class HomeFragment extends Fragment {
             return null;
         }
     }
+
     private List<Event> getEventsForDay(CalendarDay date) {
         // Format date as "yyyy-MM-dd"
         String dateKey = date.getYear() + "-" + (date.getMonth() + 1) + "-" + date.getDay();
