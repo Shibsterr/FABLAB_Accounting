@@ -310,4 +310,14 @@
     <string name="max_stock_bad">Failed to update max stock</string>
     <string name="validname_error">Invalid name. Only Latvian letters and spaces are allowed.</string>
     <string name="enter_quantity">Enter Quantity:</string>
+
+
+    <string name="stock_spec">Stock:</string>
+    <string name="minstock_spec">Minimum stock: </string>
+    <string name="maxstock_spec">Maximum stock:</string>
+    <string name="critstock_spec">Critical stock:</string>
+
+
+
+
 </resources>

@@ -313,4 +313,11 @@
     <string name="max_stock_bad">Neizdevās atjaunināt maksimālo krājumu</string>
     <string name="validname_error">Nederīgs nosaukums. Ir atļauti tikai latviešu burti un atstarpes.</string>
     <string name="enter_quantity">Enter Quantity:</string>
+
+
+
+    <string name="stock_spec">Krājums:</string>
+    <string name="minstock_spec">Minimālais krājums: </string>
+    <string name="maxstock_spec">Maksimālais krājums:</string>
+    <string name="critstock_spec">Kritiskie krājumi:</string>
 </resources>

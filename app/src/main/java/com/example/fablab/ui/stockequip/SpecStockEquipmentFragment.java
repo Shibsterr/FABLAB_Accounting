@@ -109,13 +109,14 @@ public class SpecStockEquipmentFragment extends Fragment {
                             int minStock = snapshot.child("Min Stock").getValue(Integer.class);
                             int maxStock = snapshot.child("Max Stock").getValue(Integer.class);
                             int critStock = snapshot.child("Critical Stock").getValue(Integer.class);
-                            String stk = snapshot.child("Skaits").getValue(String.class);
+                            int stk = snapshot.child("Skaits").getValue(Integer.class);
+
 
                             String min, max, crit, stock;
-                            stock = "Stock: " + stk;
-                            min = "Minimum stock: " + minStock;
-                            max = "Maximum stock: " + maxStock;
-                            crit = "Critical stock: " + critStock;
+                            stock = getString(R.string.stock_0, stk);
+                            min = getString(R.string.minimum_stock_0, minStock);
+                            max = getString(R.string.maximum_stock_0, maxStock);
+                            crit = getString(R.string.critical_stock_0, critStock);
 
                             // Update UI with the retrieved details
                             equipimg.setClipToOutline(true);
@@ -128,20 +129,25 @@ public class SpecStockEquipmentFragment extends Fragment {
                             basestock.setText(stock);
 
                             Glide.with(requireContext()).load(imageName).into(equipimg);
-                            int currentStock = Integer.parseInt(basestock.getText().toString().replace("Stock: ", ""));
-                            // Disable the Subtract button if current stock is below or equal to minimum stock
-                            if (currentStock <= minStock) {
-                                subtractbtn.setEnabled(false);
-                            } else {
-                                subtractbtn.setEnabled(true);
+                            String stockText = basestock.getText().toString();
+                            String stockPrefix = getString(R.string.stock); // e.g., "Stock: " or "Krājums: "
+
+                            if (stockText.startsWith(stockPrefix)) {
+                                try {
+                                    int currentStock = Integer.parseInt(stockText.replace(stockPrefix, "").trim());
+
+                                    // Disable the Subtract button if current stock is below or equal to minimum stock
+                                    subtractbtn.setEnabled(currentStock > minStock);
+
+                                    // Disable the Add button if current stock is equal to or above maximum stock
+                                    addbtn.setEnabled(currentStock < maxStock);
+
+                                } catch (NumberFormatException e) {
+                                    e.printStackTrace();
+                                }
                             }
 
-                            // Disable the Add button if current stock is equal to or above maximum stock
-                            if (currentStock >= maxStock) {
-                                addbtn.setEnabled(false);
-                            } else {
-                                addbtn.setEnabled(true);
-                            }
+
                         }
                     } else {
                         // Equipment with the given name does not exist
@@ -163,13 +169,14 @@ public class SpecStockEquipmentFragment extends Fragment {
         QuantityInputDialogFragment dialogFragment = new QuantityInputDialogFragment(quantity -> {
             // Add or subtract the quantity based on user input
             // Ensure it cannot go above max and below crit
-            int currentStock = Integer.parseInt(basestock.getText().toString().replace("Stock: ", ""));
+            int currentStock = parseStockFromText(basestock.getText().toString(), R.string.stock_0);
+
             int newStock = isAddOperation ? currentStock + quantity : currentStock - quantity;
 
             // Ensure stock does not go above max or below crit
-            int maxStock = Integer.parseInt(maxstc.getText().toString().replace("Maximum stock: ", ""));
-            int critStock = Integer.parseInt(critstc.getText().toString().replace("Critical stock: ", ""));
-            int minStock = Integer.parseInt(minstc.getText().toString().replace("Minimum stock: ", ""));
+            int maxStock = Integer.parseInt(maxstc.getText().toString(), R.string.maximum_stock_0);
+            int critStock = Integer.parseInt(critstc.getText().toString(),  R.string.critical_stock_0);
+            int minStock = Integer.parseInt(minstc.getText().toString(), R.string.minimum_stock_0);
 
             // Check if the new stock is below minimum stock
             if (newStock < minStock) {
@@ -187,7 +194,8 @@ public class SpecStockEquipmentFragment extends Fragment {
 
 
             // Update the UI with the new stock value
-            basestock.setText("Stock: " + newStock);
+            basestock.setText(getString(R.string.stock_0, newStock));
+
 
             // Update the stock in the database
             String equipmentName = titletext.getText().toString();
@@ -231,8 +239,8 @@ public class SpecStockEquipmentFragment extends Fragment {
     }
 
     private void sendEmailToAdmin() {
-        int maxStock = Integer.parseInt(maxstc.getText().toString().replace("Maximum stock: ", ""));
-        int minStock = Integer.parseInt(minstc.getText().toString().replace("Minimum stock: ", ""));
+        int maxStock = Integer.parseInt(maxstc.getText().toString(), R.string.maximum_stock_0);
+        int minStock = Integer.parseInt(minstc.getText().toString(), R.string.minimum_stock_0);
 
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentUser != null) {
@@ -256,7 +264,7 @@ public class SpecStockEquipmentFragment extends Fragment {
                                 "Uzmanību! Preces '" + titletext.getText().toString() + "' krājums ir zemā līmenī.\n" +
                                 "Detalizēta informācija:\n" +
                                 "Nosaukums: " + titletext.getText().toString() + "\n" +
-                                "Pašreizējais krājums: " + basestock.getText().toString().replace("Stock: ", "") + "\n" +
+                                "Pašreizējais krājums: " + basestock.getText().toString() + "\n" +
                                 "Minimālais krājums: " + minStock + "\n" +
                                 "Maksimālais krājums: " + maxStock + "\n" +
                                 "Paldies!";
@@ -364,8 +372,9 @@ public class SpecStockEquipmentFragment extends Fragment {
 
     private void updateMaxStock(int newMaxStock) {
         String equipmentName = titletext.getText().toString();
-        // Update the UI
-        maxstc.setText("Maximum stock: " + newMaxStock);
+
+        // Update the UI with localized string
+        maxstc.setText(getString(R.string.maximum_stock_0, newMaxStock));
 
         // Update the value in Firebase
         DatabaseReference equipmentRef = FirebaseDatabase.getInstance().getReference().child("equipment");
@@ -375,18 +384,20 @@ public class SpecStockEquipmentFragment extends Fragment {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
                     for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                        int currentStock = Integer.parseInt(basestock.getText().toString().replace("Stock: ", ""));
-                        int minStock = snapshot.child("Min Stock").getValue(Integer.class);
-                        int maxStock = snapshot.child("Max Stock").getValue(Integer.class);
-                        // Update the "Max Stock" value in the database
-                        snapshot.getRef().child("Max Stock").setValue(newMaxStock)
-                                .addOnSuccessListener(aVoid -> {
-                                    Toast.makeText(getContext(), getString(R.string.max_stock_good), Toast.LENGTH_SHORT).show();
+                        try {
+                            // Update the "Max Stock" value in the database
+                            snapshot.getRef().child("Max Stock").setValue(newMaxStock)
+                                    .addOnSuccessListener(aVoid -> {
+                                        Toast.makeText(getContext(), getString(R.string.max_stock_good), Toast.LENGTH_SHORT).show();
+                                    })
+                                    .addOnFailureListener(e -> {
+                                        Toast.makeText(getContext(), getString(R.string.max_stock_bad), Toast.LENGTH_SHORT).show();
+                                    });
 
-                                })
-                                .addOnFailureListener(e -> {
-                                    Toast.makeText(getContext(), getString(R.string.max_stock_bad), Toast.LENGTH_SHORT).show();
-                                });
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            Toast.makeText(getContext(), "Error reading stock values", Toast.LENGTH_SHORT).show();
+                        }
                     }
                 } else {
                     Toast.makeText(getContext(), getString(R.string.equip_notfound), Toast.LENGTH_SHORT).show();
@@ -398,23 +409,36 @@ public class SpecStockEquipmentFragment extends Fragment {
                 Log.e("UpdateMaxStock", "Error updating max stock: " + databaseError.getMessage());
             }
         });
-        updateBtn();
+
+        updateBtn(); // Update the button states
     }
 
     private void updateBtn() {
-        int currentStock = Integer.parseInt(basestock.getText().toString().replace("Stock: ", ""));
-        int minStock = Integer.parseInt(minstc.getText().toString().replace("Minimum stock: ", ""));
-        int maxStock = Integer.parseInt(maxstc.getText().toString().replace("Maximum stock: ", ""));
+        try {
+            String stockPrefix = getString(R.string.stock);
+            String minPrefix = getString(R.string.minimum_stock_0, 0).replace("0", "").trim();
+            String maxPrefix = getString(R.string.maximum_stock_0, 0).replace("0", "").trim();
 
-        if (currentStock <= minStock) {
+            int currentStock = Integer.parseInt(basestock.getText().toString().replace(stockPrefix, "").trim());
+            int minStock = Integer.parseInt(minstc.getText().toString().replace(minPrefix, "").trim());
+            int maxStock = Integer.parseInt(maxstc.getText().toString().replace(maxPrefix, "").trim());
+
+            subtractbtn.setEnabled(currentStock > minStock);
+            addbtn.setEnabled(currentStock < maxStock);
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
             subtractbtn.setEnabled(false);
-        } else {
-            subtractbtn.setEnabled(true);
-        }
-        if (currentStock >= maxStock) {
             addbtn.setEnabled(false);
-        } else {
-            addbtn.setEnabled(true);
+        }
+    }
+
+    private int parseStockFromText(String fullText, int stringId) {
+        String prefix = getString(stringId).replace("%1$d", "").trim();
+        try {
+            return Integer.parseInt(fullText.replace(prefix, "").trim());
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+            return -1; // or throw, or return 0 as fallback
         }
     }
 

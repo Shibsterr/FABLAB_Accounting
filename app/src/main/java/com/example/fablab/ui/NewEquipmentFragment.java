@@ -240,6 +240,7 @@ public class NewEquipmentFragment extends Fragment {
                     int critValue = Integer.parseInt(crit);
                     int minValue = Integer.parseInt(min);
                     int maxValue = Integer.parseInt(max);
+                    int skaitsint = Integer.parseInt(skaits);
                     code = code.toUpperCase();
                     String kods = code;
 
@@ -307,6 +308,7 @@ public class NewEquipmentFragment extends Fragment {
                                         StorageReference storageRef = FirebaseStorage.getInstance().getReferenceFromUrl(imagePath);
                                         // Get the download URL for the image
                                         storageRef.getDownloadUrl().addOnSuccessListener(uri -> {
+
                                             // Once we have the download URL, we can store it along with other equipment details in the Realtime Database
                                             String imageUrl = uri.toString();
                                             // Store other equipment details in the Realtime Database
@@ -316,7 +318,7 @@ public class NewEquipmentFragment extends Fragment {
                                             Stockequips.put("Kods", kods);
                                             Stockequips.put("Nosaukums", name);
                                             Stockequips.put("Mērvienība", selectedUnit);
-                                            Stockequips.put("Skaits", skaits);
+                                            Stockequips.put("Skaits", skaitsint);
                                             Stockequips.put("Max Stock", maxValue);
                                             Stockequips.put("Min Stock", minValue);
                                             Stockequips.put("Critical Stock", critValue);
@@ -333,7 +335,7 @@ public class NewEquipmentFragment extends Fragment {
                                             equips.put("Kods", kods);
                                             equips.put("Nosaukums", name);
                                             equips.put("Mērvienība", selectedUnit);
-                                            equips.put("Skaits", skaits);
+                                            equips.put("Skaits", skaitsint);
                                             equips.put("Description", desc);
                                             equips.put("IzgKods", izg_code);
                                             equips.put("Attēls", imageUrl);

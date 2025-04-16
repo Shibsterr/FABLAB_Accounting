@@ -296,5 +296,12 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
+    // needed for the three lined (hamburger) button to work (REQUIRED)
+    @Override
+    public boolean onSupportNavigateUp() {
+        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
+        return NavigationUI.navigateUp(navController, mAppBarConfiguration)
+                || super.onSupportNavigateUp();
+    }
 
 }
