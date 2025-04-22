@@ -166,11 +166,11 @@ public class MainActivity extends AppCompatActivity {
         email.setText(userEmail != null ? userEmail : "No email");
 
         Menu navMenu = binding.navView.getMenu();
-        navMenu.findItem(R.id.new_equip).setVisible("Darbinieks".equals(statuss) || "Admin".equals(statuss));
-        navMenu.findItem(R.id.nav_task).setVisible("Darbinieks".equals(statuss) || "Admin".equals(statuss));
-        navMenu.findItem(R.id.nav_logs).setVisible("Admin".equals(statuss));
-        navMenu.findItem(R.id.nav_assign).setVisible("Darbinieks".equals(statuss) || "Admin".equals(statuss));
-        navMenu.findItem(R.id.nav_updateuser).setVisible("Admin".equals(statuss));
+            navMenu.findItem(R.id.new_equip).setVisible("Darbinieks".equals(statuss) || "Admin".equals(statuss));
+            navMenu.findItem(R.id.nav_task).setVisible("Darbinieks".equals(statuss) || "Admin".equals(statuss));
+            navMenu.findItem(R.id.nav_logs).setVisible("Admin".equals(statuss));
+            navMenu.findItem(R.id.nav_assign).setVisible("Darbinieks".equals(statuss) || "Admin".equals(statuss));
+            navMenu.findItem(R.id.nav_updateuser).setVisible("Admin".equals(statuss));
     }
 
     private boolean isNetworkAvailable() {
