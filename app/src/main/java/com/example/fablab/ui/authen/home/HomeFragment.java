@@ -70,10 +70,9 @@ public class HomeFragment extends Fragment {
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        // Inflate the layout
         View view = inflater.inflate(R.layout.fragment_home, container, false);
 
-        // Initialize views
+        // Inicializēt skatus
         hidingButton = view.findViewById(R.id.hiding_button);
         eventPage = view.findViewById(R.id.event_page_button);
         properLayout = view.findViewById(R.id.properLayout);
@@ -81,35 +80,35 @@ public class HomeFragment extends Fragment {
         calendarView = view.findViewById(R.id.calendarView); // CalendarView reference
         stockbtn = view.findViewById(R.id.stock_button);
 
-        // Initialize lists
+        // Inicializēt sarakstus
         stationsList = new ArrayList<>();
         descriptionsList = new ArrayList<>();
 
-        // Initialize Firebase Database reference
+        // Inicializēt Firebase datu bāzes atsauci
         eventsDatabaseRef = FirebaseDatabase.getInstance().getReference().child("events");
         currentUserUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
         userDatabaseReference = FirebaseDatabase.getInstance().getReference().child("users").child(currentUserUid).child("recentlyUsedStations");
 
-        // Set up button click listeners
+        // Iestatiet pogu klikšķu klausītājus
         calbtn.setOnClickListener(v -> toggleCalView());
         hidingButton.setOnClickListener(v -> toggleViews()); // Updated to toggle views including calendar
         eventPage.setOnClickListener(v -> openNewEventActivity());
         stockbtn.setOnClickListener(v -> Navigation.findNavController(v).navigate(R.id.equipmentFragment));
 
-        // Set up calendar
+        // Iestatiet kalendāru
         setupCalendar();
 
-        // Load stations from Firebase, including recently used order
+        // Ielādējiet stacijas no Firebase, tostarp nesen izmantoto pasūtījumu
         loadStations();
 
-        // Check user status and set up the UI
+        // Pārbaudiet lietotāja statusu un iestatiet lietotāja interfeisu
         checkUserStatus();
 
         calendarView.setOnDateChangedListener((widget, date, selected) -> {
             List<Event> eventsForDay = getEventsForDay(date);
 
             if (eventsForDay != null && !eventsForDay.isEmpty()) {
-                // Show dialog with events
+                // Rādīt dialogu ar notikumiem
                 EventsDialogFragment eventsDialogFragment = EventsDialogFragment.newInstance(eventsForDay);
                 eventsDialogFragment.show(getChildFragmentManager(), "eventsDialog");
             }
@@ -118,7 +117,7 @@ public class HomeFragment extends Fragment {
     }
 
     private void toggleViews() {
-        // Toggle properLayout
+        // Pārslēgt properlayout
         if (properLayout.getVisibility() == View.VISIBLE) {
             collapseLayout(properLayout);
         } else {
@@ -128,14 +127,14 @@ public class HomeFragment extends Fragment {
     }
 
     private void toggleCalView() {
-        // Toggle calendarView
+        // Pārslēgt calendarView
         if (calendarView.getVisibility() == View.VISIBLE) {
             calendarView.setVisibility(View.GONE);
-            collapseLayout(calendarView); // Collapse calendarView
+            collapseLayout(calendarView); // Sakļaut calendarView
             eventPage.setVisibility(View.GONE);
         } else {
             calendarView.setVisibility(View.VISIBLE);
-            expandLayout(calendarView); // Expand calendarView
+            expandLayout(calendarView); // Izvērst calendarView
             eventPage.setVisibility(View.VISIBLE);
         }
     }
@@ -150,7 +149,7 @@ public class HomeFragment extends Fragment {
 
         String language = getCurrentLanguage();
 
-        // Get recently used stations for the current user
+        // Iegūstiet nesen izmantotās stacijas pašreizējam lietotājam
         userDatabaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot userSnapshot) {
@@ -164,12 +163,12 @@ public class HomeFragment extends Fragment {
                     }
                 }
 
-                // Now load stations from the main database
+                // Tagad ielādējiet stacijas no galvenās datu bāzes
                 databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        properLayout.removeAllViews(); // Clear previous views
-                        addedCardViewIds.clear(); // Clear the set of added CardView IDs
+                        properLayout.removeAllViews(); // Notīrīt iepriekšējos skatus
+                        addedCardViewIds.clear(); // Notīriet pievienoto CardView ID kopu
 
                         if (dataSnapshot.exists()) {
                             List<DataSnapshot> stationSnapshots = new ArrayList<>();
@@ -177,16 +176,16 @@ public class HomeFragment extends Fragment {
                                 stationSnapshots.add(snapshot);
                             }
 
-                            // Sort stations by recently used count
+                            // Kārtot stacijas pēc nesen izmantoto skaita
                             stationSnapshots.sort((s1, s2) -> {
-                                Long id1 = s1.child("ID").getValue(Long.class); // Fetch as Long
-                                Long id2 = s2.child("ID").getValue(Long.class); // Fetch as Long
-                                Integer count1 = recentlyUsedMap.getOrDefault(id1.toString(), 0); // Convert Long to String for map key
-                                Integer count2 = recentlyUsedMap.getOrDefault(id2.toString(), 0); // Convert Long to String for map key
-                                return count2.compareTo(count1); // Sort by descending usage
+                                Long id1 = s1.child("ID").getValue(Long.class); // Saņemt kā Long datu tipu
+                                Long id2 = s2.child("ID").getValue(Long.class);
+                                Integer count1 = recentlyUsedMap.getOrDefault(id1.toString(), 0); // Pārveidojiet Long par virkni kartes atslēgai
+                                Integer count2 = recentlyUsedMap.getOrDefault(id2.toString(), 0);
+                                return count2.compareTo(count1); // Kārtot pēc lietojuma dilstošā secībā
                             });
 
-                            // Add stations as CardViews in sorted order
+                            // Pievienojiet stacijas kā CardViews sakārtotā secībā
                             for (DataSnapshot snapshot : stationSnapshots) {
                                 String station = snapshot.child("Name").child(language).getValue(String.class);
                                 String description = snapshot.child("Description").child(language).getValue(String.class);
@@ -194,7 +193,7 @@ public class HomeFragment extends Fragment {
 
                                 if (station != null && description != null && ID != null && !addedCardViewIds.contains(ID)) {
                                     createCardView(getContext(), properLayout, station, description, ID);
-                                    addedCardViewIds.add(ID); // Add the ID to the set of added CardView IDs
+                                    addedCardViewIds.add(ID); // Pievienojiet ID pievienoto CardView ID kopai
                                 }
                             }
                         }
@@ -215,7 +214,7 @@ public class HomeFragment extends Fragment {
     }
 
     private String getCurrentLanguage() {
-        // Retrieve from shared preferences or app settings
+        // Izgūt no koplietotajām preferencēm vai lietotņu iestatījumiem
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getContext());
         return sharedPref.getString("language_preference", "en"); // Default is "en"
     }
@@ -223,31 +222,31 @@ public class HomeFragment extends Fragment {
     private void createCardView(Context context, LinearLayout parent, String title, String description, int ID) {
         CardView cardView = new CardView(context);
 
-        // Set layout parameters for CardView with fixed margin
+        // Iestatiet CardView izkārtojuma parametrus ar fiksētu piemali
         LinearLayout.LayoutParams cardParams = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT
         );
-        cardParams.setMargins(24, 24, 24, 24); // Adding consistent margins
+        cardParams.setMargins(24, 24, 24, 24); // Pievienot cardView margins
         cardView.setLayoutParams(cardParams);
-        cardView.setBackgroundResource(R.drawable.my_custom_background); // Custom background for the CardView
+        cardView.setBackgroundResource(R.drawable.my_custom_background); // Pielāgots CardView fons (drawable)
 
-        // Inner layout for card content (vertical orientation and padding)
+        // Kartes satura iekšējais izkārtojums (vertikālā orientācija un polsterējums)
         LinearLayout innerLayout = new LinearLayout(context);
         innerLayout.setOrientation(LinearLayout.VERTICAL);
         innerLayout.setPadding(30, 30, 30, 30);
         innerLayout.setBackgroundResource(R.drawable.my_custom_background);
 
-        // ImageView for station icon (fixed size)
+        // ImageView stacijas ikonai (fiksēts izmērs)
         ImageView imageView = new ImageView(context);
         LinearLayout.LayoutParams imageParams = new LinearLayout.LayoutParams(150, 150);
         imageView.setLayoutParams(imageParams);
 
-        // Load image from Firebase Storage based on station ID
+        // Ielādējiet attēlu no Firebase krātuves, pamatojoties uz stacijas ID
         FirebaseStorage storage = FirebaseStorage.getInstance();
         StorageReference storageReference = storage.getReference().child("Station_Icons/" + ID + ".png");
 
-        // Loading image from Firebase with success/failure handling
+        // Notiek attēla ielāde no Firebase ar veiksmīgu/neveiksmīgu apstrādi
         storageReference.getBytes(Long.MAX_VALUE).addOnSuccessListener(bytes -> {
             Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
             imageView.setImageBitmap(bitmap);
@@ -256,36 +255,36 @@ public class HomeFragment extends Fragment {
             imageView.setImageResource(R.drawable.placeholder_image); // Placeholder image in case of failure
         });
 
-        // TextView for the title of the station
+        // TextView stacijas nosaukumam
         TextView titleView = new TextView(context);
         titleView.setText(title);
         titleView.setTextSize(15);
         titleView.setTypeface(null, Typeface.BOLD);
 
-        // TextView for station description
+        // TextView stacijas aprakstam
         TextView descriptionView = new TextView(context);
         descriptionView.setText(description);
         descriptionView.setTextSize(12);
 
-        // TextView for displaying station ID
+        // TextView stacijas ID parādīšanai
         TextView idView = new TextView(context);
         idView.setText("ID: " + ID);
         idView.setTextColor(Color.parseColor("#FF5722")); // Using color for emphasis on ID
         idView.setTextSize(14);
         idView.setTypeface(null, Typeface.BOLD);
 
-        // Add views to the inner layout
+        // Pievienojiet skatus iekšējam izkārtojumam
         innerLayout.addView(imageView);
         innerLayout.addView(titleView);
         innerLayout.addView(descriptionView);
         innerLayout.addView(idView);
 
-        cardView.addView(innerLayout); // Adding inner layout to CardView
-        parent.addView(cardView); // Adding CardView to the parent layout
+        cardView.addView(innerLayout); // Iekšējā izkārtojuma pievienošana CardView
+        parent.addView(cardView); // CardView pievienošana vecāku izkārtojumam
 
-        // Setting up click listener for each CardView
+        // Klikšķu uztvērēja iestatīšana katram CardView
         cardView.setOnClickListener(v -> {
-            // Update recently used station count by station ID
+            // Atjauniniet nesen izmantoto staciju skaitu pēc stacijas ID
             updateRecentlyUsedStation(ID);
 
             NavController navController = Navigation.findNavController(v);
@@ -301,7 +300,7 @@ public class HomeFragment extends Fragment {
                                     String stationNodeName = stationSnapshot.getKey();
                                     Bundle bundle = new Bundle();
                                     bundle.putString("stationNodeName", stationNodeName);
-                                    navController.navigate(R.id.equipmentListFragment, bundle); // Navigate to equipment list
+                                    navController.navigate(R.id.equipmentListFragment, bundle); // Pārejiet uz aprīkojuma sarakstu
                                     return;
                                 }
                             }
@@ -423,11 +422,11 @@ public class HomeFragment extends Fragment {
 
     private void setupCalendar() {
         calendarView.setOnDateChangedListener((widget, date, selected) -> {
-            // Display events for the selected date
+            // Parādīt notikumus atlasītajam datumam
             getEventsForDay(date);
         });
 
-        // Load events and mark calendar
+        // Ielādējiet notikumus un atzīmējiet kalendāru
         loadEvents();
     }
 
@@ -457,10 +456,10 @@ public class HomeFragment extends Fragment {
                             String status = eventSnapshot.child("status").getValue(String.class);
 
                             if (title != null && description != null && date != null && startTime != null && endTime != null && numberOfPeople != null && status != null && userId != null) {
-                                // Create the Event object with the new structure
+                                // Izveidojiet notikumu objektu ar jauno struktūru
                                 Event event = new Event(eventId, title, description, date, startTime, endTime, numberOfPeople, status, userId);
 
-                                // Add the event to the list of events for this date
+                                // Pievienojiet notikumu šī datuma notikumu sarakstam
                                 if (!eventsMap.containsKey(date)) {
                                     eventsMap.put(date, new ArrayList<>());
                                 }
@@ -470,7 +469,7 @@ public class HomeFragment extends Fragment {
                     }
                 }
 
-                markEventsOnCalendar(); // Mark the events on the calendar
+                markEventsOnCalendar(); // Atzīmējiet notikumus kalendārā
             }
 
             @Override
@@ -481,17 +480,17 @@ public class HomeFragment extends Fragment {
     }
 
     private void markEventsOnCalendar() {
-        calendarView.removeDecorators(); // Clear old decorators
+        calendarView.removeDecorators(); // notīrīt vecos vecie dekoratori
 
-        // Iterate over the map
+        // Iziet cauri notikumiem atkal un salikt tos sarakstā
         for (Map.Entry<String, List<Event>> entry : eventsMap.entrySet()) {
             String dateString = entry.getKey();
             List<Event> events = entry.getValue();
 
-            // Parse the date
+            // Iziet cauri datumiem
             CalendarDay calendarDay = parseDate(dateString);
             if (calendarDay != null) {
-                // Add a decorator for each event
+                // Katram pasākumam pievienojiet dekoratoru (krāsas apli)`
                 for (Event event : events) {
                     calendarView.addDecorator(new EventDecorator(calendarDay, event.getStatus()));
                 }
@@ -513,7 +512,7 @@ public class HomeFragment extends Fragment {
     }
 
     private List<Event> getEventsForDay(CalendarDay date) {
-        // Format date as "yyyy-MM-dd"
+        // formatēt datumu kā "yyyy-MM-dd"
         String dateKey = date.getYear() + "-" + (date.getMonth() + 1) + "-" + date.getDay();
 
         // Return the list of events for the selected day, or an empty list if none

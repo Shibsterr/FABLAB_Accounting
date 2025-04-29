@@ -61,9 +61,9 @@ public class MainActivity extends AppCompatActivity {
                 if (result.getContents() == null) {
                     Toast.makeText(this, "Cancelled", Toast.LENGTH_LONG).show();
                 } else {
-                    String scannedCode = result.getContents();
-                    if (isValidScan(scannedCode)) {
-                        searchEquipmentInFirebase(scannedCode);
+                    String scannedCode = result.getContents(); //Saņem noskanētu rezultātu
+                    if (isValidScan(scannedCode)) { // Pārbauda vai dati atbilst
+                        searchEquipmentInFirebase(scannedCode); // Ja jā tad padod tos datus uz meklēšanu un atver to iekārti
                     } else {
                         Toast.makeText(this, "Invalid scan. Please try again.", Toast.LENGTH_LONG).show();
                         scanCode(null);
@@ -75,43 +75,50 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Apply language and theme
+        // Ielādē iepriekš izvēlēto motīvu (theme) un to uzstāda
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         String selectedTheme = sharedPreferences.getString("theme_preference", "Theme.FABLAB");
         int themeResourceId = getResources().getIdentifier(selectedTheme, "style", getPackageName());
         setTheme(themeResourceId);
 
+        // Ielādē iepriekš izvēlēto valodu un to uzstāda
         String languageCode = sharedPreferences.getString("language_preference", "en");
         Locale locale = new Locale(languageCode);
         Locale.setDefault(locale);
+
         Configuration configuration = getResources().getConfiguration();
         configuration.setLocale(locale);
         getResources().updateConfiguration(configuration, getResources().getDisplayMetrics());
 
+        // Uzstāda sākotnējo skatu ar ielādes ekrānu
         setContentView(R.layout.activity_loading);
         loadingScreen = findViewById(R.id.progressBar);
 
+        // Pārbauda, vai ir pieejams interneta savienojums (WiFi vai mobilie dati)
         if (!isNetworkAvailable()) {
-            Toast.makeText(this, "No network connection", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.no_internet), Toast.LENGTH_SHORT).show();
             return;
         }
 
+        // Pārbauda, vai ir pieslēgts lietotājs
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentUser == null) {
+            // Ja nav lietotāja, pārvirza uz reģistrācijas aktivitāti
             startActivity(new Intent(MainActivity.this, RegisterUser.class));
             finish();
         } else {
+            // Ja ir pieslēgts lietotājs, iegūst lietotāja datus no Firebase
             userRef = FirebaseDatabase.getInstance().getReference("users").child(currentUser.getUid());
-            userRef.keepSynced(true);
+            userRef.keepSynced(true); // Nodrošina, ka dati vienmēr ir sinhronizēti
 
             userListener = new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
                     if (!snapshot.exists()) {
-                        Toast.makeText(MainActivity.this, "User data not found", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(MainActivity.this, getString(R.string.no_data_user), Toast.LENGTH_SHORT).show();
                         return;
                     }
-
+                    // Datu apstrāde tiek veikta UI pavedienā
                     runOnUiThread(() -> {
                         if (binding == null) {
                             setupMainContent(snapshot);
@@ -123,14 +130,16 @@ public class MainActivity extends AppCompatActivity {
 
                 @Override
                 public void onCancelled(@NonNull DatabaseError error) {
-                    Toast.makeText(MainActivity.this, "Database error", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, getString(R.string.database_error), Toast.LENGTH_SHORT).show();
                 }
             };
             userRef.addValueEventListener(userListener);
         }
     }
 
+
     private void setupMainContent(DataSnapshot dataSnapshot) {
+        // Inicializē galveno aktivitātes saturu ar DrawerLayout un NavigationView
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
@@ -140,6 +149,7 @@ public class MainActivity extends AppCompatActivity {
         DrawerLayout drawer = binding.drawerLayout;
         NavigationView navigationView = binding.navView;
 
+        // Konfigurē navigācijas izvēlni
         mAppBarConfiguration = new AppBarConfiguration.Builder(
                 R.id.nav_home, R.id.new_equip, R.id.nav_task, R.id.nav_assign,
                 R.id.nav_logs, R.id.nav_report, R.id.nav_settings)
@@ -153,7 +163,9 @@ public class MainActivity extends AppCompatActivity {
         updateSidebarUI(dataSnapshot);
     }
 
+
     private void updateSidebarUI(DataSnapshot snapshot) {
+        // Atjaunina sānu izvēlni ar lietotāja vārdu un e-pastu
         View headerView = binding.navView.getHeaderView(0);
         fullname = headerView.findViewById(R.id.nameSurname);
         email = headerView.findViewById(R.id.epasts);
@@ -165,28 +177,35 @@ public class MainActivity extends AppCompatActivity {
         fullname.setText(name != null ? name : "No name");
         email.setText(userEmail != null ? userEmail : "No email");
 
+        // Pēc lietotāja statusa nosaka, kuras izvēlnes opcijas būs redzamas
         Menu navMenu = binding.navView.getMenu();
-            navMenu.findItem(R.id.new_equip).setVisible("Darbinieks".equals(statuss) || "Admin".equals(statuss));
-            navMenu.findItem(R.id.nav_task).setVisible("Darbinieks".equals(statuss) || "Admin".equals(statuss));
-            navMenu.findItem(R.id.nav_logs).setVisible("Admin".equals(statuss));
-            navMenu.findItem(R.id.nav_assign).setVisible("Darbinieks".equals(statuss) || "Admin".equals(statuss));
-            navMenu.findItem(R.id.nav_updateuser).setVisible("Admin".equals(statuss));
+        navMenu.findItem(R.id.new_equip).setVisible("Darbinieks".equals(statuss) || "Admin".equals(statuss));
+        navMenu.findItem(R.id.nav_task).setVisible("Darbinieks".equals(statuss) || "Admin".equals(statuss));
+        navMenu.findItem(R.id.nav_logs).setVisible("Admin".equals(statuss));
+        navMenu.findItem(R.id.nav_assign).setVisible("Darbinieks".equals(statuss) || "Admin".equals(statuss));
+        navMenu.findItem(R.id.nav_updateuser).setVisible("Admin".equals(statuss));
     }
 
+
     private boolean isNetworkAvailable() {
+        // Pārbauda, vai ierīcei ir aktīvs interneta savienojums
         ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
         return activeNetwork != null && activeNetwork.isConnected();
     }
 
+
     private boolean isValidScan(String data) {
+        // Validē skenēto datu formātu (8 cipari vai specifiska struktūra)
         return data.length() == 8 || data.matches("^[1-9][0-9]?_[1-9]_[1-2]?_[a-zA-Z0-9\\s]+$")
                 || data.matches("^[1-9][0-9]?_[1-9][0-9]?_[1-2]_[a-zA-Z0-9\\s]+$")
                 || data.matches("^[1-9]_[1-9][0-9]?_[1-2]_[a-zA-Z0-9\\s]+$")
                 || data.matches("^[1-9]_[1-9]_[1-2]_[a-zA-Z0-9\\s]+$");
     }
 
+
     private void searchEquipmentInFirebase(String scannedCode) {
+        // Meklē iekārtu Firebase datubāzē pēc skenētā koda
         FirebaseDatabase.getInstance().getReference("equipment").addListenerForSingleValueEvent(
                 new ValueEventListener() {
                     @Override
@@ -214,7 +233,9 @@ public class MainActivity extends AppCompatActivity {
                 });
     }
 
+
     private void openSpecificEquipmentFragment(String equipmentId) {
+        // Atver specifisko iekārtas fragmentu, nododot tā ID
         Bundle bundle = new Bundle();
         bundle.putString("code", equipmentId);
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
@@ -223,7 +244,9 @@ public class MainActivity extends AppCompatActivity {
         addLogEntry(equipmentId);
     }
 
+
     public void scanCode(MenuItem item) {
+        // Palaiž QR koda skeneri ar noteiktiem iestatījumiem
         ScanOptions options = new ScanOptions();
         options.setPrompt(getString(R.string.volume_prompt_qr));
         options.setBeepEnabled(false);
@@ -232,7 +255,9 @@ public class MainActivity extends AppCompatActivity {
         barLauncher.launch(options);
     }
 
+
     private void addLogEntry(String code) {
+        // Pievieno jaunu ierakstu žurnālā par skenēto iekārtu
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentUser == null) return;
 
@@ -244,6 +269,7 @@ public class MainActivity extends AppCompatActivity {
         userRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
                 if (!dataSnapshot.exists()) {
                     Log.e("AddLogEntry", "User data not found.");
                     return;
@@ -251,7 +277,7 @@ public class MainActivity extends AppCompatActivity {
 
                 String fullName = dataSnapshot.child("Vards un uzvards").getValue(String.class);
 
-                // Format current date and time
+                // Formatē pašreizējo datumu un laiku uz (DD-MM-YYYY)
                 SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.getDefault());
                 String dateTime = sdf.format(new Date());
 
@@ -289,14 +315,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    //adds the qr button at the top bar (REQUIRED)
+    //pievieno pogu qr augšējā joslā (NEPIECIEŠAMS)
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
 
-    // needed for the three lined (hamburger) button to work (REQUIRED)
+    // nepieciešama, lai trīs līniju (hamburger) poga darbotos (NEPIECIEŠAMS)
     @Override
     public boolean onSupportNavigateUp() {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);

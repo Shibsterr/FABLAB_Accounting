@@ -316,8 +316,10 @@
     <string name="minstock_spec">Minimum stock: </string>
     <string name="maxstock_spec">Maximum stock:</string>
     <string name="critstock_spec">Critical stock:</string>
-
-
+    <string name="no_internet">No internet connection</string>
+    <string name="no_data_user">User data not found</string>
+    <string name="database_error">Database error</string>
+    <string name="date_validation_error">Please select a valid date of birth.</string>
 
 
 </resources>
