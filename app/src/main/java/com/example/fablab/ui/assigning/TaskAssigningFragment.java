@@ -46,44 +46,48 @@ public class TaskAssigningFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_task_assigning, container, false);
 
+        // Inicializē UI komponentes
         spinnerUsers = view.findViewById(R.id.spinnerUsers);
         datePicker = view.findViewById(R.id.datePicker);
         radioGroupUrgency = view.findViewById(R.id.radioGroupUrgency);
         editTextDescription = view.findViewById(R.id.editTextDescription);
         buttonAssignTask = view.findViewById(R.id.buttonAssignTask);
 
+        // Firebase autentifikācija un datu bāzes references
         mAuth = FirebaseAuth.getInstance();
         mDatabase = FirebaseDatabase.getInstance().getReference();
 
-        // Set the minimum date for the DatePicker to today's date
+        // Uzstāda šodienas datumu kā minimālo DatePicker vērtību
         Calendar calendar = Calendar.getInstance();
         datePicker.setMinDate(calendar.getTimeInMillis());
 
-        // Initialize spinner with users
+        // Ielādē lietotāju sarakstu spinera izvēlnē
         initSpinner();
 
+        // Uzstāda pogas nospiešanas listeneri
         buttonAssignTask.setOnClickListener(v -> assignTask());
 
         return view;
     }
 
+    // Inicializē lietotāju spineri
     private void initSpinner() {
-        // Get a reference to the users node in the database
         DatabaseReference usersRef = mDatabase.child("users");
 
-        // Read data from the users node
+        // Nolasa visus lietotājus no datu bāzes vienreiz
         usersRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 List<String> userList = new ArrayList<>();
 
-                // Get the status of the current user
+                // Iegūst pašreizējā lietotāja statusu
                 String currentUserStatus = dataSnapshot.child(mAuth.getCurrentUser().getUid()).child("Statuss").getValue(String.class);
 
-                // Iterate through the users
+                // Iterē caur visiem lietotājiem
                 for (DataSnapshot userSnapshot : dataSnapshot.getChildren()) {
                     String status = userSnapshot.child("Statuss").getValue(String.class);
 
+                    // Atkarībā no pašreizējā lietotāja statusa pievieno attiecīgos lietotājus
                     if ("Admin".equals(currentUserStatus)) {
                         if ("Admin".equals(status) || "Darbinieks".equals(status)) {
                             String fullName = userSnapshot.child("Vards un uzvards").getValue(String.class);
@@ -101,7 +105,7 @@ public class TaskAssigningFragment extends Fragment {
                     }
                 }
 
-                // Populate the spinner with the user list
+                // Uzstāda spinerim adapteri ar lietotāju sarakstu
                 ArrayAdapter<String> adapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_spinner_item, userList);
                 adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                 spinnerUsers.setAdapter(adapter);
@@ -109,64 +113,71 @@ public class TaskAssigningFragment extends Fragment {
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
+                // Kļūda lietotāju ielādē
                 Toast.makeText(getContext(), getString(R.string.failed_error_loadUser) + databaseError.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }
 
+    // Metode uzdevuma piešķiršanai
     private void assignTask() {
         String selectedUser = spinnerUsers.getSelectedItem().toString();
+
+        // Saņem izvēlēto datumu
         int day = datePicker.getDayOfMonth();
-        int month = datePicker.getMonth() + 1; // Months are 0-based, so add 1
+        int month = datePicker.getMonth() + 1;
         int year = datePicker.getYear();
         String deadline = day + "/" + month + "/" + year;
 
+        // Saņem izvēlēto steidzamības līmeni
         RadioButton radioButton = getView().findViewById(radioGroupUrgency.getCheckedRadioButtonId());
         String urgency = radioButton.getText().toString();
 
+        // Iegūst aprakstu un pārbauda, vai tas nav tukšs
         String description = editTextDescription.getText().toString();
-
-        // Check if the description is empty
         if (description.trim().isEmpty()) {
             Toast.makeText(getContext(), getString(R.string.error_desc_empty), Toast.LENGTH_SHORT).show();
             return;
         }
 
-        // Get current user's UID
+        // Iegūst pašreizējā lietotāja UID
         String currentUserId = mAuth.getCurrentUser().getUid();
 
-        // Get current user's username from the Realtime Database
+        // Nolasa pašreizējā lietotāja vārdu no datu bāzes
         DatabaseReference currentUserRef = mDatabase.child("users").child(currentUserId);
         currentUserRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
+                    // Iegūst vārdu un uzvārdu
                     String currentUserName = dataSnapshot.child("Vards un uzvards").getValue(String.class);
 
-                    // Get current date and time
+                    // Ģenerē datuma un laika zīmogu kā uzdevuma ID
                     SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.getDefault());
                     String dateTime = sdf.format(new Date());
 
-                    // Assign task to user in the database
+                    // Saglabā uzdevumu izvēlētajam lietotājam datu bāzē
                     DatabaseReference userTasksRef = mDatabase.child("tasks").child(selectedUser);
-
-                    // Generate unique task ID using date and time
-                    String taskId = dateTime;
+                    String taskId = dateTime; // Izmanto datuma/laika zīmogu kā unikālu ID
                     DatabaseReference taskRef = userTasksRef.child(taskId);
 
+                    // Saglabā uzdevuma detaļas
                     taskRef.child("deadline").setValue(deadline);
                     taskRef.child("urgency").setValue(urgency);
                     taskRef.child("description").setValue(description);
-                    taskRef.child("status").setValue("incomplete"); // Initial status is incomplete
-                    taskRef.child("assignedBy").setValue(currentUserName); // Include the name of the user who assigned the task
+                    taskRef.child("status").setValue("incomplete"); // Sākotnējais statuss
+                    taskRef.child("assignedBy").setValue(currentUserName); // Kas piešķīra
+
                     Toast.makeText(getContext(), getString(R.string.task_assign_good), Toast.LENGTH_SHORT).show();
                 } else {
+                    // Kļūda lietotāja datu nolasē
                     Toast.makeText(getContext(), getString(R.string.failed_retrieve_info), Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
+                // Kļūda datu nolasē
                 Toast.makeText(getContext(), getString(R.string.failed_retrieve_info), Toast.LENGTH_SHORT).show();
             }
         });

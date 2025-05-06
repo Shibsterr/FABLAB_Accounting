@@ -144,47 +144,47 @@ public class RegisterUser extends AppCompatActivity implements View.OnClickListe
         String statuss = "Lietotājs";
 
         // Validācijas pārbaudes
-        if (names.isEmpty()) {
+        if (names.isEmpty()) {//Vārds nav ievadīts
             name_surname.setError(getString(R.string.error_name_required));
             name_surname.requestFocus();
             return;
         }
-        if (mail.isEmpty()) {
+        if (mail.isEmpty()) {//Epasts nav ievadīts
             email.setError(getString(R.string.error_email_required));
             email.requestFocus();
             return;
         }
-        if (!Patterns.EMAIL_ADDRESS.matcher(mail).matches()) {
+        if (!Patterns.EMAIL_ADDRESS.matcher(mail).matches()) {//Epast nav pareizi ievadīts
             email.setError(getString(R.string.error_invalid_email));
             email.requestFocus();
             return;
         }
-        if (!isValidEmailDomain(mail)) {
+        if (!isValidEmailDomain(mail)) {    //Epasts domēns
             email.setError(getString(R.string.error_invalid_email_domain));
             email.requestFocus();
             return;
         }
-        if (dob.isEmpty()) {
+        if (dob.isEmpty()) { //Dzimšanas datums nav ievadīts
             date_of_birth.setError(getString(R.string.error_dob_required));
             date_of_birth.requestFocus();
             return;
         }
-        if (pass.isEmpty()) {
+        if (pass.isEmpty()) {//Parole nav ievadīta
             password.setError(getString(R.string.error_password_required));
             password.requestFocus();
             return;
         }
-        if (!pass.equals(reppass)) {
+        if (!pass.equals(reppass)) {//Atkārtošanas parole nav vienāda
             rep_password.setError(getString(R.string.error_password_mismatch));
             rep_password.requestFocus();
             return;
         }
-        if (!isValidPassword(pass)) {
+        if (!isValidPassword(pass)) {//Parole neatbilst vajadzībām
             password.setError(getString(R.string.error_invalid_password));
             password.requestFocus();
             return;
         }
-        if (!isValidName(names)) {
+        if (!isValidName(names)) {//Uzvārds nav ievadīts pareizi (nav izmantoti latviešu burti)
             name_surname.setError(getString(R.string.validname_error));
             name_surname.requestFocus();
             return;

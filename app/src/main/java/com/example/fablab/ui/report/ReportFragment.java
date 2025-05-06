@@ -33,63 +33,67 @@ public class ReportFragment extends Fragment {
     private EditText descriptionEditText, edittelpanr;
     private Spinner stacijaSpinner, equipmentSpinner;
     private EmailSender emailSender;
-    private List<String> stationNodeNames = new ArrayList<>();  // To store station node names
+    private List<String> stationNodeNames = new ArrayList<>();  // Saglabā staciju Firebase mezglu nosaukumus
 
-    @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_slideshow, container, false);
 
+        // Sasaista UI komponentes
         descriptionEditText = view.findViewById(R.id.Description);
         edittelpanr = view.findViewById(R.id.telpanr);
         stacijaSpinner = view.findViewById(R.id.stacijasnr_spinner);
         equipmentSpinner = view.findViewById(R.id.equipment_spinner);
 
+        // Nosūta e-pastu, kad tiek nospiesta poga
         Button sendButton = view.findViewById(R.id.send_it);
         sendButton.setOnClickListener(v -> fetchAdminAndWorkerEmails());
 
+        // Ielādē staciju nosaukumus no Firebase
         loadStationNames();
 
-        // Initialize EmailSender with your email and password
+        // Inicializē EmailSender klasi ar Gmail konta datiem
         emailSender = new EmailSender("fablabappnoreply@gmail.com", "xllk wqet dulg xabp");
 
-        // Set listener for station selection to load equipment list
+        // Kad izvēlas staciju, tiek ielādēts tās aprīkojums
         stacijaSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                String selectedStationNode = stationNodeNames.get(position);  // Get the node name for the selected station
-                loadEquipmentForStation(selectedStationNode);  // Pass the node name
+                String selectedStationNode = stationNodeNames.get(position);
+                loadEquipmentForStation(selectedStationNode);
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
-                // Do nothing
+                // Nekas nav izvēlēts
             }
         });
 
         return view;
     }
 
+    // Iegūst pašreizējo lietotāja valodas izvēli
     private String getCurrentLanguage() {
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getContext());
-        return sharedPref.getString("language_preference", "en"); // Default is "en"
+        return sharedPref.getString("language_preference", "en");
     }
 
+    // Ielādē staciju nosaukumus no Firebase un uzstāda tos Spinnerī
     private void loadStationNames() {
         DatabaseReference stationsRef = FirebaseDatabase.getInstance().getReference().child("stations");
         stationsRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 List<String> stationNames = new ArrayList<>();
-                stationNodeNames.clear();  // Clear previous station nodes
+                stationNodeNames.clear();
 
                 for (DataSnapshot stationSnapshot : dataSnapshot.getChildren()) {
                     String stationName = stationSnapshot.child("Name").child(getCurrentLanguage()).getValue(String.class);
-                    String stationNodeName = stationSnapshot.getKey();  // Get the node name (e.g., "Heatpress_station")
+                    String stationNodeName = stationSnapshot.getKey();
 
                     if (stationName != null && stationNodeName != null) {
-                        stationNames.add(stationName);  // Add station name to display
-                        stationNodeNames.add(stationNodeName);  // Store node name for later use
+                        stationNames.add(stationName);
+                        stationNodeNames.add(stationNodeName);
                     }
                 }
 
@@ -100,12 +104,12 @@ public class ReportFragment extends Fragment {
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                // Handle error
+                // Kļūda piekļūstot datiem
             }
         });
     }
 
-    // Method to load equipment for the selected station node
+    // Ielādē izvēlētās stacijas aprīkojumu
     private void loadEquipmentForStation(String stationNodeName) {
         DatabaseReference equipmentRef = FirebaseDatabase.getInstance().getReference().child("stations").child(stationNodeName).child("Equipment");
         equipmentRef.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -113,11 +117,12 @@ public class ReportFragment extends Fragment {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 List<String> equipmentList = new ArrayList<>();
                 for (DataSnapshot equipmentSnapshot : dataSnapshot.getChildren()) {
-                    String equipmentName = equipmentSnapshot.child("Nosaukums").getValue(String.class);  // Get equipment name
+                    String equipmentName = equipmentSnapshot.child("Nosaukums").getValue(String.class);
                     if (equipmentName != null) {
                         equipmentList.add(equipmentName);
                     }
                 }
+
                 ArrayAdapter<String> equipmentAdapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_spinner_item, equipmentList);
                 equipmentAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                 equipmentSpinner.setAdapter(equipmentAdapter);
@@ -125,11 +130,12 @@ public class ReportFragment extends Fragment {
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                // Handle error
+                // Kļūda piekļūstot aprīkojumam
             }
         });
     }
 
+    // Iegūst visus adminu un darbinieku e-pastus
     private void fetchAdminAndWorkerEmails() {
         DatabaseReference usersRef = FirebaseDatabase.getInstance().getReference().child("users");
         usersRef.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -159,10 +165,11 @@ public class ReportFragment extends Fragment {
         });
     }
 
+    // Nosūta e-pastu ar ziņojumu par problēmu
     private void sendEmailToAdmin(List<String> emails) {
         String telpanr = edittelpanr.getText().toString();
         String stacijanr = stacijaSpinner.getSelectedItem().toString();
-        String equipmentName = equipmentSpinner.getSelectedItem().toString(); // Equipment name from Spinner
+        String equipmentName = equipmentSpinner.getSelectedItem().toString();
         String description = descriptionEditText.getText().toString();
 
         String emailBody = "Telpa: " + telpanr +

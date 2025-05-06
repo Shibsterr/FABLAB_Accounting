@@ -45,13 +45,12 @@ public class NewEvent extends AppCompatActivity {
     private String startTime = "";
     private String endTime = "";
 
-    // Email credentials (ensure to store them securely)
-    private static final String EMAIL = "fablabappnoreply@gmail.com"; // Change this to your email
-    private static final String PASSWORD = "xllk wqet dulg xabp"; // Change this to your password
+    private static final String EMAIL = "fablabappnoreply@gmail.com";
+    private static final String PASSWORD = "xllk wqet dulg xabp";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        // Apply theme and language before setting content view
+        // Pirms satura skata iestatīšanas lietojiet motīvu un valodu
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         String selectedTheme = sharedPreferences.getString("theme_preference", "Theme.FABLAB");
         int themeResourceId = getResources().getIdentifier(selectedTheme, "style", getPackageName());

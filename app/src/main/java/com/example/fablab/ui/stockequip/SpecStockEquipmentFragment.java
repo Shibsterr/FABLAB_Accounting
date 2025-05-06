@@ -44,16 +44,16 @@ import java.util.regex.Pattern;
 
 public class SpecStockEquipmentFragment extends Fragment {
 
+    // Firebase datu bāzes references un UI komponentes
     private DatabaseReference databaseReference;
-    private TextView titletext, desctext,
-            maxstc, minstc, critstc, basestock, roomtxt;
+    private TextView titletext, desctext, maxstc, minstc, critstc, basestock, roomtxt;
     private ImageView equipimg;
     private Button addbtn, subtractbtn, maxStockButton;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        // Iegūst valodas iestatījumus no SharedPreferences un iestata lokalizāciju
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
-        // Set locale based on saved language preference
         String languageCode = sharedPreferences.getString("language_preference", "en");
         Locale locale = new Locale(languageCode);
         Locale.setDefault(locale);
@@ -61,21 +61,19 @@ public class SpecStockEquipmentFragment extends Fragment {
         Resources resources = getResources();
         Configuration configuration = new Configuration(resources.getConfiguration());
         configuration.setLocale(locale);
-
-        // Update the configuration and display metrics
         resources.updateConfiguration(configuration, resources.getDisplayMetrics());
 
         Log.d("MainActivity", "Language Code: " + languageCode);
         super.onCreate(savedInstanceState);
-
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        // Uzpūš fragmenta izkārtojumu un inicializē UI komponentes
         View view = inflater.inflate(R.layout.fragment_spec_stock_equipment, container, false);
-        // Retrieve the data passed from the previous fragment
         Bundle bundle = getArguments();
 
+        // Saista UI elementus ar XML komponentēm
         titletext = view.findViewById(R.id.equip_title);
         desctext = view.findViewById(R.id.equip_desc);
         equipimg = view.findViewById(R.id.equip_image);
@@ -87,25 +85,26 @@ public class SpecStockEquipmentFragment extends Fragment {
         subtractbtn = view.findViewById(R.id.subtractbutton);
         maxStockButton = view.findViewById(R.id.maxstock_button);
 
+        // Pievieno notikumu klausītājus pogām
         maxStockButton.setOnClickListener(v -> showEditMaxStockDialog());
         addbtn.setOnClickListener(v -> onAddButtonClicked());
         subtractbtn.setOnClickListener(v -> onSubtractButtonClicked());
 
+        // Ja ir saņemts iekārtas nosaukums no iepriekšējā fragmenta, tad pieprasa datus no Firebase
         if (bundle != null && bundle.containsKey("equipment_name")) {
             String equipmentName = bundle.getString("equipment_name");
             Log.d("StockSpecificEquipment", "Equipment name: " + equipmentName);
 
-            // Query the database to find details about the clicked equipment
+            // Iegūst datus no Firebase par konkrēto iekārtu
             DatabaseReference equipmentRef = FirebaseDatabase.getInstance().getReference().child("equipment");
-
             Query query = equipmentRef.orderByChild("Nosaukums").equalTo(equipmentName);
             query.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    // Check if the equipment with the given name exists in the database
+                    // Ja atrasta atbilstoša iekārta
                     if (dataSnapshot.exists()) {
                         for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                            // Get the details of the equipment
+                            // Izgūst iekārtas detaļas
                             String imageName = snapshot.child("Attēls").getValue(String.class);
                             String description = snapshot.child("Description").getValue(String.class);
                             int minStock = snapshot.child("Min Stock").getValue(Integer.class);
@@ -113,40 +112,35 @@ public class SpecStockEquipmentFragment extends Fragment {
                             int critStock = snapshot.child("Critical Stock").getValue(Integer.class);
                             int stk = snapshot.child("Skaits").getValue(Integer.class);
 
+                            // Formatē tekstus un iestata tos UI komponentēs
+                            String min = getString(R.string.minimum_stock_0, minStock);
+                            String max = getString(R.string.maximum_stock_0, maxStock);
+                            String crit = getString(R.string.critical_stock_0, critStock);
+                            String stock = getString(R.string.stock_0, stk);
 
-                            String min, max, crit, stock;
-                            stock = getString(R.string.stock_0, stk);
-                            min = getString(R.string.minimum_stock_0, minStock);
-                            max = getString(R.string.maximum_stock_0, maxStock);
-                            crit = getString(R.string.critical_stock_0, critStock);
-
-                            // Update UI with the retrieved details
                             equipimg.setClipToOutline(true);
                             titletext.setText(equipmentName);
                             desctext.setText(description);
-
                             maxstc.setText(max);
                             minstc.setText(min);
                             critstc.setText(crit);
                             basestock.setText(stock);
 
+                            // Ielādē attēlu ar Glide
                             Glide.with(requireContext()).load(imageName).into(equipimg);
-                            String stockText = basestock.getText().toString();
-                            String stockPrefix = getString(R.string.stock); // e.g., "Stock: " or "Krājums: "
 
+                            // Atjauno pogu statusus
                             updateBtn();
-
-
                         }
                     } else {
-                        // Equipment with the given name does not exist
+                        // Ja nav atrasta atbilstoša iekārta
                         Log.d("StockSpecificEquipment", "Equipment with name '" + equipmentName + "' not found.");
                     }
                 }
 
                 @Override
                 public void onCancelled(@NonNull DatabaseError databaseError) {
-                    // Handle errors
+                    // Apstrādā Firebase vaicājuma kļūdas
                     Log.e("StockSpecificEquipment", "Error querying equipment: " + databaseError.getMessage());
                 }
             });
@@ -155,31 +149,30 @@ public class SpecStockEquipmentFragment extends Fragment {
     }
 
     private void showQuantityInputDialog(boolean isAddOperation) {
+        // Rāda dialogu, kur ievadīt pievienojamo vai atņemamo daudzumu
         QuantityInputDialogFragment dialogFragment = new QuantityInputDialogFragment(quantity -> {
             int currentStock = parseStockFromText(basestock.getText().toString(), R.string.stock_0);
 
-            // Adjust quantity to prevent negative stock
+            // Aprēķina jauno krājumu, ņemot vērā robežvērtības
             int adjustedQuantity = isAddOperation ? quantity : Math.min(quantity, currentStock);
             int newStock = isAddOperation ? currentStock + adjustedQuantity : currentStock - adjustedQuantity;
 
-            // Fetch limits
+            // Iegūst robežvērtības no UI
             int maxStock = extractStockValue(maxstc.getText().toString(), 0);
             int critStock = extractStockValue(critstc.getText().toString(), 0);
             int minStock = extractStockValue(minstc.getText().toString(), 0);
 
-            // Email alerts and capping
+            // Sūta e-pastu, ja krājums zem minimuma vai kritiska
             if (newStock < minStock) {
-                sendEmailToAdmin(); // Alert when below min
+                sendEmailToAdmin();
             } else if (newStock > maxStock) {
-                newStock = maxStock; // Cap to max
+                newStock = maxStock;
             } else if (newStock < critStock) {
-                sendEmailToAdmin(); // Alert when below critical
+                sendEmailToAdmin();
             }
 
-            // Update UI
+            // Atjauno UI un Firebase
             basestock.setText(getString(R.string.stock_0, newStock));
-
-            // Update Firebase
             String equipmentName = titletext.getText().toString();
             DatabaseReference equipmentRef = FirebaseDatabase.getInstance().getReference().child("equipment");
 
@@ -195,11 +188,12 @@ public class SpecStockEquipmentFragment extends Fragment {
                             int adjustedDbQuantity = isAddOperation ? quantity : Math.min(quantity, currentStockFromDB);
                             int updatedStock = isAddOperation ? currentStockFromDB + adjustedDbQuantity : currentStockFromDB - adjustedDbQuantity;
 
-                            // Cap to max
+                            // Aizsargā pret pārsniegšanu
                             if (updatedStock > maxStock) {
                                 updatedStock = maxStock;
                             }
 
+                            // Atjauno Firebase un pievieno žurnāla ierakstu
                             snapshot.getRef().child("Skaits").setValue(updatedStock);
                             addLogEntry(equipmentName, adjustedDbQuantity, isAddOperation);
                             updateBtn();
@@ -217,10 +211,9 @@ public class SpecStockEquipmentFragment extends Fragment {
         dialogFragment.show(getParentFragmentManager(), "quantity_input_dialog");
     }
 
-    // Utility method to extract digits from a string and parse to int
+    // Izvelk skaitli no teksta virknes (piemēram "Krājums: 15" -> 15)
     private int extractStockValue(String text, int fallback) {
         try {
-            // This will extract the first number found in the string
             Matcher matcher = Pattern.compile("\\d+").matcher(text);
             if (matcher.find()) {
                 return Integer.parseInt(matcher.group());
@@ -232,6 +225,7 @@ public class SpecStockEquipmentFragment extends Fragment {
     }
 
     private void sendEmailToAdmin() {
+        // Sūta e-pastu visiem administratoriem, ja krājums zem normas
         int maxStock = extractStockValue(maxstc.getText().toString(), 0);
         int minStock = extractStockValue(minstc.getText().toString(), 0);
 
@@ -252,6 +246,7 @@ public class SpecStockEquipmentFragment extends Fragment {
                         }
                     }
                     if (!adminEmails.isEmpty()) {
+                        // Veido ziņojuma tekstu un sūta to
                         String subject = "Paziņojums par zemu krājumu";
                         String message = "Sveiki!\n\n" +
                                 "Uzmanību! Preces '" + titletext.getText().toString() + "' krājums ir zemā līmenī.\n" +
@@ -269,12 +264,12 @@ public class SpecStockEquipmentFragment extends Fragment {
 
                 @Override
                 public void onCancelled(@NonNull DatabaseError databaseError) {
-                    Log.e("SendEmailToAdmin", "Database error: " + databaseError.getMessage());
+                    // Firebase kļūdu apstrāde
                 }
             });
         }
     }
-
+    // Pievieno žurnāla ierakstu Firebase, kas norāda, vai lietotājs pievienoja vai noņēma vienības
     private void addLogEntry(String equipmentName, int quantity, boolean isAddOperation) {
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentUser == null) return;
@@ -288,59 +283,66 @@ public class SpecStockEquipmentFragment extends Fragment {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (!dataSnapshot.exists()) {
-                    Log.e("AddLogEntry", "User data not found.");
+                    Log.e("AddLogEntry", "Lietotāja dati nav atrasti.");
                     return;
                 }
 
+                // Iegūst lietotāja vārdu no Firebase
                 String fullName = dataSnapshot.child("Vards un uzvards").getValue(String.class);
 
-                // Format current date and time
+                // Formatē pašreizējo datumu un laiku
                 SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.getDefault());
                 String dateTime = sdf.format(new Date());
 
-                // Summary based on action
+                // Veido kopsavilkumu, pamatojoties uz darbību
                 String summary = isAddOperation
                         ? fullName + " pievienoja " + quantity + " vienības priekšmetam '" + equipmentName + "'."
                         : fullName + " noņēma " + quantity + " vienības no priekšmeta '" + equipmentName + "'.";
 
+                // Veido virsrakstu žurnāla ierakstam
                 String title = isAddOperation
                         ? "Iekārtes vienību pievienošana " + dateTime
                         : "Iekārtes vienību noņemšana " + dateTime;
+
                 DatabaseReference logRef = FirebaseDatabase.getInstance().getReference()
                         .child("Logs").child(dateTime);
 
+                // Izveido ierakstu kā HashMap
                 Map<String, Object> logEntry = new HashMap<>();
                 logEntry.put("user", fullName);
                 logEntry.put("email", email);
                 logEntry.put("title", title);
                 logEntry.put("summary", summary);
 
+                // Saglabā žurnāla ierakstu Firebase
                 logRef.setValue(logEntry)
-                        .addOnSuccessListener(aVoid -> Log.d("AddLogEntry", "Log entry added successfully"))
-                        .addOnFailureListener(e -> Log.e("AddLogEntry", "Error adding log entry", e));
+                        .addOnSuccessListener(aVoid -> Log.d("AddLogEntry", "Žurnāla ieraksts veiksmīgi pievienots"))
+                        .addOnFailureListener(e -> Log.e("AddLogEntry", "Kļūda pievienojot žurnāla ierakstu", e));
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                Log.e("AddLogEntry", "Database error: " + databaseError.getMessage());
+                Log.e("AddLogEntry", "Datu bāzes kļūda: " + databaseError.getMessage());
             }
         });
     }
 
+    // Apstrādā pievienošanas pogas klikšķi – atver ievades dialogu ar pievienošanas loģiku
     private void onAddButtonClicked() {
-        showQuantityInputDialog(true);
+        showQuantityInputDialog(true); // true = pievienošana
     }
 
+    // Apstrādā noņemšanas pogas klikšķi – atver ievades dialogu ar noņemšanas loģiku
     private void onSubtractButtonClicked() {
-        showQuantityInputDialog(false);
+        showQuantityInputDialog(false); // false = noņemšana
     }
 
+    // Parāda dialogu, kas ļauj rediģēt maksimālo krājumu daudzumu konkrētai iekārtai
     private void showEditMaxStockDialog() {
-        // Create an EditText view for user input
-        final EditText input = new EditText(getContext());
-        input.setInputType(InputType.TYPE_CLASS_NUMBER); // Only allow integer input
+        final EditText input = new EditText(getContext()); // Teksta lauks ievadei
+        input.setInputType(InputType.TYPE_CLASS_NUMBER); // Atļauj tikai skaitļus
 
-        // Create the dialog
+        // Izveido un parāda ievades dialogu
         new AlertDialog.Builder(getContext())
                 .setTitle(getString(R.string.max_changetitle))
                 .setMessage(getString(R.string.max_change))
@@ -350,8 +352,8 @@ public class SpecStockEquipmentFragment extends Fragment {
 
                     if (!inputText.isEmpty()) {
                         try {
-                            int newMaxStock = Integer.parseInt(inputText);
-                            updateMaxStock(newMaxStock); // Update the maxStock in the UI and Firebase
+                            int newMaxStock = Integer.parseInt(inputText); // Parsē skaitli
+                            updateMaxStock(newMaxStock); // Atjaunina Firebase un UI
                         } catch (NumberFormatException e) {
                             Toast.makeText(getContext(), getString(R.string.invalid_input), Toast.LENGTH_SHORT).show();
                         }
@@ -363,13 +365,13 @@ public class SpecStockEquipmentFragment extends Fragment {
                 .show();
     }
 
+    // Atjaunina Firebase un UI ar jauno maksimālā krājuma daudzumu izvēlētajai iekārtai
     private void updateMaxStock(int newMaxStock) {
-        String equipmentName = titletext.getText().toString();
+        String equipmentName = titletext.getText().toString(); // Iegūst iekārtas nosaukumu
 
-        // Update the UI with localized string
-        maxstc.setText(getString(R.string.maximum_stock_0, newMaxStock));
+        maxstc.setText(getString(R.string.maximum_stock_0, newMaxStock)); // Atjaunina UI
 
-        // Update the value in Firebase
+        // Atrod attiecīgo iekārtu Firebase datubāzē
         DatabaseReference equipmentRef = FirebaseDatabase.getInstance().getReference().child("equipment");
         Query query = equipmentRef.orderByChild("Nosaukums").equalTo(equipmentName);
         query.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -378,7 +380,7 @@ public class SpecStockEquipmentFragment extends Fragment {
                 if (dataSnapshot.exists()) {
                     for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                         try {
-                            // Update the "Max Stock" value in the database
+                            // Atjaunina "Max Stock" Firebase datubāzē
                             snapshot.getRef().child("Max Stock").setValue(newMaxStock)
                                     .addOnSuccessListener(aVoid -> {
                                         Toast.makeText(getContext(), getString(R.string.max_stock_good), Toast.LENGTH_SHORT).show();
@@ -389,7 +391,7 @@ public class SpecStockEquipmentFragment extends Fragment {
 
                         } catch (Exception e) {
                             e.printStackTrace();
-                            Toast.makeText(getContext(), "Error reading stock values", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getContext(), "Kļūda lasot krājuma vērtības", Toast.LENGTH_SHORT).show();
                         }
                     }
                 } else {
@@ -399,30 +401,37 @@ public class SpecStockEquipmentFragment extends Fragment {
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                Log.e("UpdateMaxStock", "Error updating max stock: " + databaseError.getMessage());
+                Log.e("UpdateMaxStock", "Kļūda atjauninot max krājumu: " + databaseError.getMessage());
             }
         });
 
-        updateBtn(); // Update the button states
+        updateBtn(); // Atjaunina pogu stāvokļus
     }
 
+    // Atjaunina pogu stāvokļus (aktīva/neaktīva) atkarībā no pašreizējā krājumu daudzuma
     private void updateBtn() {
         int currentStock = parseStockFromText(basestock.getText().toString(), R.string.stock_0);
         int minStock = extractStockValue(minstc.getText().toString(), 0);
         int maxStock = extractStockValue(maxstc.getText().toString(), 0);
 
+        // Poga “noņemt” pieejama tikai, ja ir vairāk nekā min
         subtractbtn.setEnabled(currentStock > minStock);
+
+        // Poga “pievienot” pieejama tikai, ja ir mazāk nekā max
         addbtn.setEnabled(currentStock < maxStock);
     }
 
+    // Parsē krājumu vērtību no tekstā norādītās informācijas
     private int parseStockFromText(String fullText, int stringId) {
-        String prefix = getString(stringId).replace("%1$d", "").trim();
+        String prefix = getString(stringId).replace("%1$d", "").trim(); // Iegūst prefiksu bez skaitļa
+
         try {
-            return Integer.parseInt(fullText.replace(prefix, "").trim());
+            return Integer.parseInt(fullText.replace(prefix, "").trim()); // Izņem skaitli no teksta
         } catch (NumberFormatException e) {
             e.printStackTrace();
-            return -1; // or throw, or return 0 as fallback
+            return -1; // Gadījumā, ja neizdodas parsēt
         }
     }
+
 
 }

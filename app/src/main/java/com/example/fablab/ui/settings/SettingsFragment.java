@@ -27,64 +27,70 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
+        // Ielādē iestatījumu XML failu
         setPreferencesFromResource(R.xml.fragment_settings, rootKey);
 
         mAuth = FirebaseAuth.getInstance();
         sharedPreferences = getPreferenceManager().getSharedPreferences();
 
-        // Set up language preference
+        // Valodas iestatīšana
         ListPreference languagePreference = findPreference("language_preference");
 
         if (languagePreference != null) {
+            // Definē pieejamās valodas un to vērtības
             CharSequence[] languageEntries = {"English", "Latvian"};
             CharSequence[] languageValues = {"en", "lv"};
             languagePreference.setEntries(languageEntries);
             languagePreference.setEntryValues(languageValues);
 
-            // Set the summary of the language preference to the current language
+            // Uzstāda valodas izvēles kopsavilkumu
             languagePreference.setSummaryProvider(preference -> {
                 String languageValue = sharedPreferences.getString("language_preference", "en");
                 Log.d("LanguagePreference", "saved language preference: " + languageValue);
                 return languageValue.equals("en") ? "English" : "Latvian";
             });
 
+            // Apstrādā valodas maiņu
             languagePreference.setOnPreferenceChangeListener((preference, newValue) -> {
                 String selectedLanguage = (String) newValue;
                 sharedPreferences.edit().putString("language_preference", selectedLanguage).apply();
-                changeLanguage(selectedLanguage);
-                restartActivity();
+                changeLanguage(selectedLanguage); // Maina valodu
+                restartActivity(); // Pārstartē aktivitāti, lai atjaunotu izmaiņas
                 return true;
             });
         }
 
-        // Set up theme preference
+        // Tēmas iestatīšana
         ListPreference themePreference = findPreference("theme_preference");
         if (themePreference != null) {
+            // Definē pieejamās tēmas un to vērtības
             CharSequence[] themeEntries = {"FABLAB", "Dabasmāja"};
             CharSequence[] themeValues = {"Theme.FABLAB", "Theme.Dabasmāja"};
             themePreference.setEntries(themeEntries);
             themePreference.setEntryValues(themeValues);
 
+            // Uzstāda tēmas izvēles kopsavilkumu
             themePreference.setSummaryProvider(preference -> {
                 String themeValue = sharedPreferences.getString("theme_preference", "Theme.FABLAB");
                 return themeValue.equals("Theme.FABLAB") ? "FABLAB" : "Dabasmāja";
             });
 
+            // Apstrādā motīva maiņu
             themePreference.setOnPreferenceChangeListener((preference, newValue) -> {
                 String selectedTheme = (String) newValue;
                 sharedPreferences.edit().putString("theme_preference", selectedTheme).apply();
-                restartActivity();
+                restartActivity(); // Pārstartē aktivitāti, lai piemērotu jauno tēmu
                 return true;
             });
         }
 
-        // Sign out button
+        // Izrakstīšanās poga
         findPreference("sign_out").setOnPreferenceClickListener(preference -> {
             signOut();
             return true;
         });
 
-        // Password reset button
+        // Paroles atiestatīšanas poga
         findPreference("password_reset").setOnPreferenceClickListener(preference -> {
             Log.d("LoginUser", "Clicked message to reset password");
             Intent intent = new Intent(getContext(), ForgotPasswordActivity.class);
@@ -94,6 +100,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         });
     }
 
+    // Lietotāja izrakstīšanās no Firebase un pāriešana uz pieslēgšanās ekrānu
     private void signOut() {
         mAuth.signOut();
         Toast.makeText(getContext(), "Signed out successfully", Toast.LENGTH_SHORT).show();
@@ -102,6 +109,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         startActivity(intent);
     }
 
+    // Maina lietotnes valodu
     private void changeLanguage(String languageCode) {
         Locale locale = new Locale(languageCode);
         Locale.setDefault(locale);
@@ -110,7 +118,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         Configuration configuration = new Configuration(resources.getConfiguration());
         configuration.setLocale(locale);
 
-        // For API 24 and above, use createConfigurationContext
+        // Android API 24+ nepieciešams izmantot createConfigurationContext
         Context context = getContext();
         if (context != null) {
             context = context.createConfigurationContext(configuration);
@@ -121,11 +129,11 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         }
     }
 
+    // Pārstartē aktivitāti, lai piemērotu valodas vai tēmas izmaiņas
     private void restartActivity() {
-        // Restart the activity to apply changes
         Intent intent = new Intent(getActivity(), MainActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
-        getActivity().finish(); // Finish the current activity to ensure it is not kept in the back stack
+        getActivity().finish(); // Aizver pašreizējo aktivitāti
     }
 }

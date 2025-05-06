@@ -37,6 +37,7 @@ import java.util.concurrent.Executors;
 
 public class EventsDialogFragment extends DialogFragment {
 
+    // Konstantes un mainīgie
     private static final String ARG_EVENTS = "events";
     private List<Event> events;
     private String userStatus;
@@ -45,17 +46,18 @@ public class EventsDialogFragment extends DialogFragment {
     private DatabaseReference eventsRef;
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
     private final Handler mainHandler = new Handler(Looper.getMainLooper());
-
     private String title;
 
+    // Statiskā metode fragmenta izveidei ar notikumu sarakstu
     public static EventsDialogFragment newInstance(List<Event> events) {
         EventsDialogFragment fragment = new EventsDialogFragment();
         Bundle args = new Bundle();
-        args.putSerializable(ARG_EVENTS, new ArrayList<>(events)); // Send the list of events
+        args.putSerializable(ARG_EVENTS, new ArrayList<>(events)); // Nosūta notikumu sarakstu kā argumentu
         fragment.setArguments(args);
         return fragment;
     }
 
+    // Fragmenta dialoga izveides metode
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(requireActivity());
@@ -64,23 +66,28 @@ public class EventsDialogFragment extends DialogFragment {
 
         recyclerView = view.findViewById(R.id.recyclerViewEvents);
 
+        // Iegūst nodotos notikumus
         assert getArguments() != null;
         events = (List<Event>) getArguments().getSerializable(ARG_EVENTS);
 
+        // Ja nav notikumu, parāda paziņojumu
         if (events == null || events.isEmpty()) {
             Toast.makeText(getContext(), getString(R.string.no_events_availabe), Toast.LENGTH_SHORT).show();
             return builder.create();
         }
 
+        // Dialoga izskats un pogas
         builder.setView(view)
                 .setTitle(getString(R.string.events_title))
                 .setPositiveButton(getString(R.string.ok_button), (dialog, id) -> dismiss());
 
-        checkUserStatus(); // Ensure we get user status before setting up the adapter
+        // Pārbauda lietotāja statusu un pēc tam uzstāda RecyclerView
+        checkUserStatus();
 
         return builder.create();
     }
 
+    // Pārbauda pieslēgušā lietotāja statusu no Firebase
     private void checkUserStatus() {
         DatabaseReference userRef = FirebaseDatabase.getInstance().getReference()
                 .child("users")
@@ -92,8 +99,8 @@ public class EventsDialogFragment extends DialogFragment {
                 userStatus = dataSnapshot.child("Statuss").getValue(String.class);
                 Log.d("EventsDialogFragment", "User status: " + userStatus);
 
-                setupRecyclerView();
-                setupEventListener(); // Set up real-time listener for event status updates
+                setupRecyclerView(); // Iestata adapteri ar lietotāja statusu
+                setupEventListener(); // Uzstāda reāllaika klausītāju, lai atjaunotu notikumu statusus
             }
 
             @Override
@@ -103,12 +110,12 @@ public class EventsDialogFragment extends DialogFragment {
         });
     }
 
+    // Uzstāda RecyclerView un adapteri ar notikumu sarakstu
     private void setupRecyclerView() {
-        if (recyclerView == null) {
-            return; // View might not be ready yet
-        }
+        if (recyclerView == null) return;
 
         adapter = new EventAdapter(events, userStatus, new EventAdapter.OnEventActionListener() {
+            // Apstrādā pogas klikšķi: Apstiprināt
             @Override
             public void onAccept(Event event) {
                 if (isEventValid(event)) {
@@ -118,6 +125,7 @@ public class EventsDialogFragment extends DialogFragment {
                 }
             }
 
+            // Apstrādā pogas klikšķi: Noraidīt
             @Override
             public void onDecline(Event event) {
                 if (isEventValid(event)) {
@@ -127,6 +135,7 @@ public class EventsDialogFragment extends DialogFragment {
                 }
             }
 
+            // Apstrādā pogas klikšķi: Pabeigt
             @Override
             public void onFinish(Event event) {
                 if (isEventValid(event)) {
@@ -141,14 +150,14 @@ public class EventsDialogFragment extends DialogFragment {
         recyclerView.setAdapter(adapter);
     }
 
+    // Pārbauda, vai notikums ir derīgs (ne null)
     private boolean isEventValid(Event event) {
         return event != null && event.getEventDate() != null && event.getUserId() != null && event.getEventId() != null;
     }
 
+    // Iestata reāllaika klausītājus katram notikumam, lai atjaunotu statusu
     private void setupEventListener() {
-        if (events == null || events.isEmpty()) {
-            return;
-        }
+        if (events == null || events.isEmpty()) return;
 
         for (Event event : events) {
             DatabaseReference eventRef = FirebaseDatabase.getInstance().getReference()
@@ -164,16 +173,12 @@ public class EventsDialogFragment extends DialogFragment {
                     if (status != null) {
                         for (Event e : events) {
                             if (e.getEventId().equals(event.getEventId())) {
-                                e.setStatus(status);
+                                e.setStatus(status); // Atjauno statusu lokālajā sarakstā
                                 break;
                             }
                         }
-                        if (adapter != null) {
-                            adapter.notifyDataSetChanged();
-                        }
+                        if (adapter != null) adapter.notifyDataSetChanged(); // Paziņo adapterim par izmaiņām
                     }
-
-
                 }
 
                 @Override
@@ -184,6 +189,7 @@ public class EventsDialogFragment extends DialogFragment {
         }
     }
 
+    // Atjauno notikuma statusu Firebase datubāzē
     private void updateEventStatus(String eventDate, String userId, String newStatus, String eventId) {
         if (eventDate == null || userId == null || eventId == null) {
             Log.e("EventsDialogFragment", "Invalid parameters for updating event status");
@@ -200,9 +206,10 @@ public class EventsDialogFragment extends DialogFragment {
             eventRef.child("status").setValue(newStatus).addOnCompleteListener(task -> {
                 mainHandler.post(() -> {
                     if (task.isSuccessful()) {
-
-
+                        // Parāda paziņojumu par veiksmīgu statusa maiņu
                         Toast.makeText(getContext(), getString(R.string.status_succ, newStatus), Toast.LENGTH_SHORT).show();
+                        addLogEntry(newStatus);
+
                     } else {
                         Toast.makeText(getContext(), getString(R.string.status_err), Toast.LENGTH_SHORT).show();
                     }
@@ -211,7 +218,7 @@ public class EventsDialogFragment extends DialogFragment {
         });
     }
 
-    // event statuss change log entry
+    // Pievieno ierakstu žurnālā (log), ja notikuma statuss tiek mainīts
     private void addLogEntry(String data) {
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentUser == null) return;
@@ -231,13 +238,12 @@ public class EventsDialogFragment extends DialogFragment {
 
                 String fullName = dataSnapshot.child("Vards un uzvards").getValue(String.class);
 
-                // Format current date and time
+                // Formatē datumu un laiku
                 SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.getDefault());
                 String dateTime = sdf.format(new Date());
 
-                String title = " " + dateTime;
-
-                String summary = fullName + "  '" + data + "'.";
+                String title = "Notikuma statusa maiņa" + dateTime;
+                String summary = fullName + " Nomainīja notikuma statusu uz: " + data + "'.";
 
                 DatabaseReference logRef = FirebaseDatabase.getInstance().getReference()
                         .child("Logs").child(dateTime);

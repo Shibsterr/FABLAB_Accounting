@@ -34,25 +34,30 @@ import java.util.Map;
 
 public class UpdateUserFragment extends Fragment {
 
+    // UI komponentes
     private Spinner spinnerUsers, spinnerStatuss;
     private Button confirm, deleteUserButton;
+
+    // Firebase mainīgie
     private DatabaseReference mDatabase;
-    private Map<String, String> userIdMap;
     private FirebaseAuth mAuth;
+    private Map<String, String> userIdMap;
 
     public UpdateUserFragment() {
-        // Required empty public constructor
+        // Nepieciešams tukšs konstruktors fragmentam
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mAuth = FirebaseAuth.getInstance();
+        mAuth = FirebaseAuth.getInstance(); // Inicializē Firebase Auth
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_update_user, container, false);
+
+        // Inicializē UI komponentes
         spinnerUsers = view.findViewById(R.id.spinnerUsers);
         spinnerStatuss = view.findViewById(R.id.spinneStatuss);
         confirm = view.findViewById(R.id.buttonConfirm);
@@ -61,11 +66,13 @@ public class UpdateUserFragment extends Fragment {
         mDatabase = FirebaseDatabase.getInstance().getReference();
         userIdMap = new HashMap<>();
 
-        deleteUserButton.setEnabled(false); // Disable delete button initially
+        deleteUserButton.setEnabled(false); // Sākumā atspējo dzēšanas pogu
 
+        // Ielādē lietotāju sarakstu un statusu opcijas
         initUserSpinner();
         initStatusSpinner();
 
+        // Uz lietotāja izvēles izmaiņām ielādē attiecīgo statusu
         spinnerUsers.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -74,16 +81,17 @@ public class UpdateUserFragment extends Fragment {
             }
 
             @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-            }
+            public void onNothingSelected(AdapterView<?> parent) {}
         });
 
+        // Pogas funkcionalitāte
         confirm.setOnClickListener(v -> UpdateUser());
         deleteUserButton.setOnClickListener(v -> confirmDeleteUser());
 
         return view;
     }
 
+    // Ielādē visus aktīvos (neizdzēstos) lietotājus Spinnerī
     private void initUserSpinner() {
         DatabaseReference usersRef = mDatabase.child("users");
         String currentUserId = mAuth.getCurrentUser().getUid();
@@ -96,7 +104,7 @@ public class UpdateUserFragment extends Fragment {
 
                 for (DataSnapshot userSnapshot : dataSnapshot.getChildren()) {
                     String userId = userSnapshot.getKey();
-                    if (userId.equals(currentUserId)) continue;
+                    if (userId.equals(currentUserId)) continue; // Neiekļauj pašreizējo lietotāju
 
                     String fullName = userSnapshot.child("Vards un uzvards").getValue(String.class);
                     String notDeleted = userSnapshot.child("Statuss").getValue(String.class);
@@ -107,11 +115,12 @@ public class UpdateUserFragment extends Fragment {
                     }
                 }
 
+                // Uzstāda spinner adapteri
                 if (getContext() != null) {
                     ArrayAdapter<String> adapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_spinner_item, userList);
                     adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                     spinnerUsers.setAdapter(adapter);
-                    deleteUserButton.setEnabled(!userList.isEmpty()); // Enable delete button if users exist
+                    deleteUserButton.setEnabled(!userList.isEmpty()); // Aktivizē dzēšanas pogu, ja ir lietotāji
                 }
             }
 
@@ -122,6 +131,7 @@ public class UpdateUserFragment extends Fragment {
         });
     }
 
+    // Inicializē statusu izvēles iespējas
     private void initStatusSpinner() {
         List<String> statuses = new ArrayList<>();
         statuses.add("Darbinieks");
@@ -135,6 +145,7 @@ public class UpdateUserFragment extends Fragment {
         }
     }
 
+    // Ielādē izvēlētā lietotāja pašreizējo statusu un uzstāda to Spinnerī
     private void loadUserStatus(String userName) {
         String userId = userIdMap.get(userName);
         if (userId == null) return;
@@ -160,6 +171,7 @@ public class UpdateUserFragment extends Fragment {
         });
     }
 
+    // Apstiprina dzēšanu ar dialogu
     private void confirmDeleteUser() {
         if (spinnerUsers.getSelectedItem() == null) {
             Toast.makeText(getContext(), getString(R.string.invalid_user_selected), Toast.LENGTH_SHORT).show();
@@ -174,8 +186,6 @@ public class UpdateUserFragment extends Fragment {
             return;
         }
 
-        Log.d("UPDATE USER", "Selected user ID: " + userId);
-
         new AlertDialog.Builder(getContext())
                 .setTitle(getString(R.string.deletetitle))
                 .setMessage(getString(R.string.deletetext1) + " " + selectedUser + " " + getString(R.string.deletetext2))
@@ -184,6 +194,7 @@ public class UpdateUserFragment extends Fragment {
                 .show();
     }
 
+    // Atzīmē lietotāju kā "deleted" un pieraksta žurnālā
     private void deleteUser(String userId) {
         Map<String, Object> updates = new HashMap<>();
         updates.put("Statuss", "deleted");
@@ -191,7 +202,7 @@ public class UpdateUserFragment extends Fragment {
         mDatabase.child("users").child(userId).updateChildren(updates).addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 Toast.makeText(getContext(), getString(R.string.userdeleted), Toast.LENGTH_SHORT).show();
-                initUserSpinner(); // Refresh the user list
+                initUserSpinner(); // Atjauno lietotāju sarakstu
                 addLogEntry(spinnerUsers.getSelectedItem().toString(), "deleted", true);
 
             } else {
@@ -200,6 +211,7 @@ public class UpdateUserFragment extends Fragment {
         });
     }
 
+    // Atjaunina lietotāja statusu
     private void UpdateUser() {
         if (spinnerUsers.getSelectedItem() == null || spinnerStatuss.getSelectedItem() == null) {
             Toast.makeText(getContext(), getString(R.string.invalid_user_id), Toast.LENGTH_SHORT).show();
@@ -219,7 +231,7 @@ public class UpdateUserFragment extends Fragment {
         userRef.child("Statuss").setValue(newStatus).addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 Toast.makeText(getContext(), getString(R.string.toastUpdateMsg), Toast.LENGTH_SHORT).show();
-                initUserSpinner(); // Refresh the user list
+                initUserSpinner();
                 addLogEntry(selectedUser, newStatus, false);
 
             } else {
@@ -228,6 +240,7 @@ public class UpdateUserFragment extends Fragment {
         });
     }
 
+    // Pievieno žurnāla ierakstu, kad lietotājs tiek dzēsts vai statusa mainīts
     private void addLogEntry(String targetUserName, String newStatus, boolean isDeletion) {
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentUser == null) return;
@@ -247,7 +260,7 @@ public class UpdateUserFragment extends Fragment {
 
                 String fullName = dataSnapshot.child("Vards un uzvards").getValue(String.class);
 
-                // Format current date and time
+                // Formatē datumu
                 SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.getDefault());
                 String dateTime = sdf.format(new Date());
 
@@ -279,6 +292,4 @@ public class UpdateUserFragment extends Fragment {
             }
         });
     }
-
-
 }

@@ -17,28 +17,30 @@ import java.util.Locale;
 
 public class Splashscreen extends AppCompatActivity {
 
-    ImageView imageView;
-    Animation imanim;
+    ImageView imageView;       // Attēla skats priekš logo
+    Animation imanim;          // Logo animācija
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        // Iegūst tēmas iestatījumus un uzstāda tēmu pirms skata ielādes
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         String selectedTheme = sharedPreferences.getString("theme_preference", "Theme.FABLAB");
         int themeResourceId = getResources().getIdentifier(selectedTheme, "style", getPackageName());
         setTheme(themeResourceId);
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splashscreen);
 
+        // Iegūst attēla skatu un uzstāda animāciju
         imageView = findViewById(R.id.fablablogo);
-
         imanim = AnimationUtils.loadAnimation(this, R.anim.imageanim);
-
         imageView.setAnimation(imanim);
 
+        // Izveido `Handler`, lai palaistu kodu pēc 2 sekundēm (Splash screen ilgums)
         final Handler myhandler = new Handler();
         myhandler.postDelayed(() -> {
 
-            // Set locale based on saved language preference
+            // Uzstāda valodu pēc lietotāja izvēles
             String languageCode = sharedPreferences.getString("language_preference", "en");
             Locale locale = new Locale(languageCode);
             Locale.setDefault(locale);
@@ -47,10 +49,12 @@ public class Splashscreen extends AppCompatActivity {
             Configuration configuration = new Configuration(resources.getConfiguration());
             configuration.setLocale(locale);
 
-            // Update the configuration and display metrics
+            // Atjauno konfigurāciju ar izvēlēto valodu
             resources.updateConfiguration(configuration, resources.getDisplayMetrics());
+
+            // Startē galveno aktivitāti un aizver splash screen
             startActivity(new Intent(Splashscreen.this, MainActivity.class));
             finish();
-        }, 2000);
+        }, 2000); // Aizture 2000 ms (2 sekundes)
     }
 }

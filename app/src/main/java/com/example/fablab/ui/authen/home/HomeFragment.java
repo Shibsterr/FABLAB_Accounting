@@ -70,51 +70,53 @@ public class HomeFragment extends Fragment {
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        // Uzpūšam fragmenta skatu no XML
         View view = inflater.inflate(R.layout.fragment_home, container, false);
 
-        // Inicializēt skatus
+        // Inicializējam skatus (pogas, kalendāru, izkārtojumu)
         hidingButton = view.findViewById(R.id.hiding_button);
         eventPage = view.findViewById(R.id.event_page_button);
         properLayout = view.findViewById(R.id.properLayout);
         calbtn = view.findViewById(R.id.calendar_button);
-        calendarView = view.findViewById(R.id.calendarView); // CalendarView reference
+        calendarView = view.findViewById(R.id.calendarView);
         stockbtn = view.findViewById(R.id.stock_button);
 
-        // Inicializēt sarakstus
+        // Inicializējam sarakstus staciju nosaukumiem un aprakstiem
         stationsList = new ArrayList<>();
         descriptionsList = new ArrayList<>();
 
-        // Inicializēt Firebase datu bāzes atsauci
+        // Inicializējam Firebase atsauces
         eventsDatabaseRef = FirebaseDatabase.getInstance().getReference().child("events");
         currentUserUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
         userDatabaseReference = FirebaseDatabase.getInstance().getReference().child("users").child(currentUserUid).child("recentlyUsedStations");
 
-        // Iestatiet pogu klikšķu klausītājus
-        calbtn.setOnClickListener(v -> toggleCalView());
-        hidingButton.setOnClickListener(v -> toggleViews()); // Updated to toggle views including calendar
-        eventPage.setOnClickListener(v -> openNewEventActivity());
-        stockbtn.setOnClickListener(v -> Navigation.findNavController(v).navigate(R.id.equipmentFragment));
+        // Uzstādām pogu nospiešanas klausītājus
+        calbtn.setOnClickListener(v -> toggleCalView()); // Rāda/paslēpj kalendāru
+        hidingButton.setOnClickListener(v -> toggleViews()); // Rāda/paslēpj properLayout
+        eventPage.setOnClickListener(v -> openNewEventActivity()); // Atver jauna notikuma aktivitāti
+        stockbtn.setOnClickListener(v -> Navigation.findNavController(v).navigate(R.id.equipmentFragment)); // Pārvieto uz aprīkojuma fragmentu
 
-        // Iestatiet kalendāru
+        // Inicializējam kalendāra funkcionalitāti
         setupCalendar();
 
-        // Ielādējiet stacijas no Firebase, tostarp nesen izmantoto pasūtījumu
+        // Ielādējam stacijas no Firebase un kārtojam pēc nesenās lietošanas
         loadStations();
 
-        // Pārbaudiet lietotāja statusu un iestatiet lietotāja interfeisu
+        // Pārbaudām lietotāja statusu, lai pielāgotu lietotāja interfeisu
         checkUserStatus();
 
+        // Kalendāra klikšķu klausītājs: atver dialogu ar dienas notikumiem
         calendarView.setOnDateChangedListener((widget, date, selected) -> {
             List<Event> eventsForDay = getEventsForDay(date);
-
             if (eventsForDay != null && !eventsForDay.isEmpty()) {
-                // Rādīt dialogu ar notikumiem
                 EventsDialogFragment eventsDialogFragment = EventsDialogFragment.newInstance(eventsForDay);
                 eventsDialogFragment.show(getChildFragmentManager(), "eventsDialog");
             }
         });
+
         return view;
     }
+
 
     private void toggleViews() {
         // Pārslēgt properlayout
@@ -321,6 +323,7 @@ public class HomeFragment extends Fragment {
         });
     }
 
+    // Atjaunina lietotāja izmantotās stacijas lietošanas skaitu Firebase datubāzē
     private void updateRecentlyUsedStation(int stationId) {
         userDatabaseReference.child(String.valueOf(stationId)).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -339,6 +342,7 @@ public class HomeFragment extends Fragment {
         });
     }
 
+    // Samazina (sakļauj) norādīto izkārtojumu ar animāciju
     private void collapseLayout(final View view) {
         final int initialHeight = view.getMeasuredHeight();
         ValueAnimator heightAnimator = ValueAnimator.ofInt(initialHeight, 0);
@@ -359,6 +363,7 @@ public class HomeFragment extends Fragment {
         heightAnimator.start();
     }
 
+    // Paplašina (atver) norādīto izkārtojumu ar animāciju
     private void expandLayout(final View view) {
         view.measure(View.MeasureSpec.makeMeasureSpec(((ViewGroup) view.getParent()).getWidth(), View.MeasureSpec.EXACTLY),
                 View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
@@ -377,7 +382,7 @@ public class HomeFragment extends Fragment {
         heightAnimator.start();
     }
 
-    //---------------------------------------------------------------------------------------
+    // Pārbauda pašreizējā lietotāja statusu un atjauno pogu redzamību atbilstoši lomai
     private void checkUserStatus() {
         DatabaseReference userRef = FirebaseDatabase.getInstance().getReference()
                 .child("users")
@@ -397,6 +402,7 @@ public class HomeFragment extends Fragment {
         });
     }
 
+    // Atjauno redzamo pogu stāvokli atkarībā no lietotāja statusa
     private void updateButtonVisibility() {
         if (userStatus != null) {
             switch (userStatus) {
@@ -420,6 +426,7 @@ public class HomeFragment extends Fragment {
         }
     }
 
+    // Inicializē kalendāra uzvedību: kad tiek izvēlēts datums, tiek parādīti tā notikumi
     private void setupCalendar() {
         calendarView.setOnDateChangedListener((widget, date, selected) -> {
             // Parādīt notikumus atlasītajam datumam
@@ -430,24 +437,23 @@ public class HomeFragment extends Fragment {
         loadEvents();
     }
 
+    // Ielādē visus notikumus no Firebase un saglabā tos atbilstoši datumiem mapē
     private void loadEvents() {
         eventsDatabaseRef = FirebaseDatabase.getInstance().getReference().child("events");
         eventsDatabaseRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                eventsMap.clear(); // Clear existing events before loading new ones
+                eventsMap.clear(); // Notīra iepriekšējos notikumus
 
-                // Iterate through each date node
+                // Iziet cauri katram datuma mezglam
                 for (DataSnapshot dateSnapshot : snapshot.getChildren()) {
-                    String date = dateSnapshot.getKey(); // Date node key
+                    String date = dateSnapshot.getKey();
 
-                    // Iterate through each user UID node under the date node
                     for (DataSnapshot userSnapshot : dateSnapshot.getChildren()) {
-                        String userId = userSnapshot.getKey(); // User UID
+                        String userId = userSnapshot.getKey();
 
-                        // Iterate through each event under the user UID node
                         for (DataSnapshot eventSnapshot : userSnapshot.getChildren()) {
-                            String eventId = eventSnapshot.getKey(); // Event ID
+                            String eventId = eventSnapshot.getKey();
                             String title = eventSnapshot.child("title").getValue(String.class);
                             String description = eventSnapshot.child("description").getValue(String.class);
                             String startTime = eventSnapshot.child("startTime").getValue(String.class);
@@ -456,10 +462,8 @@ public class HomeFragment extends Fragment {
                             String status = eventSnapshot.child("status").getValue(String.class);
 
                             if (title != null && description != null && date != null && startTime != null && endTime != null && numberOfPeople != null && status != null && userId != null) {
-                                // Izveidojiet notikumu objektu ar jauno struktūru
                                 Event event = new Event(eventId, title, description, date, startTime, endTime, numberOfPeople, status, userId);
 
-                                // Pievienojiet notikumu šī datuma notikumu sarakstam
                                 if (!eventsMap.containsKey(date)) {
                                     eventsMap.put(date, new ArrayList<>());
                                 }
@@ -469,7 +473,7 @@ public class HomeFragment extends Fragment {
                     }
                 }
 
-                markEventsOnCalendar(); // Atzīmējiet notikumus kalendārā
+                markEventsOnCalendar(); // Atzīmē notikumus kalendārā
             }
 
             @Override
@@ -479,18 +483,16 @@ public class HomeFragment extends Fragment {
         });
     }
 
+    // Atzīmē notikumus kalendārā izmantojot dekoratorus (piemēram, krāsainus punktus)
     private void markEventsOnCalendar() {
-        calendarView.removeDecorators(); // notīrīt vecos vecie dekoratori
+        calendarView.removeDecorators(); // Notīra iepriekšējos dekoratorus
 
-        // Iziet cauri notikumiem atkal un salikt tos sarakstā
         for (Map.Entry<String, List<Event>> entry : eventsMap.entrySet()) {
             String dateString = entry.getKey();
             List<Event> events = entry.getValue();
 
-            // Iziet cauri datumiem
             CalendarDay calendarDay = parseDate(dateString);
             if (calendarDay != null) {
-                // Katram pasākumam pievienojiet dekoratoru (krāsas apli)`
                 for (Event event : events) {
                     calendarView.addDecorator(new EventDecorator(calendarDay, event.getStatus()));
                 }
@@ -498,11 +500,12 @@ public class HomeFragment extends Fragment {
         }
     }
 
+    // Pārvērš datuma tekstu uz CalendarDay objektu
     private CalendarDay parseDate(String date) {
         try {
             String[] parts = date.split("-");
             int year = Integer.parseInt(parts[0]);
-            int month = Integer.parseInt(parts[1]) - 1; // Calendar months are 0-based
+            int month = Integer.parseInt(parts[1]) - 1; // Mēneši sākas no 0
             int day = Integer.parseInt(parts[2]);
             return CalendarDay.from(year, month, day);
         } catch (Exception e) {
@@ -511,11 +514,10 @@ public class HomeFragment extends Fragment {
         }
     }
 
+    // Iegūst notikumu sarakstu konkrētai dienai
     private List<Event> getEventsForDay(CalendarDay date) {
-        // formatēt datumu kā "yyyy-MM-dd"
         String dateKey = date.getYear() + "-" + (date.getMonth() + 1) + "-" + date.getDay();
-
-        // Return the list of events for the selected day, or an empty list if none
         return eventsMap.getOrDefault(dateKey, new ArrayList<>());
     }
+
 }
