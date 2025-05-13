@@ -55,7 +55,6 @@ public class MainActivity extends AppCompatActivity {
     private FirebaseUser currentUser;
     private ActivityMainBinding binding;
     private final ExecutorService executorService = Executors.newSingleThreadExecutor();
-
     private final ActivityResultLauncher<ScanOptions> barLauncher = registerForActivityResult(new ScanContract(),
             result -> {
                 if (result.getContents() == null) {
@@ -65,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
                     if (isValidScan(scannedCode)) { // Pārbauda vai dati atbilst
                         searchEquipmentInFirebase(scannedCode); // Ja jā tad padod tos datus uz meklēšanu un atver to iekārti
                     } else {
-                        Toast.makeText(this, "Invalid scan. Please try again.", Toast.LENGTH_LONG).show();
+                        Toast.makeText(this, getString(R.string.invalid_qr_code_scanned), Toast.LENGTH_LONG).show();
                         scanCode(null);
                     }
                 }

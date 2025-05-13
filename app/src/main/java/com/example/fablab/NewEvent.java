@@ -56,7 +56,7 @@ public class NewEvent extends AppCompatActivity {
         int themeResourceId = getResources().getIdentifier(selectedTheme, "style", getPackageName());
         setTheme(themeResourceId);
 
-        // Set locale based on saved language preference
+        // Iestatiet lokalizāciju, pamatojoties uz izvēlēto valodu
         String languageCode = sharedPreferences.getString("language_preference", "en");
         Locale locale = new Locale(languageCode);
         Locale.setDefault(locale);
@@ -65,13 +65,13 @@ public class NewEvent extends AppCompatActivity {
         Configuration configuration = new Configuration(resources.getConfiguration());
         configuration.setLocale(locale);
 
-        // Update the configuration and display metrics
+        // Atjauniniet konfigurāciju un displeja metriku
         resources.updateConfiguration(configuration, resources.getDisplayMetrics());
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.new_event);
 
-        // Initialize views
+        // Inicializēt skatus
         titleText = findViewById(R.id.nodarbiba_text);
         descriptionText = findViewById(R.id.stacija_text);
         dateText = findViewById(R.id.date_text);
@@ -89,31 +89,31 @@ public class NewEvent extends AppCompatActivity {
             return;
         }
 
-        // Reference to the "events" node in Firebase database
+        // Atsauce uz Firebase datu bāzes mezglu "notikumi".
         eventsRef = FirebaseDatabase.getInstance().getReference("events");
 
-        // Date Picker
+        // Datuma atlasītājs
         dateText.setOnClickListener(v -> showDatePickerDialog());
 
-        // Time Picker for Start Time
+        // Laika atlasītājs sākuma laikam
         startTimeText.setOnClickListener(v -> showTimePickerDialog(true));
 
-        // Time Picker for End Time
+        // Laika atlasītājs beigu laikam
         endTimeText.setOnClickListener(v -> showTimePickerDialog(false));
 
-        // Submit Button
+        // Iesniegšanas poga
         submitButton.setOnClickListener(v -> {
             String title = titleText.getText().toString().trim();
             String description = descriptionText.getText().toString().trim();
             String numberOfPeople = numberOfPeopleText.getText().toString().trim();
 
-            // Validation
+            // Validācija
             if (title.isEmpty() || description.isEmpty() || eventDate.isEmpty() || startTime.isEmpty() || endTime.isEmpty() || numberOfPeople.isEmpty()) {
                 Toast.makeText(NewEvent.this, getString(R.string.empty_fields_error), Toast.LENGTH_SHORT).show();
                 return;
             }
 
-            // Create event object with a unique ID
+            // Izveidojiet notikuma objektu ar unikālu ID
             String eventId = UUID.randomUUID().toString();
             Map<String, Object> eventMap = new HashMap<>();
             eventMap.put("eventId", eventId);
@@ -126,26 +126,26 @@ public class NewEvent extends AppCompatActivity {
             eventMap.put("status", "Pending");
             eventMap.put("userId", currentUser.getUid());
 
-            // Save event under events/date/userId/eventId
+            // Saglabājiet notikumu sadaļā Events/date/userId/eventId
             eventsRef.child(eventDate).child(currentUser.getUid()).child(eventId).setValue(eventMap)
                     .addOnSuccessListener(aVoid -> {
                         Toast.makeText(NewEvent.this, getString(R.string.eventadded_good), Toast.LENGTH_SHORT).show();
                         sendEmailToAdmins(title, description, numberOfPeople, eventDate, startTime, endTime);
                         addLogEntry(title, eventDate);
-                        finish(); // Close activity after successful submission
+                        finish(); // Aizvērt darbību pēc veiksmīgas iesniegšanas
                     })
                     .addOnFailureListener(e -> Toast.makeText(NewEvent.this, getString(R.string.eventadded_Bad), Toast.LENGTH_SHORT).show());
         });
     }
 
-    // Show DatePickerDialog for picking the date
+    // Rādīt DatePicker Dialog datuma izvēlei
     private void showDatePickerDialog() {
         Calendar calendar = Calendar.getInstance();
         int year = calendar.get(Calendar.YEAR);
         int month = calendar.get(Calendar.MONTH);
         int day = calendar.get(Calendar.DAY_OF_MONTH);
 
-        // Set the minimum date to today
+        // Iestatiet minimālo datumu uz šodienu
         Calendar minDate = Calendar.getInstance();
         DatePickerDialog datePickerDialog = new DatePickerDialog(
                 this, (view, selectedYear, selectedMonth, selectedDay) -> {
@@ -153,12 +153,12 @@ public class NewEvent extends AppCompatActivity {
             dateText.setText(eventDate);
         }, year, month, day);
 
-        // Ensure the user cannot select a past date
+        // Pārliecinieties, ka lietotājs nevar atlasīt pagātnes datumu
         datePickerDialog.getDatePicker().setMinDate(calendar.getTimeInMillis());
         datePickerDialog.show();
     }
 
-    // Show TimePickerDialog for picking start or end time
+    // Rādīt TimePickerDialog, lai izvēlētos sākuma vai beigu laiku
     private void showTimePickerDialog(boolean isStartTime) {
         Calendar calendar = Calendar.getInstance();
         int hour = calendar.get(Calendar.HOUR_OF_DAY);
@@ -183,14 +183,14 @@ public class NewEvent extends AppCompatActivity {
         timePickerDialog.show();
     }
 
-    // Check if the end time is before the start time
+    // Pārbaudiet, vai beigu laiks ir pirms sākuma laika
     private boolean isEndTimeBeforeStartTime(String endTime) {
         if (startTime.isEmpty()) return false;
 
         Calendar startCalendar = Calendar.getInstance();
         Calendar endCalendar = Calendar.getInstance();
 
-        // Parse the start and end times
+        // Parsējiet sākuma un beigu laiku
         String[] startParts = startTime.split(":");
         String[] endParts = endTime.split(":");
 
@@ -203,9 +203,9 @@ public class NewEvent extends AppCompatActivity {
         return endCalendar.before(startCalendar);
     }
 
-    // Method to send email to admins
+    // Sūta e-pastu visiem administratoriem un darbiniekiem
     private void sendEmailToAdmins(String title, String description, String numberOfPeople, String eventDate, String startTime, String endTime) {
-        // Create a string with the email body
+        // Izveidojiet virkni ar e-pasta pamattekstu
         String emailBody = "Ir izveidots jauns pasākums:\n" +
                 "Stacija: " + title +
                 "\nApraksts: " + description +
@@ -214,7 +214,7 @@ public class NewEvent extends AppCompatActivity {
                 "\nSākuma laiks: " + startTime +
                 "\nBeigu laiks: " + endTime;
 
-        // Fetch admin and worker emails and send the email
+        // Iegūstiet administratora un darbinieku e-pasta ziņojumus un nosūtiet e-pastu
         DatabaseReference usersRef = FirebaseDatabase.getInstance().getReference().child("users");
         usersRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -224,13 +224,13 @@ public class NewEvent extends AppCompatActivity {
                     String status = userSnapshot.child("Statuss").getValue(String.class);
                     String email = userSnapshot.child("epasts").getValue(String.class);
 
-                    // Add email if user is an admin or worker
+                    // Pievienojiet e-pasta adresi, ja lietotājs ir administrators vai darbinieks
                     if (email != null && ("Admin".equalsIgnoreCase(status) || "Darbinieks".equalsIgnoreCase(status))) {
                         emails.add(email);
                     }
                 }
 
-                // Send email if there are recipients
+                // Nosūtiet e-pastu, ja ir adresāti
                 if (!emails.isEmpty()) {
                     EmailSender emailSender = new EmailSender(EMAIL, PASSWORD);
                     emailSender.sendEmail(emails, "Izveidots jauns pasākums", emailBody);
@@ -239,11 +239,11 @@ public class NewEvent extends AppCompatActivity {
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                // Handle possible errors.
+
             }
         });
     }
-
+    // Pievieno ierakstu "Logs" sadaļā
     private void addLogEntry(String name, String time) {
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentUser == null) return;

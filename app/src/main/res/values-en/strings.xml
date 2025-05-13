@@ -320,6 +320,7 @@
     <string name="no_data_user">User data not found</string>
     <string name="database_error">Database error</string>
     <string name="date_validation_error">Please select a valid date of birth.</string>
+    <string name="invalid_qr_code_scanned">Invalid scan. Please try again.</string>
 
 
 </resources>

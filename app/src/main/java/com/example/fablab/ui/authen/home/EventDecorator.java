@@ -24,16 +24,16 @@ public class EventDecorator implements DayViewDecorator {
         int color;
         switch (status) {
             case "Accepted":
-                color = 0xFF00FF00; // Green
+                color = 0xFF00FF00; // Zaļš
                 break;
             case "Declined":
-                color = 0xFFFF0000; // Red
+                color = 0xFFFF0000; // Sarkans
                 break;
             case "Finished":
-                color = 0xFF6633FF;
+                color = 0xFF6633FF; //zils
                 break;
             default:
-                color = 0xFFFFA500; // Orange for Pending
+                color = 0xFFFFA500; // Oranžš
                 break;
         }
         view.addSpan(new DotSpan(10, color));

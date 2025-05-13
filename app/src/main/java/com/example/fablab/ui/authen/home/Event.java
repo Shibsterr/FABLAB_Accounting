@@ -13,11 +13,11 @@ public class Event implements Serializable {
     private String status;
     private String userId;
 
-    // Default constructor required for calls to DataSnapshot.getValue(Event.class)
+    // Nepieciešams noklusējuma konstruktors DataSnapshot.getValue(Event.class) izsaukumiem.
     public Event() {
     }
 
-    // Constructor with all fields
+    // Konstruktors ar visiem laukiem
     public Event(String eventId, String title, String description, String eventDate, String startTime, String endTime, String numberOfPeople, String status, String userId) {
         this.eventId = eventId;
         this.title = title;
@@ -30,7 +30,7 @@ public class Event implements Serializable {
         this.userId = userId;
     }
 
-    // Getters and setters
+    // getteri un setteri
     public String getEventId() {
         return eventId;
     }

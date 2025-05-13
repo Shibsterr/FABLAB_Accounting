@@ -63,24 +63,21 @@ public class LogAdapter extends RecyclerView.Adapter<LogAdapter.LogViewHolder> {
         }
 
         public void bind(LogItem logItem) {
-            // Set the button label to the log's title
+            // Iestatiet pogas apzīmējumu atbilstoši žurnāla nosaukumam
             buttonExpand.setText(logItem.getTitle() != null ? logItem.getTitle() : "Žurnāla ieraksts");
 
-            // Bold "Vārds uzvārds:"
             String nameLabel = "Vārds uzvārds: ";
             String name = logItem.getUser();
             SpannableString spannableName = new SpannableString(nameLabel + name);
             spannableName.setSpan(new StyleSpan(Typeface.BOLD), 0, nameLabel.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             textUserName.setText(spannableName);
 
-            // Bold "E-pasts:"
             String emailLabel = "E-pasts: ";
             String email = logItem.getEmail();
             SpannableString spannableEmail = new SpannableString(emailLabel + email);
             spannableEmail.setSpan(new StyleSpan(Typeface.BOLD), 0, emailLabel.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             textEmail.setText(spannableEmail);
 
-            // Bold "Kopsavilkums:"
             if (logItem.getSummary() != null && !logItem.getSummary().isEmpty()) {
                 String summaryLabel = "Kopsavilkums: ";
                 String summary = logItem.getSummary();
