@@ -148,6 +148,7 @@ public class MainActivity extends AppCompatActivity {
         DrawerLayout drawer = binding.drawerLayout;
         NavigationView navigationView = binding.navView;
 
+
         // Konfigurē navigācijas izvēlni
         mAppBarConfiguration = new AppBarConfiguration.Builder(
                 R.id.nav_home, R.id.new_equip, R.id.nav_task, R.id.nav_assign,
@@ -196,7 +197,8 @@ public class MainActivity extends AppCompatActivity {
 
     private boolean isValidScan(String data) {
         // Validē skenēto datu formātu (8 cipari vai specifiska struktūra)
-        return data.length() == 8 || data.matches("^[1-9][0-9]?_[1-9]_[1-2]?_[a-zA-Z0-9\\s]+$")
+        return data.length() == 8 ||
+                data.matches("^[1-9][0-9]?_[1-9]_[1-2]?_[a-zA-Z0-9\\s]+$")
                 || data.matches("^[1-9][0-9]?_[1-9][0-9]?_[1-2]_[a-zA-Z0-9\\s]+$")
                 || data.matches("^[1-9]_[1-9][0-9]?_[1-2]_[a-zA-Z0-9\\s]+$")
                 || data.matches("^[1-9]_[1-9]_[1-2]_[a-zA-Z0-9\\s]+$");
