@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -136,6 +137,12 @@ public class NewEvent extends AppCompatActivity {
                     })
                     .addOnFailureListener(e -> Toast.makeText(NewEvent.this, getString(R.string.eventadded_Bad), Toast.LENGTH_SHORT).show());
         });
+
+        ImageButton backButton = findViewById(R.id.back_button);
+        backButton.setOnClickListener(v -> {
+            finish(); // Pāriet atpakļa uz sākuma skatu.
+        });
+
     }
 
     // Rādīt DatePicker Dialog datuma izvēlei
