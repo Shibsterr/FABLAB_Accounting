@@ -321,6 +321,8 @@
     <string name="database_error">Database error</string>
     <string name="date_validation_error">Please select a valid date of birth.</string>
     <string name="invalid_qr_code_scanned">Invalid scan. Please try again.</string>
+    <string name="settings_recentstation">Delete recently used stations</string>
+    <string name="settings_subrecent">Reset the recently used stations list so it returns to default</string>
 
 
 </resources>

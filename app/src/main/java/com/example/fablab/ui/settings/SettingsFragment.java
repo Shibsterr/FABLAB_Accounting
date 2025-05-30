@@ -17,6 +17,9 @@ import com.example.fablab.R;
 import com.example.fablab.ui.authen.ForgotPasswordActivity;
 import com.example.fablab.ui.authen.LoginUser;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.Locale;
 
@@ -98,6 +101,39 @@ public class SettingsFragment extends PreferenceFragmentCompat {
             startActivity(intent);
             return true;
         });
+
+
+        findPreference("recent_stations").setOnPreferenceClickListener(preference -> {
+            recentstat();
+            return true;
+        });
+
+    }
+
+    private void recentstat() {
+        Log.d("SettingsFragment", "Clicked to reset recently used stations");
+
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user != null) {
+            String uid = user.getUid();
+            DatabaseReference ref = FirebaseDatabase.getInstance().getReference()
+                    .child("users")
+                    .child(uid)
+                    .child("recentlyUsedStations");
+
+            ref.removeValue().addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    Log.d("SettingsFragment", "Successfully deleted recently used stations");
+                    Toast.makeText(getContext(), "Recently used stations reset", Toast.LENGTH_SHORT).show();
+                } else {
+                    Log.e("SettingsFragment", "Failed to delete recently used stations", task.getException());
+                    Toast.makeText(getContext(), "Failed to reset recently used stations", Toast.LENGTH_SHORT).show();
+                }
+            });
+        } else {
+            Log.e("SettingsFragment", "User not logged in");
+            Toast.makeText(getContext(), "User not logged in", Toast.LENGTH_SHORT).show();
+        }
     }
 
     // Lietotāja izrakstīšanās no Firebase un pāriešana uz pieslēgšanās ekrānu

@@ -24,4 +24,9 @@
         android:title="@string/settings_reset"
         android:summary="@string/settings_subreset" />
 
+    <Preference
+        android:key="recent_stations"
+        android:title="@string/settings_recentstation"
+        android:summary="@string/settings_subrecent" />
+
 </PreferenceScreen>

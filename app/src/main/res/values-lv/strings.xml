@@ -325,4 +325,6 @@
     <string name="database_error">Datu bāzes kļūda</string>
     <string name="date_validation_error">Lūdzu, atlasiet derīgu dzimšanas datumu.</string>
     <string name="invalid_qr_code_scanned">Nederīga skenēšana. Lūdzu, mēģiniet vēlreiz.</string>
+    <string name="settings_recentstation">Dzēst nesen izmantotās stacijas</string>
+    <string name="settings_subrecent">Atiestatiet nesen izmantoto staciju sarakstu, lai tas atgrieztos pēc noklusējuma</string>
 </resources>
