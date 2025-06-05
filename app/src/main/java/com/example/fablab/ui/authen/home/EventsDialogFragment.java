@@ -242,7 +242,7 @@ public class EventsDialogFragment extends DialogFragment {
                 SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.getDefault());
                 String dateTime = sdf.format(new Date());
 
-                String title = "Notikuma statusa maiņa" + dateTime;
+                String title = "Notikuma statusa maiņa " + dateTime;
                 String summary = fullName + " Nomainīja notikuma statusu uz: " + data + "'.";
 
                 DatabaseReference logRef = FirebaseDatabase.getInstance().getReference()
